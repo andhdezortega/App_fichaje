@@ -1,0 +1,189 @@
+:root {
+    --azulado: #30588C;
+    --aguamarina: #41A69C;
+    --mostaza: #F2AB27;
+    --anaranjado: #F28E13;
+    --perlado: #F2F2F2;
+    --texto-oscuro: #2c2c2c;
+    --gris-desactivado: #cccccc;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--perlado);
+    margin: 0;
+    padding: 0;
+    color: var(--texto-oscuro);
+}
+
+.fichaje-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--perlado);
+}
+
+.login-box {
+    background-color: var(--perlado);
+    padding: 40px 50px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.login-box h2 {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--azul-pastelado);
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--anaranjado); /* Línea de acento */
+    
+    padding-bottom: 5px;
+}
+
+
+
+
+.login-box label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--texto-oscuro);
+}
+
+.login-box input[type="text"],
+.login-box input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--azulado);
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-box button:hover {
+    background-color: var(--aguamarina);
+}
+
+.error {
+    color: red;
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+.fichaje-box {
+    background-color: white;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+h1 {
+    margin-bottom: 10px;
+    color: var(--azulado);
+}
+
+p {
+    margin-bottom: 20px;
+    color: var(--texto-oscuro);
+    font-weight: 500;   
+}
+
+
+
+form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+form label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+    color: var(--texto-oscuro);
+}
+
+form button[type="submit"] {
+    margin-top: 5px;
+    background-color: var(--aguamarina);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+
+button {
+    padding: 12px 20px;
+    margin: 10px 5px;
+    font-size: 16px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: var(--azulado);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.estado-msg {
+    background-color: #f9f9f9;
+    border-left: 4px solid var(--anaranjado);
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-weight: 500;
+    color: var(--texto-oscuro);
+}
+
+button:hover:not([disabled]) {
+    background-color: var(--aguamarina);
+}
+
+button:disabled {
+    background-color: var(--gris-desactivado);
+    cursor: not-allowed;
+}
+
+button.cerrar-btn {
+    background-color: #b0b0b0;
+    color: white;
+}
+
+button.cerrar-btn:hover {
+    background-color: #7a7a7a;
+}
