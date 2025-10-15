@@ -6,6 +6,8 @@
     --perlado: #F2F2F2;
     --texto-oscuro: #2c2c2c;
     --gris-desactivado: #cccccc;
+    --rojo:#c9302c;
+
 }
 
 body {
@@ -44,15 +46,12 @@ body {
     font-size: 24px;
     font-weight: 600;
     text-align: center;
-    color: var(--azul-pastelado);
+    color: var(--azulado);
     margin-bottom: 20px;
-    border-bottom: 2px solid var(--anaranjado); /* Línea de acento */
+    border-bottom: 2px solid var(--anaranjado);
     
     padding-bottom: 5px;
 }
-
-
-
 
 .login-box label {
     display: block;
@@ -66,7 +65,7 @@ body {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid #dcdcdc;
     border-radius: 5px;
     font-size: 14px;
 }
@@ -75,7 +74,7 @@ body {
     width: 100%;
     padding: 12px;
     background-color: var(--azulado);
-    color: white;
+    color: var(--perlado);
     font-size: 16px;
     border: none;
     border-radius: 5px;
@@ -88,12 +87,11 @@ body {
 }
 
 .error {
-    color: red;
+    color: var(--rojo);
     margin-top: 15px;
     text-align: center;
     font-weight: bold;
 }
-
 
 .fichaje-box {
     background-color: white;
@@ -113,9 +111,8 @@ h1 {
 p {
     margin-bottom: 20px;
     color: var(--texto-oscuro);
-    font-weight: 500;   
+    font-weight: 500;
 }
-
 
 
 form select {
@@ -124,7 +121,7 @@ form select {
     margin-top: 5px;
     margin-bottom: 15px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--perlado);
     font-size: 14px;
 }
 
@@ -138,16 +135,14 @@ form label {
 form button[type="submit"] {
     margin-top: 5px;
     background-color: var(--aguamarina);
-    color: white;
+    color: var(--perlado);
     border: none;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
 }
 
-
-
-button {
+button:not(.cerrar-btn) {
     padding: 12px 20px;
     margin: 10px 5px;
     font-size: 16px;
@@ -156,20 +151,31 @@ button {
     border-radius: 5px;
     cursor: pointer;
     background-color: var(--azulado);
-    color: white;
+    color:var(--perlado);
     transition: background-color 0.3s ease;
 }
 
+/*------------------------ESTADOS------------------*/
+/* Clase base */
 .estado-msg {
-    background-color: #f9f9f9;
-    border-left: 4px solid var(--anaranjado);
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    font-weight: 500;
-    color: var(--texto-oscuro);
+    border-left: 8px solid;
+    background-color: var(--perlado);
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1;
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+}
+.estado-produccion {
+    border-color: var(--aguamarina);
+    background-color: var(--perlado);
+}
+.estado-no-produccion {
+    border-color: var(--mostaza);
 }
 
+/*----------------------------------------------------*/
 button:hover:not([disabled]) {
     background-color: var(--aguamarina);
 }
@@ -178,12 +184,183 @@ button:disabled {
     background-color: var(--gris-desactivado);
     cursor: not-allowed;
 }
+.botones-secundarios-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    background-color: var(--perlado);
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+
+
+/* Botón rojo */
+.btn-rojo {
+    background-color: var(--rojo);
+    border: none;
+    color: var(--perlado);
+    transition: background-color 0.3s ease;
+}
+
+.btn-rojo:hover:not(:disabled) {
+    background-color: var(--rojo);
+}
+
+.btn-rojo:disabled {
+    background-color: var(--gris-desactivado);
+    cursor: not-allowed;
+}
+
 
 button.cerrar-btn {
-    background-color: #b0b0b0;
-    color: white;
+    background-color: var(--perlado);
+    color: var(--texto-oscuro);
 }
 
 button.cerrar-btn:hover {
-    background-color: #7a7a7a;
+    background-color: gray;
 }
+
+/*------------------ Tabla del panel administrador----------------- */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.admin-table thead {
+    background-color: var(--azulado);
+    color: var(--perlado);
+}
+
+.admin-table th, .admin-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--perlado);
+}
+
+.admin-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.admin-table td.vacio {
+    text-align: center;
+    color: var(--gris-desactivado);
+    font-style: italic;
+}
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Lado izquierdo: barra lateral del formulario */
+.sidebar {
+    width: 300px;
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Estilos básicos del formulario */
+.sidebar h2 {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.sidebar label {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--perlado)
+}
+
+.sidebar input[type="text"],
+.sidebar input[type="date"],
+.sidebar input[type="time"],
+.sidebar input[type="number"] {
+    width: 100%;
+    padding: 6px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 4px;
+}
+
+/* Botón de enviar */
+.sidebar input[type="submit"] {
+    margin-top: 15px;
+    width: 100%;
+    background-color: #3498db;
+    border: none;
+    padding: 10px;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Parte central: tabla */
+.main {
+    flex: 1;
+    padding: 30px;
+    background-color: #f5f5f5;
+    overflow: auto;
+}
+
+.main h1 {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+th {
+    background-color: #2980b9;
+    color: white;
+}
+.admin-table th,
+.admin-table td {
+    width: 10%; /* Ajusta este valor si necesitas más o menos espacio */
+    text-align: center;
+}
+
+.admin-table th:last-child,
+.admin-table td:last-child {
+    width: auto;
+    white-space: nowrap;
+}
+.estado-si {
+    background-color: #d4edda; /* verde claro */
+    color: #155724;
+    font-weight: bold;
+    text-align: center;
+}
+
+.estado-no {
+    background-color: #fff3cd; /* amarillo claro */
+    color: #856404;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+
+
+

@@ -10,8 +10,13 @@
     <name>ControlFichaje</name>
 
     <properties>
+<<<<<<< HEAD
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+=======
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+>>>>>>> origin/andrea
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
@@ -33,12 +38,15 @@
             <version>8.0.33</version>
         </dependency>
         -->
+<<<<<<< HEAD
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>6.1.0</version>
             <type>jar</type>
         </dependency>
+=======
+>>>>>>> origin/andrea
     </dependencies>
 
     <build>
@@ -49,7 +57,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
+<<<<<<< HEAD
                     <release>17</release>
+=======
+                    <release>21</release>
+>>>>>>> origin/andrea
                 </configuration>
             </plugin>
 

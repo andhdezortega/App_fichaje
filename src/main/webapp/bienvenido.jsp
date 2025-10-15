@@ -8,10 +8,7 @@
     }
 
     Boolean fichajeEntrada = (Boolean) session.getAttribute("fichajeEntrada");
-    Boolean fichajeSalida = (Boolean) session.getAttribute("fichajeSalida");
-
     if (fichajeEntrada == null) fichajeEntrada = false;
-    if (fichajeSalida == null) fichajeSalida = false;
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -19,6 +16,8 @@
     <meta charset="UTF-8">
     <title>Bienvenido</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" href="<%=request.getContextPath()%>/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="fichaje-container">
@@ -28,16 +27,11 @@
 
             <form action="FichajeServlet" method="post">
                 <button type="submit" name="accion" value="entrada" <%= fichajeEntrada ? "disabled" : "" %>>Fichar Entrada</button>
-                <button type="submit" name="accion" value="salida" <%= (!fichajeEntrada || fichajeSalida) ? "disabled" : "" %>>Fichar Salida</button>
             </form>
 
             <form action="LogoutServlet" method="post" style="margin-top: 10px;">
                 <button class="cerrar-btn" type="submit">Cerrar sesión</button>
             </form>
-            
-
-            </form>
-
         </div>
     </div>
 </body>
