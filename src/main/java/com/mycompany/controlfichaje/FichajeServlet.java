@@ -16,42 +16,12 @@ public class FichajeServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String usuario = (String) session.getAttribute("usuario");
         String accion = request.getParameter("accion");
-<<<<<<< HEAD
-        System.out.println("FichajeServlet: accion = " + accion);
-
-        if (usuario == null) {
-=======
 
         if (usuario == null || accion == null) {
->>>>>>> origin/andrea
             response.sendRedirect("login.jsp");
             return;
         }
 
-<<<<<<< HEAD
-        // Lógica de fichaje
-        if ("entrada".equals(accion)) {
-            // Guarda la hora de entrada (opcional)
-            session.setAttribute("horaEntrada", LocalDateTime.now());
-            
-
-            // Marca que fichó entrada
-            session.setAttribute("fichajeEntrada", true);
-            session.setAttribute("fichajeSalida", false);
-
-        } else if ("salida".equals(accion)) {
-            // Guarda la hora de salida (opcional)
-            session.setAttribute("horaSalida", LocalDateTime.now());
-
-            // Marca que fichó salida
-            session.setAttribute("fichajeSalida", true);
-            session.setAttribute("fichajeEntrada", false); // o true si quieres evitar que fiche entrada de nuevo
-        }
-
-        // Vuelve a la página principal
-        request.getRequestDispatcher("perfil.jsp").forward(request, response);
-        
-=======
         switch (accion) {
             case "entrada":
                 session.setAttribute("horaEntrada", LocalDateTime.now());
@@ -73,6 +43,5 @@ public class FichajeServlet extends HttpServlet {
                 // si no reconoce la acción
                 response.sendRedirect("perfil.jsp");
         }
->>>>>>> origin/andrea
     }
 }
