@@ -20,7 +20,12 @@ public class LoginServlet extends HttpServlet {
         // Usar la clase Autenticacion para validar y crear sesión
         boolean loginExitoso = Autenticacion.hacerLogin(request, usuario, contrasena);
         if (loginExitoso) {
-            response.sendRedirect("bienvenido.jsp");
+            // Verificar si el usuario es admin
+            if ("admin".equals(Autenticacion.obtenerRol(request))) {
+                response.sendRedirect("admin.jsp");
+            } else {
+                response.sendRedirect("bienvenido.jsp");
+            }
         } else {
             response.sendRedirect("login.jsp?error=1");
         }

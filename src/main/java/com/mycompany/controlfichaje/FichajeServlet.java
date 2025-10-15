@@ -1,10 +1,11 @@
 package com.mycompany.controlfichaje;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import Autenticacion.Autenticacion;
 
 @WebServlet(name = "FichajeServlet", urlPatterns = {"/FichajeServlet"})
 public class FichajeServlet extends HttpServlet {
@@ -13,14 +14,21 @@ public class FichajeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession();
-        String usuario = (String) session.getAttribute("usuario");
-        String accion = request.getParameter("accion");
-
-        if (usuario == null || accion == null) {
+        // Verificar si el usuario está autenticado
+        if (!Autenticacion.estaAutenticado(request)) {
             response.sendRedirect("login.jsp");
             return;
         }
+        
+        String usuario = Autenticacion.obtenerUsuarioActual(request);
+        String accion = request.getParameter("accion");
+
+        if (accion == null) {
+            response.sendRedirect("perfil.jsp");
+            return;
+        }
+
+        HttpSession session = request.getSession();
 
         switch (accion) {
             case "entrada":
@@ -43,5 +51,11 @@ public class FichajeServlet extends HttpServlet {
                 // si no reconoce la acción
                 response.sendRedirect("perfil.jsp");
         }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doPost(request, response);
     }
 }
