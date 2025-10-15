@@ -9,20 +9,28 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        String usuario = request.getParameter("usuario");
-        String contrasena = request.getParameter("contrasena");
+    String usuario = request.getParameter("usuario");
+    String contrasena = request.getParameter("contrasena");
 
-        if ("admin".equals(usuario) && "1234".equals(contrasena)) {
-            // GUARDAR EL USUARIO EN LA SESIÓN
-            HttpSession session = request.getSession();
-            session.setAttribute("usuario", usuario);
+    HttpSession session = request.getSession();
 
-            response.sendRedirect("bienvenido.jsp");
-        } else {
-            response.sendRedirect("login.jsp?error=1");
-        }
+    // Login para usuario normal
+    if ("usuario".equals(usuario) && "1234".equals(contrasena)) {
+        session.setAttribute("usuario", usuario);
+        session.setAttribute("rol", "usuario");
+        response.sendRedirect("bienvenido.jsp");
+
+    // Login para administrador
+    } else if ("admin".equals(usuario) && "admin123".equals(contrasena)) {
+        session.setAttribute("usuario", usuario);
+        session.setAttribute("rol", "admin");
+        response.sendRedirect("admin.jsp");
+
+    } else {
+        response.sendRedirect("login.jsp?error=1");
     }
+}
 }

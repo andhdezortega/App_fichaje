@@ -16,34 +16,32 @@ public class FichajeServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String usuario = (String) session.getAttribute("usuario");
         String accion = request.getParameter("accion");
-        System.out.println("FichajeServlet: accion = " + accion);
 
-        if (usuario == null) {
+        if (usuario == null || accion == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
-        // Lógica de fichaje
-        if ("entrada".equals(accion)) {
-            // Guarda la hora de entrada (opcional)
-            session.setAttribute("horaEntrada", LocalDateTime.now());
-            
+        switch (accion) {
+            case "entrada":
+                session.setAttribute("horaEntrada", LocalDateTime.now());
+                session.setAttribute("horaSalida", null);
+                session.setAttribute("fichajeEntrada", true);
+                session.setAttribute("fichajeSalida", false);
+                // Redirige a perfil.jsp
+                response.sendRedirect("perfil.jsp");
+                return;
 
-            // Marca que fichó entrada
-            session.setAttribute("fichajeEntrada", true);
-            session.setAttribute("fichajeSalida", false);
+            case "salida":
+                session.setAttribute("horaSalida", LocalDateTime.now());
+                session.setAttribute("fichajeSalida", true);
+                session.setAttribute("fichajeEntrada", false);
+                response.sendRedirect("bienvenido.jsp");
+                return;
 
-        } else if ("salida".equals(accion)) {
-            // Guarda la hora de salida (opcional)
-            session.setAttribute("horaSalida", LocalDateTime.now());
-
-            // Marca que fichó salida
-            session.setAttribute("fichajeSalida", true);
-            session.setAttribute("fichajeEntrada", false); // o true si quieres evitar que fiche entrada de nuevo
+            default:
+                // si no reconoce la acción
+                response.sendRedirect("perfil.jsp");
         }
-
-        // Vuelve a la página principal
-        request.getRequestDispatcher("perfil.jsp").forward(request, response);
-        
     }
 }

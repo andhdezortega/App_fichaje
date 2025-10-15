@@ -1,5 +1,6 @@
+com\mycompany\controlfichaje\ActualizarEstadoServlet.class
+com\mycompany\controlfichaje\resources\JakartaEE8Resource.class
+com\mycompany\controlfichaje\JakartaRestConfiguration.class
 com\mycompany\controlfichaje\FichajeServlet.class
 com\mycompany\controlfichaje\LogoutServlet.class
 com\mycompany\controlfichaje\LoginServlet.class
-com\mycompany\controlfichaje\resources\JakartaEE8Resource.class
-com\mycompany\controlfichaje\JakartaRestConfiguration.class
