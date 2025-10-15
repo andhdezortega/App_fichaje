@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Iniciar Sesión</title>
     <link rel="stylesheet" href="css/styles.css">
-.    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" href="<%=request.getContextPath()%>/favicon.ico" type="image/x-icon">
 
 

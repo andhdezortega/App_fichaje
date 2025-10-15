@@ -360,6 +360,13 @@ th {
     text-align: center;
 }
 
+.divisor {
+    border-top: 2px solid var(--mostaza);
+    margin: 15px 0;
+}
+
+
+
 
 
 

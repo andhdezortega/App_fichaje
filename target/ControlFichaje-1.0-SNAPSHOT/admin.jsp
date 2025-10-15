@@ -17,10 +17,23 @@
     List<FichajeMock> fichajes = (List<FichajeMock>) session.getAttribute("fichajes");
     if (fichajes == null) {
         fichajes = new ArrayList<>();
+        // Lista de fichajes de prueba
         fichajes.add(new FichajeMock(1, "Juan", "Pérez", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 40, true));
         fichajes.add(new FichajeMock(2, "Lucía", "Gómez", "usuario", "2025-10-14", "09:00", "18:00", "20", "60", 38, false));
         fichajes.add(new FichajeMock(3, "Carlos", "López", "usuario", "2025-10-14", "07:30", "16:30", "10", "45", 40, true));
-        // ... puedes añadir más si lo necesitas ...
+        fichajes.add(new FichajeMock(4, "Marta", "Fernández", "usuario", "2025-10-14", "08:15", "17:15", "15", "30", 37, true));
+        fichajes.add(new FichajeMock(5, "Diego", "Ramírez", "usuario", "2025-10-14", "09:00", "18:00", "20", "60", 38, false));
+        fichajes.add(new FichajeMock(6, "Elena", "García", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 40, true));
+        fichajes.add(new FichajeMock(7, "Pedro", "Martínez", "usuario", "2025-10-14", "07:45", "16:45", "10", "50", 36, true));
+        fichajes.add(new FichajeMock(8, "Sofía", "Torres", "usuario", "2025-10-14", "08:30", "17:30", "15", "60", 40, false));
+        fichajes.add(new FichajeMock(9, "Andrés", "Suárez", "usuario", "2025-10-14", "09:00", "18:00", "20", "45", 38, true));
+        fichajes.add(new FichajeMock(10, "Paula", "Navarro", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 39, false));
+        fichajes.add(new FichajeMock(11, "Javier", "Ortega", "usuario", "2025-10-14", "07:30", "16:30", "10", "30", 35, true));
+        fichajes.add(new FichajeMock(12, "Ana", "Luna", "usuario", "2025-10-14", "08:15", "17:15", "15", "60", 40, true));
+        fichajes.add(new FichajeMock(13, "Hugo", "Delgado", "usuario", "2025-10-14", "09:00", "18:00", "20", "60", 38, false));
+        fichajes.add(new FichajeMock(14, "Clara", "Vega", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 40, true));
+        fichajes.add(new FichajeMock(15, "Raúl", "Moreno", "usuario", "2025-10-14", "07:45", "16:45", "10", "50", 37, true));
+
         session.setAttribute("fichajes", fichajes);
     }
 
@@ -44,6 +57,21 @@
     <meta charset="UTF-8">
     <title>Panel Administrador</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+    <meta charset="UTF-8">
+    <title>Panel Administrador</title>
+    <!-- Enlace al CSS de DataTables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+    
+    <!-- Enlace a jQuery (requerido por DataTables) -->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Enlace a JS de DataTables -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    
+
+
     <style>
         .estado-si {
             background-color: #d4edda; /* verde claro */
@@ -58,6 +86,8 @@
             text-align: center;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sorttable/2.1.2/sorttable.min.js"></script>
+
 </head>
 <body>
 
@@ -68,6 +98,7 @@
         <form method="post" action="<%= (fichajeSeleccionado != null) ? "ActualizarFichaje" : "InsertarFichaje" %>">
             <% if (fichajeSeleccionado != null) { %>
                 <input type="hidden" name="id" value="<%= fichajeSeleccionado.id %>">
+                <p><strong>ID:</strong> <%= fichajeSeleccionado.id %></p> <!-- Puedes mostrarlo para info -->
             <% } %>
 
             <label>Nombre:</label>
@@ -104,12 +135,14 @@
         </form>
     </div>
 
-    <!-- PANEL CENTRAL: tabla -->
+    <!------------------- PANEL CENTRAL: tabla ------------->
     <div class="main">
-        <h1>Fichajes registrados</h1>
-        <table class="admin-table">
+        <h1>Control de Fichajes</h1>
+        <h2>Administrador</h2>
+       <table id="tablaFichajes" class="admin-table">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Nombre</th>
                     <th>Apellido</th>
                     <th>Rol</th>
@@ -118,7 +151,7 @@
                     <th>Salida</th>
                     <th>Descanso</th>
                     <th>Comida</th>
-                    <th>Horas</th>
+                    <th>Horas/semana</th>
                     <th>En producción</th>
                     <th>Acciones</th>
                 </tr>
@@ -126,6 +159,7 @@
             <tbody>
             <% for (FichajeMock f : fichajes) { %>
                 <tr>
+                    <td><%= f.id %></td>
                     <td><%= f.nombre %></td>
                     <td><%= f.apellido %></td>
                     <td><%= f.rol %></td>
@@ -147,7 +181,7 @@
                         <form method="post" action="EliminarFichaje" style="display:inline;">
                             <input type="hidden" name="id" value="<%= f.id %>">
                             <input type="submit" value="Eliminar" class="btn-accion" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
-                                                </form>
+                        </form>
                     </td>
                 </tr>
             <% } %>
@@ -155,6 +189,30 @@
         </table>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+    $('#tablaFichajes').DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        language: {
+            sSearch: "Buscar:",
+            sLengthMenu: "Mostrar _MENU_ registros por página",
+            sInfo: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
+            sZeroRecords: "No se han encontrado registros",
+            sInfoFiltered: "(filtrado de _MAX_ registros totales)"
+        }
+    });
+
+    // Insertar divisor visual después del control de cantidad de registros
+    setTimeout(function() {
+        $('.dataTables_length').after('<div class="divisor"></div>');
+    }, 50);
+});
+</script>
+
 
 </body>
 </html>
