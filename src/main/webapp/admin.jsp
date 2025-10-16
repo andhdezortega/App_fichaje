@@ -12,7 +12,6 @@
         return;
     }
 
-   
     // Recuperar o inicializar la lista de fichajes en sesión
     List<FichajeMock> fichajes = (List<FichajeMock>) session.getAttribute("fichajes");
     if (fichajes == null) {
@@ -69,18 +68,16 @@
     <!-- Enlace a JS de DataTables -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 
-    
-
-
+       
     <style>
         .estado-si {
-            background-color: #d4edda; /* verde claro */
+            background-color: #d4edda; 
             color: #155724;
             font-weight: bold;
             text-align: center;
         }
         .estado-no {
-            background-color: #fff3cd; /* amarillo claro */
+            background-color: #fff3cd; 
             color: #856404;
             font-weight: bold;
             text-align: center;
@@ -91,8 +88,15 @@
 </head>
 <body>
 
+            
+        <div class="top-right-controls">
+            <form method="post" action="LogoutServlet">
+                <button type="submit" class="cerrar-btn">Cerrar sesión</button>
+            </form>
+        </div>
 <div class="container">
-    <!-- BARRA LATERAL -->
+
+    <!---------------------- BARRA LATERAL----------------------- -->
     <div class="sidebar">
         <h2><%= (fichajeSeleccionado != null) ? "Editar Fichaje" : "Nuevo Fichaje" %></h2>
         <form method="post" action="<%= (fichajeSeleccionado != null) ? "ActualizarFichaje" : "InsertarFichaje" %>">
@@ -131,15 +135,16 @@
             <label>En producción:</label>
             <input type="checkbox" name="estado" <%= (fichajeSeleccionado != null && fichajeSeleccionado.estado) ? "checked" : "" %>>
 
-            <input type="submit" value="<%= (fichajeSeleccionado != null) ? "Actualizar" : "Guardar fichaje" %>">
+            <input type="submit" value="<%= (fichajeSeleccionado != null) ? "Actualizar" : "Guardar" %>">
         </form>
     </div>
 
     <!------------------- PANEL CENTRAL: tabla ------------->
     <div class="main">
+        
         <h1>Control de Fichajes</h1>
         <h2>Administrador</h2>
-       <table id="tablaFichajes" class="admin-table">
+        <table id="tablaFichajes" class="admin-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -173,15 +178,17 @@
                         <%= f.estado ? "Sí" : "No" %>
                     </td>
                     <td>
-                        <form method="get" action="admin.jsp" style="display:inline;">
-                            <input type="hidden" name="id" value="<%= f.id %>">
-                            <input type="submit" value="Editar" class="btn-accion">
-                        </form>
-                        <span style="margin: 0 5px;">|</span>
-                        <form method="post" action="EliminarFichaje" style="display:inline;">
-                            <input type="hidden" name="id" value="<%= f.id %>">
-                            <input type="submit" value="Eliminar" class="btn-accion" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
-                        </form>
+                        <div class="actions-inline">
+                            <form method="get" action="admin.jsp">
+                                <input type="hidden" name="id" value="<%= f.id %>">
+                                <input type="submit" value="Editar" class="btn-accion small-action">
+                            </form>
+
+                            <form method="post" action="EliminarFichaje">
+                                <input type="hidden" name="id" value="<%= f.id %>">
+                                <input type="submit" value="Eliminar" class="btn-accion small-action" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
+                            </form>
+                        </div>
                     </td>
                 </tr>
             <% } %>
@@ -196,6 +203,7 @@ $(document).ready(function() {
         searching: true,
         ordering: true,
         info: true,
+        pageLength: 100,
         language: {
             sSearch: "Buscar:",
             sLengthMenu: "Mostrar _MENU_ registros por página",
@@ -213,8 +221,24 @@ $(document).ready(function() {
 });
 </script>
 
+<script>
+// Alinea el botón de logout con el h1 dentro de .main
+function alignLogoutButton() {
+    var h1 = document.querySelector('.main h1');
+    var wrapper = document.querySelector('.top-right-controls');
+    if (!h1 || !wrapper) return;
+    var h1Rect = h1.getBoundingClientRect();
+    var btn = wrapper.querySelector('.cerrar-btn');
+    var btnHeight = btn ? btn.offsetHeight : wrapper.offsetHeight;
+    // calcular top para centrar el botón con el H1
+    var top = h1Rect.top + (h1Rect.height - btnHeight) / 2;
+    if (top < 6) top = 6;
+    wrapper.style.top = top + 'px';
+}
+window.addEventListener('load', alignLogoutButton);
+window.addEventListener('resize', alignLogoutButton);
+</script>
+
 
 </body>
 </html>
-
-               

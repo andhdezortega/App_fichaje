@@ -26,6 +26,7 @@
             <p>Te damos la bienvenida al menú</p>
 
             <form action="FichajeServlet" method="post">
+                <input type="hidden" name="returnTo" value="perfil.jsp">
                 <button type="submit" name="accion" value="entrada" <%= fichajeEntrada ? "disabled" : "" %>>Fichar Entrada</button>
             </form>
 
