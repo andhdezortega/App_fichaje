@@ -2,6 +2,10 @@
 <%@ page session="true" %>
 <%@ page import="java.time.format.DateTimeFormatter"%>
 <%@ page import="java.time.LocalDateTime"%>
+<%@ page import="java.time.Duration"%>
+<%@ page import="com.mycompany.controlfichaje.dao.FichajeDAO"%>
+<%@ page import="com.mycompany.controlfichaje.FichajeMock"%>
+<%@ page import="java.util.List"%>
 
 <%
     String usuario = (String) session.getAttribute("usuario");
@@ -9,6 +13,11 @@
         response.sendRedirect("login.jsp");
         return;
     }
+
+    // Obtener nombre y apellido del usuario
+    String[] partes = usuario.split(" ");
+    String nombre = partes[0];
+    String apellido = partes.length > 1 ? partes[1] : "";
 
     LocalDateTime horaEntrada = (LocalDateTime) session.getAttribute("horaEntrada");
     LocalDateTime horaSalida = (LocalDateTime) session.getAttribute("horaSalida");
@@ -52,6 +61,7 @@
     <meta charset="UTF-8">
     <title><%= estadoBarra %></title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/fichajes.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" href="<%=request.getContextPath()%>/favicon.ico" type="image/x-icon">
 </head>
@@ -62,6 +72,24 @@
 
             <p><strong>Última entrada:</strong> <%= entradaFormateada %></p>
             
+            <% 
+            // Calcular tiempo transcurrido
+            String tiempoTranscurrido = "";
+            if (horaEntrada != null) {
+                Duration duracion;
+                if (horaSalida != null) {
+                    duracion = Duration.between(horaEntrada, horaSalida);
+                } else {
+                    duracion = Duration.between(horaEntrada, LocalDateTime.now());
+                }
+                long horas = duracion.toHours();
+                long minutos = duracion.toMinutesPart();
+                tiempoTranscurrido = String.format("%d horas y %d minutos", horas, minutos);
+            }
+            if (!tiempoTranscurrido.isEmpty()) { 
+            %>
+                <p><strong>Tiempo transcurrido:</strong> <%= tiempoTranscurrido %></p>
+            <% } %>
 
             <% if (estadoUsuario != null && !estadoUsuario.isEmpty()) { %>
                 <p class="<%= claseEstado %>"><strong>Tu estado es:&nbsp;</strong><%= estadoBarra %></p>
@@ -76,14 +104,25 @@
                 </select>
                 <button type="submit">Actualizar estado</button>
             </form>
+            
+            
                 
                 <!-- Enviar la acción de salida al servlet de fichaje para que registre la hora de salida -->
                 <form action="FichajeServlet" method="post">
                     <input type="hidden" name="accion" value="salida">
+                    <input type="hidden" name="nombre" value="<%= nombre %>">
+                    <input type="hidden" name="apellido" value="<%= apellido %>">
+                    <input type="hidden" name="descanso" value="<%= "break".equals(estadoUsuario) ? 1 : 0 %>">
+                    <input type="hidden" name="comida" value="<%= "comida".equals(estadoUsuario) ? 1 : 0 %>">
                     <button type="submit" class="btn-rojo" <%= (!fichajeSalida) ? "disabled" : "" %>>Fichar Salida</button>
                 </form>
-            </div>
+            
+                <form action="LogoutServlet" method="post" style="margin-bottom: 20px;">
+                    <button class="cerrar-btn" type="submit">Cerrar sesión</button>
+                </form>
 
+                <!-- Historial desactivado: solo mostramos hora de entrada / salida en sesión -->
+            </div>
     </div>
 </body>
 </html>

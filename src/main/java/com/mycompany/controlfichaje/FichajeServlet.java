@@ -5,7 +5,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import Autenticacion.Autenticacion;
+import com.mycompany.controlfichaje.dao.FichajeDAO;
+import com.mycompany.controlfichaje.dao.UsuarioDAO;
+import com.mycompany.controlfichaje.dao.Usuario;
 
 @WebServlet(name = "FichajeServlet", urlPatterns = {"/FichajeServlet"})
 public class FichajeServlet extends HttpServlet {
@@ -20,7 +26,7 @@ public class FichajeServlet extends HttpServlet {
             return;
         }
         
-        String usuario = Autenticacion.obtenerUsuarioActual(request);
+        String nombreUsuario = Autenticacion.obtenerUsuarioActual(request);
         String accion = request.getParameter("accion");
 
         if (accion == null) {
@@ -29,22 +35,85 @@ public class FichajeServlet extends HttpServlet {
         }
 
         HttpSession session = request.getSession();
+        LocalDateTime ahora = LocalDateTime.now();
+        
+        // Obtener usuario actual y sus datos
+        Usuario usuario = UsuarioDAO.obtenerUsuario(nombreUsuario);
+        
+        // Forzar coherencia: usar siempre datos del usuario autenticado
+        String nombre = (usuario != null && usuario.getUsuario() != null) ? usuario.getUsuario() : nombreUsuario;
+        String apellido = (usuario != null && usuario.getApellido() != null) ? usuario.getApellido() : "";
+        if (usuario == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+        
+        // Crear objeto FichajeMock para las operaciones
+        FichajeMock fichaje = new FichajeMock();
+        fichaje.nombre = nombre;
+        fichaje.apellido = apellido;
+        fichaje.rol = usuario.getRol();
+    fichaje.fecha = LocalDate.now();
+    fichaje.entrada = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
 
+        FichajeDAO fichajeDAO = new FichajeDAO();
+        
         switch (accion) {
             case "entrada":
-                session.setAttribute("horaEntrada", LocalDateTime.now());
-                session.setAttribute("horaSalida", null);
-                session.setAttribute("fichajeEntrada", true);
-                session.setAttribute("fichajeSalida", false);
-                // Redirige a perfil.jsp
-                response.sendRedirect("perfil.jsp");
+                // Evitar duplicados: si ya hay activo, no crear otro
+                FichajeMock activo = fichajeDAO.obtenerFichajeActivo(nombre, apellido);
+                if (activo != null) {
+                    // Refrescar estado en sesión y redirigir
+                    session.setAttribute("horaEntrada", LocalDateTime.of(activo.fecha, activo.entrada));
+                    session.setAttribute("horaSalida", null);
+                    session.setAttribute("fichajeEntrada", true);
+                    session.setAttribute("fichajeSalida", false);
+                    response.sendRedirect("perfil.jsp");
+                    return;
+                }
+
+                // Registrar entrada nueva
+                boolean entradaRegistrada = fichajeDAO.crear(fichaje);
+                
+                if (entradaRegistrada) {
+                    session.setAttribute("horaEntrada", ahora);
+                    session.setAttribute("horaSalida", null);
+                    session.setAttribute("fichajeEntrada", true);
+                    session.setAttribute("fichajeSalida", false);
+                    response.sendRedirect("perfil.jsp");
+                } else {
+                    request.setAttribute("error", "Error al registrar la entrada");
+                    request.getRequestDispatcher("perfil.jsp").forward(request, response);
+                }
                 return;
 
             case "salida":
-                session.setAttribute("horaSalida", LocalDateTime.now());
-                session.setAttribute("fichajeSalida", true);
-                session.setAttribute("fichajeEntrada", false);
-                response.sendRedirect("bienvenido.jsp");
+                // Buscar fichaje activo
+                    // Buscar fichaje activo directamente en la base de datos
+                    FichajeMock fichajeActivo = fichajeDAO.obtenerFichajeActivo(nombre, apellido);
+                
+                if (fichajeActivo != null) {
+                    // Actualizar fichaje con la salida
+                    fichajeActivo.salida = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
+                    fichajeActivo.estado = true;
+                    fichajeActivo.descanso = "break".equals(request.getParameter("estado")) ? 1 : 0;
+                    fichajeActivo.comida = "comida".equals(request.getParameter("estado")) ? 1 : 0;
+                    
+                    boolean salidaRegistrada = fichajeDAO.actualizar(fichajeActivo);
+                    
+                    if (salidaRegistrada) {
+                        session.setAttribute("horaSalida", ahora);
+                        session.setAttribute("fichajeSalida", true);
+                        session.setAttribute("fichajeEntrada", false);
+                        response.sendRedirect("bienvenido.jsp");
+                    } else {
+                        request.setAttribute("error", "Error al registrar la salida");
+                        request.getRequestDispatcher("perfil.jsp").forward(request, response);
+                    }
+                } else {
+                    request.setAttribute("error", "No se encontró un fichaje activo");
+                    request.getRequestDispatcher("perfil.jsp").forward(request, response);
+                }
                 return;
 
             default:

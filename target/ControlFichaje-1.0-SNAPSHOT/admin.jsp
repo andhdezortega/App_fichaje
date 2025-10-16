@@ -1,7 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page session="true" %>
 <%@ page import="java.util.*, java.time.*, java.time.format.DateTimeFormatter" %>
-<%@ page import="com.mycompany.controlfichaje.FichajeMock" %>
+<%@ page import="com.mycompany.controlfichaje.*" %>
+<%@ page import="com.mycompany.controlfichaje.dao.FichajeDAO" %>
+<%@ page import="com.mycompany.controlfichaje.util.DateTimeUtil" %>
 
 <%
     String usuario = (String) session.getAttribute("usuario");
@@ -13,40 +15,18 @@
     }
 
    
-    // Recuperar o inicializar la lista de fichajes en sesión
-    List<FichajeMock> fichajes = (List<FichajeMock>) session.getAttribute("fichajes");
-    if (fichajes == null) {
-        fichajes = new ArrayList<>();
-        // Lista de fichajes de prueba
-        fichajes.add(new FichajeMock(1, "Juan", "Pérez", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 40, true));
-        fichajes.add(new FichajeMock(2, "Lucía", "Gómez", "usuario", "2025-10-14", "09:00", "18:00", "20", "60", 38, false));
-        fichajes.add(new FichajeMock(3, "Carlos", "López", "usuario", "2025-10-14", "07:30", "16:30", "10", "45", 40, true));
-        fichajes.add(new FichajeMock(4, "Marta", "Fernández", "usuario", "2025-10-14", "08:15", "17:15", "15", "30", 37, true));
-        fichajes.add(new FichajeMock(5, "Diego", "Ramírez", "usuario", "2025-10-14", "09:00", "18:00", "20", "60", 38, false));
-        fichajes.add(new FichajeMock(6, "Elena", "García", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 40, true));
-        fichajes.add(new FichajeMock(7, "Pedro", "Martínez", "usuario", "2025-10-14", "07:45", "16:45", "10", "50", 36, true));
-        fichajes.add(new FichajeMock(8, "Sofía", "Torres", "usuario", "2025-10-14", "08:30", "17:30", "15", "60", 40, false));
-        fichajes.add(new FichajeMock(9, "Andrés", "Suárez", "usuario", "2025-10-14", "09:00", "18:00", "20", "45", 38, true));
-        fichajes.add(new FichajeMock(10, "Paula", "Navarro", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 39, false));
-        fichajes.add(new FichajeMock(11, "Javier", "Ortega", "usuario", "2025-10-14", "07:30", "16:30", "10", "30", 35, true));
-        fichajes.add(new FichajeMock(12, "Ana", "Luna", "usuario", "2025-10-14", "08:15", "17:15", "15", "60", 40, true));
-        fichajes.add(new FichajeMock(13, "Hugo", "Delgado", "usuario", "2025-10-14", "09:00", "18:00", "20", "60", 38, false));
-        fichajes.add(new FichajeMock(14, "Clara", "Vega", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 40, true));
-        fichajes.add(new FichajeMock(15, "Raúl", "Moreno", "usuario", "2025-10-14", "07:45", "16:45", "10", "50", 37, true));
+    // Obtener fichajes desde la base de datos
+    FichajeDAO fichajeDAO = new FichajeDAO();
+    List<FichajeMock> fichajes = fichajeDAO.obtenerTodos();
 
-        session.setAttribute("fichajes", fichajes);
-    }
-
-    // Buscar fichaje para edición
+    // Buscar fichaje para edición (por id)
     String paramId = request.getParameter("id");
     FichajeMock fichajeSeleccionado = null;
     if (paramId != null) {
-        int id = Integer.parseInt(paramId);
-        for (FichajeMock f : fichajes) {
-            if (f.id == id) {
-                fichajeSeleccionado = f;
-                break;
-            }
+        try {
+            fichajeSeleccionado = fichajeDAO.obtenerPorId(Integer.parseInt(paramId));
+        } catch (NumberFormatException ex) {
+            fichajeSeleccionado = null;
         }
     }
 %>
@@ -113,11 +93,26 @@
             <label>Fecha:</label>
             <input type="date" name="fecha" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.fecha.toString() : "" %>">
 
+            <%
+                String entradaVal = "";
+                String salidaVal = "";
+                if (fichajeSeleccionado != null) {
+                    if (fichajeSeleccionado.entrada != null) {
+                        String s = fichajeSeleccionado.entrada.toString();
+                        entradaVal = s.length() >= 5 ? s.substring(0,5) : s;
+                    }
+                    if (fichajeSeleccionado.salida != null) {
+                        String s2 = fichajeSeleccionado.salida.toString();
+                        salidaVal = s2.length() >= 5 ? s2.substring(0,5) : s2;
+                    }
+                }
+            %>
+
             <label>Entrada:</label>
-            <input type="time" name="entrada" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.entrada.toString() : "" %>">
+            <input type="time" name="entrada" required value="<%= entradaVal %>">
 
             <label>Salida:</label>
-            <input type="time" name="salida" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.salida.toString() : "" %>">
+            <input type="time" name="salida" required value="<%= salidaVal %>">
 
             <label>Descanso (min):</label>
             <input type="number" name="descanso" value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.descanso : "" %>">
@@ -139,6 +134,9 @@
     <div class="main">
         <h1>Control de Fichajes</h1>
         <h2>Administrador</h2>
+        <div style="margin-bottom: 20px;">
+            <a href="usuarios.jsp" class="boton-link">Gestionar Usuarios</a>
+        </div>
        <table id="tablaFichajes" class="admin-table">
             <thead>
                 <tr>
@@ -151,6 +149,7 @@
                     <th>Salida</th>
                     <th>Descanso</th>
                     <th>Comida</th>
+                    <th>Horas trabajadas</th>
                     <th>Horas/semana</th>
                     <th>En producción</th>
                     <th>Acciones</th>
@@ -168,9 +167,23 @@
                     <td><%= f.salida %></td>
                     <td><%= f.descanso %></td>
                     <td><%= f.comida %></td>
+                    <td>
+                        <%
+                            String hhmm = "00:00";
+                            if (f.entrada != null && f.salida != null) {
+                                long minutos = java.time.Duration.between(f.entrada, f.salida).toMinutes();
+                                int descuentos = Math.max(0, f.descanso) + Math.max(0, f.comida);
+                                long minutosEfectivos = Math.max(0, minutos - descuentos);
+                                long horas = minutosEfectivos / 60;
+                                long mins = minutosEfectivos % 60;
+                                hhmm = String.format("%02d:%02d", horas, mins);
+                            }
+                        %>
+                        <%= hhmm %>
+                    </td>
                     <td><%= f.horasSemanales %></td>
-                    <td class="<%= f.estado ? "estado-si" : "estado-no" %>">
-                        <%= f.estado ? "Sí" : "No" %>
+                    <td class="<%= (f.entrada != null && f.salida == null) ? "estado-si" : "estado-no" %>">
+                        <%= (f.entrada != null && f.salida == null) ? "Sí" : "No" %>
                     </td>
                     <td>
                         <form method="get" action="admin.jsp" style="display:inline;">

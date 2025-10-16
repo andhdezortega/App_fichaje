@@ -360,6 +360,39 @@ th {
     text-align: center;
 }
 
+.mensaje-exito {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.mensaje-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.boton-link {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: var(--azulado);
+    color: var(--perlado);
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.boton-link:hover {
+    background-color: var(--aguamarina);
+    text-decoration: none;
+    color: var(--perlado);
+}
+
 .divisor {
     border-top: 2px solid var(--mostaza);
     margin: 15px 0;

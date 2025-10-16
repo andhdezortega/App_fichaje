@@ -1,11 +1,12 @@
 package com.mycompany.controlfichaje; 
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import Autenticacion.Autenticacion;
 
 import java.io.IOException;
 
@@ -16,13 +17,29 @@ public class ActualizarEstadoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Verificar autenticación
+        if (!Autenticacion.estaAutenticado(request)) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
         String estado = request.getParameter("estado");
 
         if (estado != null && !estado.trim().isEmpty()) {
             HttpSession session = request.getSession();
             session.setAttribute("estadoUsuario", estado);
+            
+            // Obtener el usuario autenticado
+            String usuario = Autenticacion.obtenerUsuarioActual(request);
+            System.out.println("Actualizando estado para usuario: " + usuario + " - Nuevo estado: " + estado);
         }
         
-        request.getRequestDispatcher("perfil.jsp").forward(request, response);
+        response.sendRedirect("perfil.jsp");
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doPost(request, response);
     }
 }
