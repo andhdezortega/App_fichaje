@@ -1,16 +1,19 @@
 :root {
     --azulado: #30588C;
-    --aguamarina: #41A69C;
+    --aguamarina: #41A69C ;
+    --aguamarina-dark: #31887b;
     --mostaza: #F2AB27;
     --anaranjado: #F28E13;
-    --perlado: #F2F2F2;
+    --blanco: #ffffff;
     --texto-oscuro: #2c2c2c;
     --gris-desactivado: #cccccc;
+    --rojo:#be5c59;
+
 }
 
 body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: var(--perlado);
+    background-color: var(--blanco);
     margin: 0;
     padding: 0;
     color: var(--texto-oscuro);
@@ -27,11 +30,11 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: var(--perlado);
+    background-color: var(--blanco);
 }
 
 .login-box {
-    background-color: var(--perlado);
+    background-color: var(--blanco);
     padding: 40px 50px;
     border-radius: 10px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -44,15 +47,12 @@ body {
     font-size: 24px;
     font-weight: 600;
     text-align: center;
-    color: var(--azul-pastelado);
+    color: var(--azulado);
     margin-bottom: 20px;
-    border-bottom: 2px solid var(--anaranjado); /* Línea de acento */
+    border-bottom: 2px solid var(--anaranjado);
     
     padding-bottom: 5px;
 }
-
-
-
 
 .login-box label {
     display: block;
@@ -66,7 +66,7 @@ body {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--gris-desactivado);
     border-radius: 5px;
     font-size: 14px;
 }
@@ -75,7 +75,7 @@ body {
     width: 100%;
     padding: 12px;
     background-color: var(--azulado);
-    color: white;
+    color: var(--blanco);
     font-size: 16px;
     border: none;
     border-radius: 5px;
@@ -88,15 +88,14 @@ body {
 }
 
 .error {
-    color: red;
+    color: var(--rojo);
     margin-top: 15px;
     text-align: center;
     font-weight: bold;
 }
 
-
 .fichaje-box {
-    background-color: white;
+    background-color: var(--blanco);
     padding: 30px 40px;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0,0,0,0.05);
@@ -105,17 +104,37 @@ body {
     max-width: 400px;
 }
 
+/* Variante amplia para páginas de consulta/tabla */
+.fichaje-box.wide {
+    max-width: 1100px;
+    padding: 20px 30px;
+    text-align: left;
+}
+
+/* Centrar la tabla dentro de la caja */
+.fichaje-box.wide .admin-table {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
 h1 {
     margin-bottom: 10px;
-    color: var(--azulado);
+    color: var(--azulado) !important;
 }
 
-p {
+h3 {
+    margin-bottom: 15px;
+    color: var(--blanco);
+    font-weight: 100;
+}
+
+/* aplicar estilo de párrafos sólo al contenido principal (no a la sidebar) */
+.main p {
     margin-bottom: 20px;
     color: var(--texto-oscuro);
-    font-weight: 500;   
+    font-weight: 500;
 }
-
 
 
 form select {
@@ -124,7 +143,7 @@ form select {
     margin-top: 5px;
     margin-bottom: 15px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--blanco);
     font-size: 14px;
 }
 
@@ -138,16 +157,14 @@ form label {
 form button[type="submit"] {
     margin-top: 5px;
     background-color: var(--aguamarina);
-    color: white;
+    color: var(--blanco);
     border: none;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
 }
 
-
-
-button {
+button:not(.cerrar-btn) {
     padding: 12px 20px;
     margin: 10px 5px;
     font-size: 16px;
@@ -156,34 +173,460 @@ button {
     border-radius: 5px;
     cursor: pointer;
     background-color: var(--azulado);
-    color: white;
+    color:var(--blanco);
     transition: background-color 0.3s ease;
 }
 
+/*------------------------ESTADOS------------------*/
+/* Clase base */
 .estado-msg {
-    background-color: #f9f9f9;
-    border-left: 4px solid var(--anaranjado);
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    font-weight: 500;
-    color: var(--texto-oscuro);
+    border-left: 8px solid;
+    background-color: var(--blanco);
+    padding: 20px;
+    font-size: 16px;
+    line-height: 1;
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+}
+.estado-produccion {
+    border-color: var(--aguamarina);
+    background-color: var(--blanco);
+}
+.estado-no-produccion {
+    border-color: var(--mostaza);
 }
 
-button:hover:not([disabled]) {
-    background-color: var(--aguamarina);
+/*----------------------------------------------------*/
+/* Hover global para la mayoría de botones (excepto cerrar y botones rojos) */
+button:not(.cerrar-btn):not(.btn-rojo):not([disabled]),
+input[type="submit"]:not(.cerrar-btn):not(.btn-rojo):not([disabled]),
+.btn-accion:not(.btn-rojo):not([disabled]),
+.small-action:not(.btn-rojo):not([disabled]) {
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.06s ease, box-shadow 0.12s ease;
+}
+button:not(.cerrar-btn):not(.btn-rojo):not([disabled]):hover,
+input[type="submit"]:not(.cerrar-btn):not(.btn-rojo):not([disabled]):hover,
+.btn-accion:not(.btn-rojo):not([disabled]):hover,
+.small-action:not(.btn-rojo):not([disabled]):hover {
+    background-color: var(--aguamarina-dark);
+    color: var(--blanco);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+    transform: translateY(-0.5px);
+}
+
+/* BOTONES */
+button:not(.cerrar-btn):not(.btn-rojo):not([disabled]):focus,
+input[type="submit"]:not(.cerrar-btn):not(.btn-rojo):not([disabled]):focus,
+.btn-accion:not(.btn-rojo):not([disabled]):focus,
+.small-action:not(.btn-rojo):not([disabled]):focus,
+button:not(.cerrar-btn):not(.btn-rojo):not([disabled]):active,
+input[type="submit"]:not(.cerrar-btn):not(.btn-rojo):not([disabled]):active,
+.btn-accion:not(.btn-rojo):not([disabled]):active,
+.small-action:not(.btn-rojo):not([disabled]):active {
+    outline: none;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    transform: translateY(-0.25px);
 }
 
 button:disabled {
     background-color: var(--gris-desactivado);
     cursor: not-allowed;
 }
+.botones-secundarios-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    background-color: var(--blanco);
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+
+
+/* Botón rojo */
+.btn-rojo {
+    background-color: var(--rojo);
+    border: none;
+    color: var(--blanco);
+    transition: background-color 0.3s ease;
+}
+
+.btn-rojo:hover:not(:disabled) {
+    background-color: var(--rojo);
+}
+
+.btn-rojo:disabled {
+    background-color: var(--gris-desactivado);
+    cursor: not-allowed;
+}
+
 
 button.cerrar-btn {
-    background-color: #b0b0b0;
-    color: white;
+    background-color: var(--blanco);
+    color: var(--texto-oscuro);
 }
 
 button.cerrar-btn:hover {
-    background-color: #7a7a7a;
+    background-color: var(--gris-desactivado);
 }
+
+/*------------------ Tabla del panel administrador----------------- */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+    background-color: var(--blanco);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.admin-table thead {
+    background-color: var(--azulado);
+    color: var(--blanco);
+}
+
+.admin-table th, .admin-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid var(--blanco);
+}
+
+.admin-table tbody tr:hover {
+    background-color: var(--gris-desactivado);
+    transition: background-color 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+
+
+.admin-table td.vacio {
+    text-align: center;
+    color: var(--gris-desactivado);
+    font-style: italic;
+}
+.container {
+    display: flex;
+    height: 100vh;
+    position: relative; /* para que los controles absolutos se posicionen respecto al contenedor */
+}
+
+/* Contenedor para controles en la esquina superior derecha (logout, etc.) */
+.top-right-controls {
+    position: fixed; /* fijo respecto al viewport */
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+}
+
+/* Ajustes visuales del boton de logout para mayor visibilidad */
+.top-right-controls .cerrar-btn {
+    background-color: rgba(255,255,255,0.9);
+    color: var(--azulado);
+    border: 1px solid rgba(0,0,0,0.06);
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+.top-right-controls .cerrar-btn:hover {
+    background-color: var(--azulado);
+    color: var(--blanco);
+}
+
+/* transición suave y estado focus/active para accesibilidad */
+.top-right-controls .cerrar-btn {
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.06s ease;
+}
+.top-right-controls .cerrar-btn:focus,
+.top-right-controls .cerrar-btn:active {
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transform: translateY(0.5px);
+}
+
+/* (sidebar submit styling está definido más abajo; la versión anterior se eliminó para evitar duplicados) */
+
+
+.top-right-controls form {
+    margin: 0;
+    
+}
+
+/* Lado izquierdo: barra lateral del formulario */
+.sidebar {
+    width: 300px;
+    background-color: var(--azulado);
+    color: var(--blanco);
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* Estilos básicos del formulario */
+.sidebar h2 {
+    font-size: 32px;
+    margin-bottom: 12px;
+    color: var(--blanco);
+    font-weight: 700;
+}
+
+.sidebar .small-note {
+    font-size: 11px !important;
+    color: var(--blanco) !important;
+    font-weight: 400 !important;
+    margin-bottom: 6px;
+    line-height: 1.1;
+}
+
+/* Regla específica para asegurar que los <p class="small-note"> se muestren en blanco */
+p.small-note,
+.sidebar p.small-note {
+    color: var(--blanco) !important;
+    font-weight: 400 !important;
+    font-size: 11px !important;
+    margin-bottom: 6px !important;
+    line-height: 1.1 !important;
+}
+
+
+.sidebar label {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--blanco)
+}
+
+.sidebar input[type="text"],
+.sidebar input[type="date"],
+.sidebar input[type="time"],
+.sidebar input[type="number"] {
+    width: 100%;
+    padding: 6px;
+    margin-top: 5px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 4px;
+}
+
+/* Botón de enviar */
+.sidebar input[type="submit"] {
+    margin-top: 15px;
+    width: 100%;
+    background-color: var(--azulado);
+    border: none;
+    padding: 10px;
+    color: var(--blanco);
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Botón de acción reutilizable (editar, descargar, etc.) */
+.btn-accion,
+.btn-accion {
+    background-color: var(--blanco);
+    color: var(--azulado);
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    width: 100%; /* Si lo quieres igual que en el style inline */
+}
+
+.btn-accion:hover {
+    background-color: var(--aguamarina);
+    color: var(--blanco);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Hover para el botón Fichar Salida en perfil.jsp (solo si no está disabled) */
+.card .btn.btn-danger:not([disabled]) {
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.06s ease, box-shadow 0.12s ease;
+}
+.card .btn.btn-danger:not([disabled]):hover {
+    background-color: var(--rojo); 
+    color: var(--blanco); 
+    border-color: rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+}
+.card .btn.btn-danger:not([disabled]):focus,
+.card .btn.btn-danger:not([disabled]):active {
+    outline: none;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    transform: translateY(-0.5px);
+}
+/* contenedor inline para acciones (Editar / Eliminar) */
+.actions-inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* Parte central: tabla */
+.main {
+    flex: 1;
+    padding: 30px;
+    background-color: var(--blanco);
+    overflow: auto;
+}
+/* Hacer .main contenedor relativo para que controles absolutos se posicionen respecto a él */
+.main {
+    position: relative;
+}
+
+/* Separación entre los controles y la tabla */
+.dataTables_wrapper .dataTables_length {
+    float: left;
+    margin-bottom: 12px; /* espacio debajo del selector de cantidad */
+    margin-right: 12px;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    margin-bottom: 12px; /* espacio debajo del buscador */
+}
+
+/* Alinear verticalmente los labels/controles (buscar / mostrar) */
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_length label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Evitar que el label haga wrap y controlar el ancho del input de búsqueda */
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_length label {
+    white-space: nowrap;
+}
+
+.dataTables_wrapper .dataTables_filter input[type="search"] {
+    width: 200px; /* ancho fijo razonable para alinear con el selector */
+    max-width: 35vw;
+}
+
+@media (max-width: 600px) {
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        float: none;
+        text-align: left;
+    }
+    .dataTables_wrapper .dataTables_filter input[type="search"] {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* Limpiar floats para que la divisor y la tabla queden debajo */
+.dataTables_wrapper::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+/* Separación entre los controles y la línea amarilla (divisor) */
+.divisor {
+    border-top: 2px solid var(--mostaza);
+    margin: 18px 0; /* más separación vertical */
+}
+
+/*  separación entre controles y tabla */
+table.dataTable, .admin-table {
+    margin-top: 8px;
+}
+
+.main h1 {
+    font-size: 22px;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--blanco);
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid var(--gris-desactivado);
+    text-align: center;
+}
+
+th {
+    background-color: var(--azulado);
+    color: var(--blanco);
+}
+.admin-table th,
+.admin-table td {
+    width: 10%; 
+    text-align: center;
+}
+
+.admin-table th:last-child,
+.admin-table td:last-child {
+    width: auto;
+    white-space: nowrap;
+}
+.estado-si {
+    background-color: var(--aguamarina);
+    color: var(--blanco);
+    font-weight: bold;
+    text-align: center;
+}
+
+.estado-no {
+    background-color: var(--mostaza);
+    color: var(--texto-oscuro);
+    font-weight: bold;
+    text-align: center;
+}
+
+.mensaje-exito {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.mensaje-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.boton-link {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: var(--rojo);
+    color: var(--perlado);
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.boton-link:hover {
+    background-color: var(--aguamarina);
+    text-decoration: none;
+    color: var(--perlado);
+}
+
+.divisor {
+    border-top: 2px solid var(--mostaza);
+    margin: 15px 0;
+}
+
+
+
+
+
+
+

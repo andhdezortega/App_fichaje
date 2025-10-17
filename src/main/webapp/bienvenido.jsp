@@ -8,10 +8,13 @@
     }
 
     Boolean fichajeEntrada = (Boolean) session.getAttribute("fichajeEntrada");
-    Boolean fichajeSalida = (Boolean) session.getAttribute("fichajeSalida");
-
     if (fichajeEntrada == null) fichajeEntrada = false;
-    if (fichajeSalida == null) fichajeSalida = false;
+
+    // Si hay fichaje activo en sesión, redirigir a perfil.jsp directamente
+    if (fichajeEntrada) {
+        response.sendRedirect("perfil.jsp");
+        return;
+    }
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -19,6 +22,8 @@
     <meta charset="UTF-8">
     <title>Bienvenido</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" href="<%=request.getContextPath()%>/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="fichaje-container">
@@ -27,17 +32,13 @@
             <p>Te damos la bienvenida al menú</p>
 
             <form action="FichajeServlet" method="post">
+                <input type="hidden" name="returnTo" value="perfil.jsp">
                 <button type="submit" name="accion" value="entrada" <%= fichajeEntrada ? "disabled" : "" %>>Fichar Entrada</button>
-                <button type="submit" name="accion" value="salida" <%= (!fichajeEntrada || fichajeSalida) ? "disabled" : "" %>>Fichar Salida</button>
             </form>
 
             <form action="LogoutServlet" method="post" style="margin-top: 10px;">
                 <button class="cerrar-btn" type="submit">Cerrar sesión</button>
             </form>
-            
-
-            </form>
-
         </div>
     </div>
 </body>

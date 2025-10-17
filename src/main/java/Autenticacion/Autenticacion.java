@@ -1,34 +1,13 @@
 
 package Autenticacion;
 
-import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import java.util.HashMap;
+import java.util.Map;
+import com.mycompany.controlfichaje.dao.UsuarioDAO;
 
-//Creación de usuarios temporales, para pruebas
 public class Autenticacion {
-        private static final Map<String, UserInfo> USUARIOS = new HashMap<>();
-
-    static {
-        USUARIOS.put("admin", new UserInfo("admin123", "admin", "Administrador del sistema"));
-        USUARIOS.put("user", new UserInfo("user123", "user", "Usuario Regular"));
-        USUARIOS.put("guest", new UserInfo("guest123", "user", "Usuario invitado"));    
-        
-    }
-    
-    //Clase con la información del usuario
-    private static class UserInfo {
-        String password;
-        String rol;
-        String descripcion;
-        
-        UserInfo(String password, String rol, String descripcion) {
-            this.password = password;
-            this.rol = rol;
-            this.descripcion = descripcion;
-        }
-    }
+    private static final UsuarioDAO usuarioDAO = new UsuarioDAO();
     
     //Método para verificar las credenciales
     public static boolean verificarCredenciales(String usuario, String password) {
@@ -41,18 +20,12 @@ public class Autenticacion {
             return false;
         }
         
-        UserInfo userInfo = USUARIOS.get(usuario.trim());
-        if (userInfo == null) {
-            System.out.println("Usuario no encontrado: " + usuario);
-            return false;
-        }
-        
-        boolean credencialesCorrectas = userInfo.password.equals(password);
+        boolean credencialesCorrectas = usuarioDAO.verificarCredenciales(usuario.trim(), password);
         
         if (credencialesCorrectas) {
             System.out.println("Credenciales correctas para: " + usuario);  
         } else {
-            System.out.println("Contraseña incorrecta para: " + usuario);
+            System.out.println("Credenciales incorrectas para: " + usuario);
         }
         
         return credencialesCorrectas;   
@@ -66,19 +39,22 @@ public class Autenticacion {
             return false;
         }
         
-        UserInfo userInfo = USUARIOS.get(usuario);
+        Map<String, String> userInfo = usuarioDAO.obtenerInfoUsuario(usuario);
+        if (userInfo.isEmpty()) {
+            return false;
+        }
         
         HttpSession session = request.getSession(true);
         System.out.println("ID de Sesión creada: " + session.getId());
         
         session.setAttribute("usuario", usuario);
-        session.setAttribute("rol", userInfo.rol);
-        session.setAttribute("descripcion", userInfo.descripcion);
+        session.setAttribute("rol", userInfo.get("rol"));
+        session.setAttribute("descripcion", userInfo.get("descripcion"));
         session.setAttribute("timestampLogin", System.currentTimeMillis());
         session.setAttribute("ipAddress", request.getRemoteAddr());
         session.setMaxInactiveInterval(30 * 60);
         
-        System.out.println("Login exitoso - Usuario: " + usuario + ", Rol: " + userInfo.rol + ", Sesión: " + session.getId());
+        System.out.println("Login exitoso - Usuario: " + usuario + ", Rol: " + userInfo.get("rol") + ", Sesión: " + session.getId());
         return true;
     }
     
