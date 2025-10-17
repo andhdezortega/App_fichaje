@@ -1,11 +1,15 @@
 package com.mycompany.controlfichaje;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/andrea
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import Autenticacion.Autenticacion;
+
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
@@ -48,6 +52,7 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
+<<<<<<< HEAD
             // Si no hay fichaje activo, ir al panel correspondiente
             if ("admin".equals(Autenticacion.obtenerRol(request))) {
                 response.sendRedirect("admin.jsp");
@@ -58,4 +63,17 @@ public class LoginServlet extends HttpServlet {
             response.sendRedirect("login.jsp?error=1");
         }
     }  
+=======
+
+    // Login para externo
+    } else if ("externo".equals(usuario) && "externo123".equals(contrasena)) {
+        // Guardar como 'usuario' para mantener el contrato con otros servlets/JSP
+        session.setAttribute("usuario", usuario);
+        session.setAttribute("rol", "externo");
+        response.sendRedirect("externo.jsp");
+
+    } else {
+        response.sendRedirect("login.jsp?error=1");
+    }
+>>>>>>> origin/andrea
 }

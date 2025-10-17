@@ -1,5 +1,6 @@
 package com.mycompany.controlfichaje;
 
+<<<<<<< HEAD
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,11 +10,22 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import com.mycompany.controlfichaje.dao.FichajeDAO;
+=======
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+>>>>>>> origin/andrea
 
 @WebServlet("/ActualizarFichaje")
 public class ActualizarFichaje extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+<<<<<<< HEAD
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
@@ -33,6 +45,23 @@ public class ActualizarFichaje extends HttpServlet {
             LocalDate ld = LocalDate.parse(fecha);
             LocalTime ltEntrada = LocalTime.parse(entrada);
             LocalTime ltSalida = LocalTime.parse(salida);
+=======
+        request.setCharacterEncoding("UTF-8");  
+        response.setContentType("text/html;charset=UTF-8");
+        int id = Integer.parseInt(request.getParameter("id"));
+        String nombre = request.getParameter("nombre");
+        String apellido = request.getParameter("apellido");
+        String rol = request.getParameter("rol");
+        String fecha = request.getParameter("fecha");
+        String entrada = request.getParameter("entrada");
+        String salida = request.getParameter("salida");
+        int descanso = Integer.parseInt(request.getParameter("descanso"));
+        int comida = Integer.parseInt(request.getParameter("comida"));
+        int horasSemanales = Integer.parseInt(request.getParameter("horasSemanales"));
+        boolean estado = request.getParameter("estado") != null;
+
+        List<FichajeMock> fichajes = (List<FichajeMock>) request.getSession().getAttribute("fichajes");
+>>>>>>> origin/andrea
 
             FichajeMock fichaje = new FichajeMock(id, nombre, apellido, rol, ld, ltEntrada, ltSalida, descanso, comida, horasSemanales, estado);
 
@@ -45,6 +74,7 @@ public class ActualizarFichaje extends HttpServlet {
                 response.sendRedirect("admin.jsp?error=1");
             }
 
+<<<<<<< HEAD
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("admin.jsp?error=1");
@@ -54,5 +84,8 @@ public class ActualizarFichaje extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
+=======
+        response.sendRedirect("admin.jsp");
+>>>>>>> origin/andrea
     }
 }

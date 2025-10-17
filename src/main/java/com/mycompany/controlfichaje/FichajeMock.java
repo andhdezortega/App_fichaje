@@ -11,6 +11,7 @@ public class FichajeMock {
     public int descanso, comida, horasSemanales;
     public boolean estado;
 
+<<<<<<< HEAD
         // Constructor para crear desde la base de datos
         public FichajeMock(int id, String nombre, String apellido, String rol, 
                            LocalDate fecha, LocalTime entrada, LocalTime salida, 
@@ -29,6 +30,8 @@ public class FichajeMock {
         }
 
         // Constructor para crear desde formulario
+=======
+>>>>>>> origin/andrea
     public FichajeMock(int id, String n, String a, String r, String f, String e, String s, String d, String c, int hs, boolean est) {
         this.id = id;
         nombre = n;
@@ -42,6 +45,7 @@ public class FichajeMock {
         horasSemanales = hs;
         estado = est;
     }
+<<<<<<< HEAD
 
         // Constructor por defecto para usar en código (por ejemplo desde servlet)
         public FichajeMock() {
@@ -57,4 +61,6 @@ public class FichajeMock {
             this.horasSemanales = 0;
             this.estado = false;
         }
+=======
+>>>>>>> origin/andrea
 }

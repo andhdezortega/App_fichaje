@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Iniciar Sesión</title>
     <link rel="stylesheet" href="css/styles.css">
-<<<<<<< HEAD
+<<<<<<< HEAD:target/ControlFichaje-1.0-SNAPSHOT/login.jsp
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" href="<%=request.getContextPath()%>/favicon.ico" type="image/x-icon">
 =======
@@ -16,7 +16,7 @@
 
     <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
->>>>>>> origin/andrea
+>>>>>>> origin/andrea:target/controlfichaje/login.jsp
 
 
 </head>

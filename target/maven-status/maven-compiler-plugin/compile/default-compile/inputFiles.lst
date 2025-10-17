@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 C:\Users\Curso Tarde\Desktop\Repositorio\App_fichaje\ControlFichaje\src\main\java\com\mycompany\controlfichaje\FichajeServlet.java
 C:\Users\Curso Tarde\Desktop\Repositorio\App_fichaje\ControlFichaje\src\main\java\com\mycompany\controlfichaje\CrearUsuarioServlet.java
 C:\Users\Curso Tarde\Desktop\Repositorio\App_fichaje\ControlFichaje\src\main\java\com\mycompany\controlfichaje\dao\UsuarioDAO.java
@@ -18,3 +19,13 @@ C:\Users\Curso Tarde\Desktop\Repositorio\App_fichaje\ControlFichaje\src\main\jav
 C:\Users\Curso Tarde\Desktop\Repositorio\App_fichaje\ControlFichaje\src\main\java\com\mycompany\controlfichaje\dao\FichajeDAO.java
 C:\Users\Curso Tarde\Desktop\Repositorio\App_fichaje\ControlFichaje\src\main\java\com\mycompany\controlfichaje\resources\JakartaEE8Resource.java
 C:\Users\Curso Tarde\Desktop\Repositorio\App_fichaje\ControlFichaje\src\main\java\com\mycompany\controlfichaje\JakartaRestConfiguration.java
+=======
+C:\Users\Usuario\Documents\NetBeansProjects\ControlFichaje\src\main\java\com\mycompany\controlfichaje\ActualizarEstadoServlet.java
+C:\Users\Usuario\Documents\NetBeansProjects\ControlFichaje\src\main\java\com\mycompany\controlfichaje\ActualizarFichaje.java
+C:\Users\Usuario\Documents\NetBeansProjects\ControlFichaje\src\main\java\com\mycompany\controlfichaje\FichajeMock.java
+C:\Users\Usuario\Documents\NetBeansProjects\ControlFichaje\src\main\java\com\mycompany\controlfichaje\FichajeServlet.java
+C:\Users\Usuario\Documents\NetBeansProjects\ControlFichaje\src\main\java\com\mycompany\controlfichaje\JakartaRestConfiguration.java
+C:\Users\Usuario\Documents\NetBeansProjects\ControlFichaje\src\main\java\com\mycompany\controlfichaje\LoginServlet.java
+C:\Users\Usuario\Documents\NetBeansProjects\ControlFichaje\src\main\java\com\mycompany\controlfichaje\LogoutServlet.java
+C:\Users\Usuario\Documents\NetBeansProjects\ControlFichaje\src\main\java\com\mycompany\controlfichaje\resources\JakartaEE8Resource.java
+>>>>>>> origin/andrea

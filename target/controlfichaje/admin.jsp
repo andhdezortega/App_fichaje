@@ -14,7 +14,7 @@
         return;
     }
 
-<<<<<<< HEAD
+<<<<<<< HEAD:target/ControlFichaje-1.0-SNAPSHOT/admin.jsp
    
     // Obtener fichajes desde la base de datos
     FichajeDAO fichajeDAO = new FichajeDAO();
@@ -43,7 +43,7 @@
 
         session.setAttribute("fichajes", fichajes);
     }
->>>>>>> origin/andrea
+>>>>>>> origin/andrea:target/controlfichaje/admin.jsp
 
     // Buscar fichaje para edición (por id)
     String paramId = request.getParameter("id");
@@ -75,13 +75,13 @@
     <!-- Enlace a JS de DataTables -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 
-<<<<<<< HEAD
+<<<<<<< HEAD:target/ControlFichaje-1.0-SNAPSHOT/admin.jsp
     
 
 
 =======
        
->>>>>>> origin/andrea
+>>>>>>> origin/andrea:target/controlfichaje/admin.jsp
     <style>
         .estado-si {
             background-color: #d4edda; 
@@ -169,7 +169,7 @@
 
     <!------------------- PANEL CENTRAL: tabla ------------->
     <div class="main">
-<<<<<<< HEAD
+<<<<<<< HEAD:target/ControlFichaje-1.0-SNAPSHOT/admin.jsp
         <h1>Control de Fichajes</h1>
         <h2>Administrador</h2>
         <div style="margin-bottom: 20px;">
@@ -181,7 +181,7 @@
         <h1>Control de Fichajes</h1>
         <h2>Administrador</h2>
         <table id="tablaFichajes" class="admin-table">
->>>>>>> origin/andrea
+>>>>>>> origin/andrea:target/controlfichaje/admin.jsp
             <thead>
                 <tr>
                     <th>ID</th>
@@ -193,10 +193,10 @@
                     <th>Salida</th>
                     <th>Descanso</th>
                     <th>Comida</th>
-<<<<<<< HEAD
+<<<<<<< HEAD:target/ControlFichaje-1.0-SNAPSHOT/admin.jsp
                     <th>Horas trabajadas</th>
 =======
->>>>>>> origin/andrea
+>>>>>>> origin/andrea:target/controlfichaje/admin.jsp
                     <th>Horas/semana</th>
                     <th>En producción</th>
                     <th>Acciones</th>
@@ -233,7 +233,7 @@
                         <%= (f.entrada != null && f.salida == null) ? "Sí" : "No" %>
                     </td>
                     <td>
-<<<<<<< HEAD
+<<<<<<< HEAD:target/ControlFichaje-1.0-SNAPSHOT/admin.jsp
                         <form method="get" action="admin.jsp" style="display:inline;">
                             <input type="hidden" name="id" value="<%= f.id %>">
                             <input type="submit" value="Editar" class="btn-accion">
@@ -255,7 +255,7 @@
                                 <input type="submit" value="Eliminar" class="btn-accion small-action" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
                             </form>
                         </div>
->>>>>>> origin/andrea
+>>>>>>> origin/andrea:target/controlfichaje/admin.jsp
                     </td>
                 </tr>
             <% } %>
@@ -270,10 +270,10 @@ $(document).ready(function() {
         searching: true,
         ordering: true,
         info: true,
-<<<<<<< HEAD
+<<<<<<< HEAD:target/ControlFichaje-1.0-SNAPSHOT/admin.jsp
 =======
         pageLength: 100,
->>>>>>> origin/andrea
+>>>>>>> origin/andrea:target/controlfichaje/admin.jsp
         language: {
             sSearch: "Buscar:",
             sLengthMenu: "Mostrar _MENU_ registros por página",
@@ -291,7 +291,7 @@ $(document).ready(function() {
 });
 </script>
 
-<<<<<<< HEAD
+<<<<<<< HEAD:target/ControlFichaje-1.0-SNAPSHOT/admin.jsp
 =======
 <script>
 // Alinea el botón de logout con el h1 dentro de .main
@@ -311,7 +311,7 @@ window.addEventListener('load', alignLogoutButton);
 window.addEventListener('resize', alignLogoutButton);
 </script>
 
->>>>>>> origin/andrea
+>>>>>>> origin/andrea:target/controlfichaje/admin.jsp
 
 </body>
 </html>

@@ -13,6 +13,7 @@ import com.mycompany.controlfichaje.dao.FichajeDAO;
 import com.mycompany.controlfichaje.dao.UsuarioDAO;
 import com.mycompany.controlfichaje.dao.Usuario;
 
+
 @WebServlet(name = "FichajeServlet", urlPatterns = {"/FichajeServlet"})
 public class FichajeServlet extends HttpServlet {
 
@@ -60,6 +61,7 @@ public class FichajeServlet extends HttpServlet {
         
         switch (accion) {
             case "entrada":
+<<<<<<< HEAD
                 // Evitar duplicados: si ya hay activo, no crear otro
                 FichajeMock activo = fichajeDAO.obtenerFichajeActivo(nombre, apellido);
                 if (activo != null) {
@@ -114,6 +116,35 @@ public class FichajeServlet extends HttpServlet {
                     request.setAttribute("error", "No se encontró un fichaje activo");
                     request.getRequestDispatcher("perfil.jsp").forward(request, response);
                 }
+=======
+                session.setAttribute("horaEntrada", LocalDateTime.now());
+                session.setAttribute("horaSalida", null);
+                session.setAttribute("fichajeEntrada", true);
+                session.setAttribute("fichajeSalida", false);
+                    // Si se pasa un parámetro opcional returnTo, redirige a esa página (por ejemplo "bienvenido.jsp");
+                    String returnTo = request.getParameter("returnTo");
+                    if (returnTo != null && !returnTo.trim().isEmpty()) {
+                        // Usa sendRedirect para que el navegador cargue la página solicitada
+                        response.sendRedirect(request.getContextPath() + "/" + returnTo);
+                        return;
+                    }
+
+                    response.sendRedirect("perfil.jsp");
+                return;
+
+            case "salida":
+                session.setAttribute("horaSalida", LocalDateTime.now());
+                session.setAttribute("fichajeSalida", true);
+                session.setAttribute("fichajeEntrada", false);
+                // Si se pasa un parámetro opcional returnTo, redirige a esa página en lugar de la ruta por defecto
+                String returnToSalida = request.getParameter("returnTo");
+                if (returnToSalida != null && !returnToSalida.trim().isEmpty()) {
+                    response.sendRedirect(request.getContextPath() + "/" + returnToSalida);
+                    return;
+                }
+
+                response.sendRedirect(request.getContextPath() + "/bienvenido.jsp");
+>>>>>>> origin/andrea
                 return;
 
             default:
