@@ -1,9 +1,5 @@
 package com.mycompany.controlfichaje;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/andrea
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -43,37 +39,32 @@ public class LoginServlet extends HttpServlet {
 
             com.mycompany.controlfichaje.dao.FichajeDAO dao = new com.mycompany.controlfichaje.dao.FichajeDAO();
             com.mycompany.controlfichaje.FichajeMock activo = dao.obtenerFichajeActivo(nombre, apellido);
-            if (activo != null) {
-                session.setAttribute("horaEntrada", java.time.LocalDateTime.of(activo.fecha, activo.entrada));
-                session.setAttribute("horaSalida", null);
-                session.setAttribute("fichajeEntrada", true);
-                session.setAttribute("fichajeSalida", false);
+            // Si el usuario tiene fichaje activo o está "En producción", ir a perfil.jsp
+            if (activo != null || (u != null && "En producción".equalsIgnoreCase(u.getDescripcion()))) {
+                if (activo != null) {
+                    session.setAttribute("horaEntrada", java.time.LocalDateTime.of(activo.fecha, activo.entrada));
+                    session.setAttribute("horaSalida", null);
+                    session.setAttribute("fichajeEntrada", true);
+                    session.setAttribute("fichajeSalida", false);
+                }
                 response.sendRedirect("perfil.jsp");
                 return;
             }
 
-<<<<<<< HEAD
-            // Si no hay fichaje activo, ir al panel correspondiente
+            // Si no hay fichaje activo ni "En producción", ir al panel correspondiente
             if ("admin".equals(Autenticacion.obtenerRol(request))) {
                 response.sendRedirect("admin.jsp");
             } else {
                 response.sendRedirect("bienvenido.jsp");
             }
+        } else if ("externo".equals(usuario) && "externo123".equals(contrasena)) {
+            // Login para externo
+            HttpSession session = request.getSession();
+            session.setAttribute("usuario", usuario);
+            session.setAttribute("rol", "externo");
+            response.sendRedirect("externo.jsp");
         } else {
             response.sendRedirect("login.jsp?error=1");
         }
-    }  
-=======
-
-    // Login para externo
-    } else if ("externo".equals(usuario) && "externo123".equals(contrasena)) {
-        // Guardar como 'usuario' para mantener el contrato con otros servlets/JSP
-        session.setAttribute("usuario", usuario);
-        session.setAttribute("rol", "externo");
-        response.sendRedirect("externo.jsp");
-
-    } else {
-        response.sendRedirect("login.jsp?error=1");
     }
->>>>>>> origin/andrea
 }

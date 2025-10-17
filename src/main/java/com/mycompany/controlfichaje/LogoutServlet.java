@@ -1,9 +1,5 @@
 package com.mycompany.controlfichaje;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/andrea
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;

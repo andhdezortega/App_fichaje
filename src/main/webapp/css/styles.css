@@ -586,7 +586,6 @@ th {
     text-align: center;
 }
 
-<<<<<<< HEAD
 .mensaje-exito {
     background-color: #d4edda;
     color: #155724;
@@ -606,7 +605,7 @@ th {
 .boton-link {
     display: inline-block;
     padding: 10px 15px;
-    background-color: var(--azulado);
+    background-color: var(--rojo);
     color: var(--perlado);
     text-decoration: none;
     border-radius: 5px;
@@ -624,9 +623,6 @@ th {
     border-top: 2px solid var(--mostaza);
     margin: 15px 0;
 }
-=======
-/* Divisor (solo una definición) */
->>>>>>> origin/andrea
 
 
 

@@ -13,37 +13,10 @@
         response.sendRedirect("login.jsp");
         return;
     }
-
-<<<<<<< HEAD
    
     // Obtener fichajes desde la base de datos
     FichajeDAO fichajeDAO = new FichajeDAO();
     List<FichajeMock> fichajes = fichajeDAO.obtenerTodos();
-=======
-    // Recuperar o inicializar la lista de fichajes en sesión
-    List<FichajeMock> fichajes = (List<FichajeMock>) session.getAttribute("fichajes");
-    if (fichajes == null) {
-        fichajes = new ArrayList<>();
-        // Lista de fichajes de prueba
-        fichajes.add(new FichajeMock(1, "Juan", "Pérez", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 40, true));
-        fichajes.add(new FichajeMock(2, "Lucía", "Gómez", "usuario", "2025-10-14", "09:00", "18:00", "20", "60", 38, false));
-        fichajes.add(new FichajeMock(3, "Carlos", "López", "usuario", "2025-10-14", "07:30", "16:30", "10", "45", 40, true));
-        fichajes.add(new FichajeMock(4, "Marta", "Fernández", "usuario", "2025-10-14", "08:15", "17:15", "15", "30", 37, true));
-        fichajes.add(new FichajeMock(5, "Diego", "Ramírez", "usuario", "2025-10-14", "09:00", "18:00", "20", "60", 38, false));
-        fichajes.add(new FichajeMock(6, "Elena", "García", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 40, true));
-        fichajes.add(new FichajeMock(7, "Pedro", "Martínez", "usuario", "2025-10-14", "07:45", "16:45", "10", "50", 36, true));
-        fichajes.add(new FichajeMock(8, "Sofía", "Torres", "usuario", "2025-10-14", "08:30", "17:30", "15", "60", 40, false));
-        fichajes.add(new FichajeMock(9, "Andrés", "Suárez", "usuario", "2025-10-14", "09:00", "18:00", "20", "45", 38, true));
-        fichajes.add(new FichajeMock(10, "Paula", "Navarro", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 39, false));
-        fichajes.add(new FichajeMock(11, "Javier", "Ortega", "usuario", "2025-10-14", "07:30", "16:30", "10", "30", 35, true));
-        fichajes.add(new FichajeMock(12, "Ana", "Luna", "usuario", "2025-10-14", "08:15", "17:15", "15", "60", 40, true));
-        fichajes.add(new FichajeMock(13, "Hugo", "Delgado", "usuario", "2025-10-14", "09:00", "18:00", "20", "60", 38, false));
-        fichajes.add(new FichajeMock(14, "Clara", "Vega", "usuario", "2025-10-14", "08:00", "17:00", "15", "60", 40, true));
-        fichajes.add(new FichajeMock(15, "Raúl", "Moreno", "usuario", "2025-10-14", "07:45", "16:45", "10", "50", 37, true));
-
-        session.setAttribute("fichajes", fichajes);
-    }
->>>>>>> origin/andrea
 
     // Buscar fichaje para edición (por id)
     String paramId = request.getParameter("id");
@@ -75,13 +48,6 @@
     <!-- Enlace a JS de DataTables -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 
-<<<<<<< HEAD
-    
-
-
-=======
-       
->>>>>>> origin/andrea
     <style>
         .estado-si {
             background-color: #d4edda; 
@@ -169,19 +135,12 @@
 
     <!------------------- PANEL CENTRAL: tabla ------------->
     <div class="main">
-<<<<<<< HEAD
         <h1>Control de Fichajes</h1>
         <h2>Administrador</h2>
         <div style="margin-bottom: 20px;">
             <a href="usuarios.jsp" class="boton-link">Gestionar Usuarios</a>
         </div>
        <table id="tablaFichajes" class="admin-table">
-=======
-        
-        <h1>Control de Fichajes</h1>
-        <h2>Administrador</h2>
-        <table id="tablaFichajes" class="admin-table">
->>>>>>> origin/andrea
             <thead>
                 <tr>
                     <th>ID</th>
@@ -193,10 +152,7 @@
                     <th>Salida</th>
                     <th>Descanso</th>
                     <th>Comida</th>
-<<<<<<< HEAD
                     <th>Horas trabajadas</th>
-=======
->>>>>>> origin/andrea
                     <th>Horas/semana</th>
                     <th>En producción</th>
                     <th>Acciones</th>
@@ -233,17 +189,6 @@
                         <%= (f.entrada != null && f.salida == null) ? "Sí" : "No" %>
                     </td>
                     <td>
-<<<<<<< HEAD
-                        <form method="get" action="admin.jsp" style="display:inline;">
-                            <input type="hidden" name="id" value="<%= f.id %>">
-                            <input type="submit" value="Editar" class="btn-accion">
-                        </form>
-                        <span style="margin: 0 5px;">|</span>
-                        <form method="post" action="EliminarFichaje" style="display:inline;">
-                            <input type="hidden" name="id" value="<%= f.id %>">
-                            <input type="submit" value="Eliminar" class="btn-accion" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
-                        </form>
-=======
                         <div class="actions-inline">
                             <form method="get" action="admin.jsp">
                                 <input type="hidden" name="id" value="<%= f.id %>">
@@ -255,7 +200,6 @@
                                 <input type="submit" value="Eliminar" class="btn-accion small-action" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
                             </form>
                         </div>
->>>>>>> origin/andrea
                     </td>
                 </tr>
             <% } %>
@@ -270,10 +214,7 @@ $(document).ready(function() {
         searching: true,
         ordering: true,
         info: true,
-<<<<<<< HEAD
-=======
         pageLength: 100,
->>>>>>> origin/andrea
         language: {
             sSearch: "Buscar:",
             sLengthMenu: "Mostrar _MENU_ registros por página",
@@ -291,8 +232,6 @@ $(document).ready(function() {
 });
 </script>
 
-<<<<<<< HEAD
-=======
 <script>
 // Alinea el botón de logout con el h1 dentro de .main
 function alignLogoutButton() {
@@ -310,8 +249,6 @@ function alignLogoutButton() {
 window.addEventListener('load', alignLogoutButton);
 window.addEventListener('resize', alignLogoutButton);
 </script>
-
->>>>>>> origin/andrea
 
 </body>
 </html>

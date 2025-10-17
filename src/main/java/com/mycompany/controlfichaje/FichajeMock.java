@@ -11,27 +11,24 @@ public class FichajeMock {
     public int descanso, comida, horasSemanales;
     public boolean estado;
 
-<<<<<<< HEAD
-        // Constructor para crear desde la base de datos
-        public FichajeMock(int id, String nombre, String apellido, String rol, 
-                           LocalDate fecha, LocalTime entrada, LocalTime salida, 
-                           int descanso, int comida, int horasSemanales, boolean estado) {
-            this.id = id;
-            this.nombre = nombre;
-            this.apellido = apellido;
-            this.rol = rol;
-            this.fecha = fecha;
-            this.entrada = entrada;
-            this.salida = salida;
-            this.descanso = descanso;
-            this.comida = comida;
-            this.horasSemanales = horasSemanales;
-            this.estado = estado;
-        }
+    // Constructor para crear desde la base de datos
+    public FichajeMock(int id, String nombre, String apellido, String rol, 
+                       LocalDate fecha, LocalTime entrada, LocalTime salida, 
+                       int descanso, int comida, int horasSemanales, boolean estado) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.rol = rol;
+        this.fecha = fecha;
+        this.entrada = entrada;
+        this.salida = salida;
+        this.descanso = descanso;
+        this.comida = comida;
+        this.horasSemanales = horasSemanales;
+        this.estado = estado;
+    }
 
-        // Constructor para crear desde formulario
-=======
->>>>>>> origin/andrea
+    // Constructor para crear desde formulario
     public FichajeMock(int id, String n, String a, String r, String f, String e, String s, String d, String c, int hs, boolean est) {
         this.id = id;
         nombre = n;
@@ -45,22 +42,19 @@ public class FichajeMock {
         horasSemanales = hs;
         estado = est;
     }
-<<<<<<< HEAD
 
-        // Constructor por defecto para usar en código (por ejemplo desde servlet)
-        public FichajeMock() {
-            this.id = 0;
-            this.nombre = "";
-            this.apellido = "";
-            this.rol = "";
-            this.fecha = LocalDate.now();
-            this.entrada = null; // establecer al registrarse
-            this.salida = null;
-            this.descanso = 0;
-            this.comida = 0;
-            this.horasSemanales = 0;
-            this.estado = false;
-        }
-=======
->>>>>>> origin/andrea
+    // Constructor por defecto para usar en código (por ejemplo desde servlet)
+    public FichajeMock() {
+        this.id = 0;
+        this.nombre = "";
+        this.apellido = "";
+        this.rol = "";
+        this.fecha = LocalDate.now();
+        this.entrada = null;
+        this.salida = null;
+        this.descanso = 0;
+        this.comida = 0;
+        this.horasSemanales = 0;
+        this.estado = false;
+    }
 }
