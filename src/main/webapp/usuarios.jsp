@@ -105,17 +105,19 @@
                             <td><%= user.get("rol") %></td>
                             <td><%= user.get("descripcion") %></td>
                             <td>
-                                <form method="get" action="EditarUsuarioServlet" style="display:inline;">
-                                    <input type="hidden" name="usuario" value="<%= user.get("usuario") %>">
-                                    <input type="submit" value="Editar" class="btn-accion">
-                                </form>
-                                <% if (!"admin".equals(user.get("usuario"))) { %>
-                                    <form method="post" action="EliminarUsuarioServlet" style="display:inline; margin-left:6px;">
+                                <div class="actions-inline">
+                                    <form method="get" action="EditarUsuarioServlet" style="display:inline;">
                                         <input type="hidden" name="usuario" value="<%= user.get("usuario") %>">
-                                        <input type="submit" value="Eliminar" class="btn-accion" 
-                                               onclick="return confirm('¿Seguro que quieres eliminar este usuario?');">
+                                        <input type="submit" value="Editar" class="btn-accion">
                                     </form>
-                                <% } %>
+                                    <% if (!"admin".equals(user.get("usuario"))) { %>
+                                        <form method="post" action="EliminarUsuarioServlet" style="display:inline;">
+                                            <input type="hidden" name="usuario" value="<%= user.get("usuario") %>">
+                                            <input type="submit" value="Eliminar" class="btn-accion btn-rojo" 
+                                                   onclick="return confirm('¿Seguro que quieres eliminar este usuario?');">
+                                        </form>
+                                    <% } %>
+                                </div>
                             </td>
                         </tr>
                     <% } %>

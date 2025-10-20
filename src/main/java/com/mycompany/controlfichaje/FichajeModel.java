@@ -3,7 +3,7 @@ package com.mycompany.controlfichaje;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class FichajeMock {
+public class FichajeModel {
     public int id;
     public String nombre, apellido, rol;
     public LocalDate fecha;
@@ -12,7 +12,7 @@ public class FichajeMock {
     public boolean estado;
 
     // Constructor para crear desde la base de datos
-    public FichajeMock(int id, String nombre, String apellido, String rol, 
+    public FichajeModel(int id, String nombre, String apellido, String rol, 
                        LocalDate fecha, LocalTime entrada, LocalTime salida, 
                        int descanso, int comida, int horasSemanales, boolean estado) {
         this.id = id;
@@ -29,7 +29,7 @@ public class FichajeMock {
     }
 
     // Constructor para crear desde formulario
-    public FichajeMock(int id, String n, String a, String r, String f, String e, String s, String d, String c, int hs, boolean est) {
+    public FichajeModel(int id, String n, String a, String r, String f, String e, String s, String d, String c, int hs, boolean est) {
         this.id = id;
         nombre = n;
         apellido = a;
@@ -44,7 +44,7 @@ public class FichajeMock {
     }
 
     // Constructor por defecto para usar en código (por ejemplo desde servlet)
-    public FichajeMock() {
+    public FichajeModel() {
         this.id = 0;
         this.nombre = "";
         this.apellido = "";

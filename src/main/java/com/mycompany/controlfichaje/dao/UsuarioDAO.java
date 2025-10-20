@@ -2,9 +2,6 @@ package com.mycompany.controlfichaje.dao;
 
 import java.sql.*;
 import java.util.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
 
 public class UsuarioDAO {
 
@@ -115,13 +112,6 @@ public class UsuarioDAO {
         return null;
     }
 
-    // Crear nuevo usuario
-    public boolean crearUsuario(String usuario, String apellido, String password, String rol, String descripcion) {
-        // Nuevo método con correo
-        return crearUsuario(usuario, apellido, null, password, rol, descripcion);
-    }
-
-    // Nuevo método para crear usuario con correo
     public boolean crearUsuario(String usuario, String apellido, String correo, String password, String rol, String descripcion) {
         String sql = "INSERT INTO usuarios (usuario, apellido, correo, password, rol, descripcion) VALUES (?, ?, ?, ?, ?, ?)";
         
@@ -178,13 +168,6 @@ public class UsuarioDAO {
         }
     }
 
-    // Actualizar usuario (si password es null o vacía, no se modifica)
-    public boolean actualizarUsuario(String usuario, String apellido, String correo, String password, String rol, String descripcion) {
-        // Mantener compatibilidad: no cambia el nombre de usuario
-        return actualizarUsuario(usuario, usuario, apellido, correo, password, rol, descripcion);
-    }
-
-    // Actualizar incluyendo cambio de nombre de usuario (PK)
     public boolean actualizarUsuario(String originalUsuario, String nuevoUsuario, String apellido, String correo, String password, String rol, String descripcion) {
         boolean actualizarPassword = password != null && !password.isEmpty();
         String sql = actualizarPassword

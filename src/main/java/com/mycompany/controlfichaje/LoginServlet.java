@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
             }
 
             com.mycompany.controlfichaje.dao.FichajeDAO dao = new com.mycompany.controlfichaje.dao.FichajeDAO();
-            com.mycompany.controlfichaje.FichajeMock activo = dao.obtenerFichajeActivo(nombre, apellido);
+            com.mycompany.controlfichaje.FichajeModel activo = dao.obtenerFichajeActivo(nombre, apellido);
             // Si el usuario tiene fichaje activo o está "En producción", ir a perfil.jsp
             if (activo != null || (u != null && "En producción".equalsIgnoreCase(u.getDescripcion()))) {
                 if (activo != null) {

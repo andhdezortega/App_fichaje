@@ -13,7 +13,6 @@ import com.mycompany.controlfichaje.dao.FichajeDAO;
 import com.mycompany.controlfichaje.dao.UsuarioDAO;
 import com.mycompany.controlfichaje.dao.Usuario;
 
-
 @WebServlet(name = "FichajeServlet", urlPatterns = {"/FichajeServlet"})
 public class FichajeServlet extends HttpServlet {
 
@@ -49,8 +48,8 @@ public class FichajeServlet extends HttpServlet {
             return;
         }
         
-        // Crear objeto FichajeMock para las operaciones
-        FichajeMock fichaje = new FichajeMock();
+        // Crear objeto FichajeModel para las operaciones
+        FichajeModel fichaje = new FichajeModel();
         fichaje.nombre = nombre;
         fichaje.apellido = apellido;
         fichaje.rol = usuario.getRol();
@@ -62,7 +61,7 @@ public class FichajeServlet extends HttpServlet {
         switch (accion) {
             case "entrada":
                 // Evitar duplicados: si ya hay activo, no crear otro
-                FichajeMock activo = fichajeDAO.obtenerFichajeActivo(nombre, apellido);
+                FichajeModel activo = fichajeDAO.obtenerFichajeActivo(nombre, apellido);
                 if (activo != null) {
                     // Refrescar estado en sesión y redirigir
                     session.setAttribute("horaEntrada", LocalDateTime.of(activo.fecha, activo.entrada));
@@ -97,7 +96,7 @@ public class FichajeServlet extends HttpServlet {
 
             case "salida":
                 // Buscar fichaje activo directamente en la base de datos
-                FichajeMock fichajeActivo = fichajeDAO.obtenerFichajeActivo(nombre, apellido);
+                FichajeModel fichajeActivo = fichajeDAO.obtenerFichajeActivo(nombre, apellido);
                 
                 if (fichajeActivo != null) {
                     // Actualizar fichaje con la salida

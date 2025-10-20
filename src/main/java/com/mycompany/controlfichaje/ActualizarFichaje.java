@@ -34,7 +34,7 @@ public class ActualizarFichaje extends HttpServlet {
             LocalTime ltEntrada = LocalTime.parse(entrada);
             LocalTime ltSalida = LocalTime.parse(salida);
 
-            FichajeMock fichaje = new FichajeMock(id, nombre, apellido, rol, ld, ltEntrada, ltSalida, descanso, comida, horasSemanales, estado);
+            FichajeModel fichaje = new FichajeModel(id, nombre, apellido, rol, ld, ltEntrada, ltSalida, descanso, comida, horasSemanales, estado);
 
             FichajeDAO dao = new FichajeDAO();
             boolean ok = dao.actualizar(fichaje);

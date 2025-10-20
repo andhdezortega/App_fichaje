@@ -2,7 +2,7 @@
 <%@ page import="java.util.*, java.time.format.DateTimeFormatter" %>
 <%
     // Recuperar fichajes de sesión (misma estructura que admin.jsp)
-    List<com.mycompany.controlfichaje.FichajeMock> fichajes = (List<com.mycompany.controlfichaje.FichajeMock>) session.getAttribute("fichajes");
+    List<com.mycompany.controlfichaje.FichajeModel> fichajes = (List<com.mycompany.controlfichaje.FichajeModel>) session.getAttribute("fichajes");
     if (fichajes == null) {
         fichajes = new ArrayList<>();
     }
@@ -16,12 +16,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" href="<%=request.getContextPath()%>/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
@@ -64,7 +59,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                <% for (com.mycompany.controlfichaje.FichajeMock f : fichajes) { %>
+                <% for (com.mycompany.controlfichaje.FichajeModel f : fichajes) { %>
                     <tr>
                         <td><%= f.id %></td>
                         <td><%= f.nombre %></td>

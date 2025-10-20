@@ -6,18 +6,9 @@
     <title>Iniciar Sesión</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" href="<%=request.getContextPath()%>/favicon.ico" type="image/x-icon">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Bundle JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-
 </head>
 
 <body>
-        <!--icono-->
-    <i class="fa-regular fa-square-check" style="color: #63E6BE;"></i>
     <div class ="login-container">
     <div class="login-box">
         <h2>Iniciar sesión</h2>

@@ -4,7 +4,7 @@
 <%@ page import="java.time.LocalDateTime"%>
 <%@ page import="java.time.Duration"%>
 <%@ page import="com.mycompany.controlfichaje.dao.FichajeDAO"%>
-<%@ page import="com.mycompany.controlfichaje.FichajeMock"%>
+<%@ page import="com.mycompany.controlfichaje.FichajeModel"%>
 <%@ page import="java.util.List"%>
 
 <%
@@ -51,9 +51,7 @@
     <meta charset="UTF-8">
     <title><%= estadoBarra %></title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/fichajes.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" href="<%=request.getContextPath()%>/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="fichaje-container">

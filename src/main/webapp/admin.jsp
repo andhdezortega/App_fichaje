@@ -3,7 +3,6 @@
 <%@ page import="java.util.*, java.time.*, java.time.format.DateTimeFormatter" %>
 <%@ page import="com.mycompany.controlfichaje.*" %>
 <%@ page import="com.mycompany.controlfichaje.dao.FichajeDAO" %>
-<%@ page import="com.mycompany.controlfichaje.util.DateTimeUtil" %>
 
 <%
     String usuario = (String) session.getAttribute("usuario");
@@ -16,11 +15,11 @@
    
     // Obtener fichajes desde la base de datos
     FichajeDAO fichajeDAO = new FichajeDAO();
-    List<FichajeMock> fichajes = fichajeDAO.obtenerTodos();
+    List<FichajeModel> fichajes = fichajeDAO.obtenerTodos();
 
     // Buscar fichaje para edición (por id)
     String paramId = request.getParameter("id");
-    FichajeMock fichajeSeleccionado = null;
+    FichajeModel fichajeSeleccionado = null;
     if (paramId != null) {
         try {
             fichajeSeleccionado = fichajeDAO.obtenerPorId(Integer.parseInt(paramId));
@@ -36,18 +35,10 @@
     <meta charset="UTF-8">
     <title>Panel Administrador</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
-    <meta charset="UTF-8">
-    <title>Panel Administrador</title>
-    <!-- Enlace al CSS de DataTables -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
-    
-    <!-- Enlace a jQuery (requerido por DataTables) -->
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Enlace a JS de DataTables -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-
     <style>
         .estado-si {
             background-color: #d4edda; 
@@ -62,8 +53,6 @@
             text-align: center;
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sorttable/2.1.2/sorttable.min.js"></script>
-
 </head>
 <body>
 
@@ -159,7 +148,7 @@
                 </tr>
             </thead>
             <tbody>
-            <% for (FichajeMock f : fichajes) { %>
+            <% for (FichajeModel f : fichajes) { %>
                 <tr>
                     <td><%= f.id %></td>
                     <td><%= f.nombre %></td>

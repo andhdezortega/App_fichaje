@@ -1,6 +1,6 @@
 package com.mycompany.controlfichaje.dao;
 
-import com.mycompany.controlfichaje.FichajeMock;
+import com.mycompany.controlfichaje.FichajeModel;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,7 +10,7 @@ import java.util.List;
 public class FichajeDAO {
 
     // Crear nuevo fichaje
-    public boolean crear(FichajeMock fichaje) {
+    public boolean crear(FichajeModel fichaje) {
         String sql = "INSERT INTO fichajes (nombre, apellido, rol, fecha, entrada, salida, descanso, comida, horas_semanales, estado) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
@@ -36,8 +36,8 @@ public class FichajeDAO {
     }
 
     // Obtener todos los fichajes
-    public List<FichajeMock> obtenerTodos() {
-        List<FichajeMock> fichajes = new ArrayList<>();
+    public List<FichajeModel> obtenerTodos() {
+        List<FichajeModel> fichajes = new ArrayList<>();
         String sql = "SELECT * FROM fichajes";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -52,7 +52,7 @@ public class FichajeDAO {
                 LocalTime entrada = (entradaStr != null && !entradaStr.isEmpty()) ? LocalTime.parse(entradaStr) : null;
                 LocalTime salida = (salidaStr != null && !salidaStr.isEmpty()) ? LocalTime.parse(salidaStr) : null;
 
-                FichajeMock fichaje = new FichajeMock(
+                FichajeModel fichaje = new FichajeModel(
                     rs.getInt("id"),
                     rs.getString("nombre"),
                     rs.getString("apellido"),
@@ -74,7 +74,7 @@ public class FichajeDAO {
     }
 
     // Obtener un fichaje por ID
-    public FichajeMock obtenerPorId(int id) {
+    public FichajeModel obtenerPorId(int id) {
         String sql = "SELECT * FROM fichajes WHERE id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
@@ -91,7 +91,7 @@ public class FichajeDAO {
                 LocalTime entrada = (entradaStr != null && !entradaStr.isEmpty()) ? LocalTime.parse(entradaStr) : null;
                 LocalTime salida = (salidaStr != null && !salidaStr.isEmpty()) ? LocalTime.parse(salidaStr) : null;
 
-                return new FichajeMock(
+                return new FichajeModel(
                     rs.getInt("id"),
                     rs.getString("nombre"),
                     rs.getString("apellido"),
@@ -112,7 +112,7 @@ public class FichajeDAO {
     }
 
     // Obtener fichaje activo (no cerrado) por nombre y apellido
-    public FichajeMock obtenerFichajeActivo(String nombre, String apellido) {
+    public FichajeModel obtenerFichajeActivo(String nombre, String apellido) {
         String sql = "SELECT * FROM fichajes WHERE nombre = ? AND apellido = ? AND estado = 0 ORDER BY id DESC LIMIT 1";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -127,7 +127,7 @@ public class FichajeDAO {
                     java.time.LocalTime entrada = (entradaStr != null && !entradaStr.isEmpty()) ? java.time.LocalTime.parse(entradaStr) : null;
                     java.time.LocalTime salida = (salidaStr != null && !salidaStr.isEmpty()) ? java.time.LocalTime.parse(salidaStr) : null;
 
-                    return new FichajeMock(
+                    return new FichajeModel(
                         rs.getInt("id"),
                         rs.getString("nombre"),
                         rs.getString("apellido"),
@@ -149,7 +149,7 @@ public class FichajeDAO {
     }
 
     // Actualizar fichaje
-    public boolean actualizar(FichajeMock fichaje) {
+    public boolean actualizar(FichajeModel fichaje) {
         String sql = "UPDATE fichajes SET nombre = ?, apellido = ?, rol = ?, fecha = ?, entrada = ?, " +
                     "salida = ?, descanso = ?, comida = ?, horas_semanales = ?, estado = ? WHERE id = ?";
         
