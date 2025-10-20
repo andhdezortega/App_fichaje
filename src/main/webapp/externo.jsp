@@ -93,7 +93,9 @@
                     csv += cols.join(',') + '\n';
                 });
 
-                var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                var BOM = '\uFEFF'; // BOM para forzar lectura UTF-8
+                var blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+
                 var url = URL.createObjectURL(blob);
                 var a = document.createElement('a');
                 a.href = url;
