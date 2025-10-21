@@ -4,12 +4,17 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class FichajeModel {
-    public int id;
-    public String nombre, apellido, rol;
-    public LocalDate fecha;
-    public LocalTime entrada, salida;
-    public int descanso, comida, horasSemanales;
-    public boolean estado;
+    private int id;
+    private String nombre;
+    private String apellido;
+    private String rol;
+    private LocalDate fecha;
+    private LocalTime entrada;
+    private LocalTime salida;
+    private int descanso;
+    private int comida;
+    private int horasSemanales;
+    private boolean estado;
 
     // Constructor para crear desde la base de datos
     public FichajeModel(int id, String nombre, String apellido, String rol, 
@@ -31,16 +36,16 @@ public class FichajeModel {
     // Constructor para crear desde formulario
     public FichajeModel(int id, String n, String a, String r, String f, String e, String s, String d, String c, int hs, boolean est) {
         this.id = id;
-        nombre = n;
-        apellido = a;
-        rol = r;
-        fecha = LocalDate.parse(f);
-        entrada = LocalTime.parse(e);
-        salida = LocalTime.parse(s);
-        descanso = Integer.parseInt(d);
-        comida = Integer.parseInt(c);
-        horasSemanales = hs;
-        estado = est;
+        this.nombre = n;
+        this.apellido = a;
+        this.rol = r;
+        this.fecha = LocalDate.parse(f);
+        this.entrada = LocalTime.parse(e);
+        this.salida = LocalTime.parse(s);
+        this.descanso = Integer.parseInt(d);
+        this.comida = Integer.parseInt(c);
+        this.horasSemanales = hs;
+        this.estado = est;
     }
 
     // Constructor por defecto para usar en código (por ejemplo desde servlet)
@@ -56,5 +61,94 @@ public class FichajeModel {
         this.comida = 0;
         this.horasSemanales = 0;
         this.estado = false;
+    }
+
+    // Getters y Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public LocalTime getEntrada() {
+        return entrada;
+    }
+
+    public void setEntrada(LocalTime entrada) {
+        this.entrada = entrada;
+    }
+
+    public LocalTime getSalida() {
+        return salida;
+    }
+
+    public void setSalida(LocalTime salida) {
+        this.salida = salida;
+    }
+
+    public int getDescanso() {
+        return descanso;
+    }
+
+    public void setDescanso(int descanso) {
+        this.descanso = descanso;
+    }
+
+    public int getComida() {
+        return comida;
+    }
+
+    public void setComida(int comida) {
+        this.comida = comida;
+    }
+
+    public int getHorasSemanales() {
+        return horasSemanales;
+    }
+
+    public void setHorasSemanales(int horasSemanales) {
+        this.horasSemanales = horasSemanales;
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
 }

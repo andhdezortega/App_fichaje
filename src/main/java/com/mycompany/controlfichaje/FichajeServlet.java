@@ -50,11 +50,11 @@ public class FichajeServlet extends HttpServlet {
         
         // Crear objeto FichajeModel para las operaciones
         FichajeModel fichaje = new FichajeModel();
-        fichaje.nombre = nombre;
-        fichaje.apellido = apellido;
-        fichaje.rol = usuario.getRol();
-    fichaje.fecha = LocalDate.now();
-    fichaje.entrada = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
+        fichaje.setNombre(nombre);
+        fichaje.setApellido(apellido);
+        fichaje.setRol(usuario.getRol());
+        fichaje.setFecha(LocalDate.now());
+        fichaje.setEntrada(LocalTime.now().truncatedTo(ChronoUnit.MINUTES));
 
         FichajeDAO fichajeDAO = new FichajeDAO();
         
@@ -64,7 +64,7 @@ public class FichajeServlet extends HttpServlet {
                 FichajeModel activo = fichajeDAO.obtenerFichajeActivo(nombre, apellido);
                 if (activo != null) {
                     // Refrescar estado en sesión y redirigir
-                    session.setAttribute("horaEntrada", LocalDateTime.of(activo.fecha, activo.entrada));
+                    session.setAttribute("horaEntrada", LocalDateTime.of(activo.getFecha(), activo.getEntrada()));
                     session.setAttribute("horaSalida", null);
                     session.setAttribute("fichajeEntrada", true);
                     session.setAttribute("fichajeSalida", false);
@@ -100,10 +100,10 @@ public class FichajeServlet extends HttpServlet {
                 
                 if (fichajeActivo != null) {
                     // Actualizar fichaje con la salida
-                    fichajeActivo.salida = LocalTime.now().truncatedTo(ChronoUnit.MINUTES);
-                    fichajeActivo.estado = true;
-                    fichajeActivo.descanso = "break".equals(request.getParameter("estado")) ? 1 : 0;
-                    fichajeActivo.comida = "comida".equals(request.getParameter("estado")) ? 1 : 0;
+                    fichajeActivo.setSalida(LocalTime.now().truncatedTo(ChronoUnit.MINUTES));
+                    fichajeActivo.setEstado(true);
+                    fichajeActivo.setDescanso("break".equals(request.getParameter("estado")) ? 1 : 0);
+                    fichajeActivo.setComida("comida".equals(request.getParameter("estado")) ? 1 : 0);
                     
                     boolean salidaRegistrada = fichajeDAO.actualizar(fichajeActivo);
                     

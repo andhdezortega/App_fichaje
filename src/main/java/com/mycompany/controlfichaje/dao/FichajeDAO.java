@@ -17,16 +17,16 @@ public class FichajeDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, fichaje.nombre);
-            pstmt.setString(2, fichaje.apellido);
-            pstmt.setString(3, fichaje.rol);
-            pstmt.setString(4, fichaje.fecha != null ? fichaje.fecha.toString() : "");
-            pstmt.setString(5, fichaje.entrada != null ? fichaje.entrada.toString() : "");
-            pstmt.setString(6, fichaje.salida != null ? fichaje.salida.toString() : "");
-            pstmt.setInt(7, fichaje.descanso);
-            pstmt.setInt(8, fichaje.comida);
-            pstmt.setInt(9, fichaje.horasSemanales);
-            pstmt.setBoolean(10, fichaje.estado);
+            pstmt.setString(1, fichaje.getNombre());
+            pstmt.setString(2, fichaje.getApellido());
+            pstmt.setString(3, fichaje.getRol());
+            pstmt.setString(4, fichaje.getFecha() != null ? fichaje.getFecha().toString() : "");
+            pstmt.setString(5, fichaje.getEntrada() != null ? fichaje.getEntrada().toString() : "");
+            pstmt.setString(6, fichaje.getSalida() != null ? fichaje.getSalida().toString() : "");
+            pstmt.setInt(7, fichaje.getDescanso());
+            pstmt.setInt(8, fichaje.getComida());
+            pstmt.setInt(9, fichaje.getHorasSemanales());
+            pstmt.setBoolean(10, fichaje.isEstado());
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -156,17 +156,17 @@ public class FichajeDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, fichaje.nombre);
-            pstmt.setString(2, fichaje.apellido);
-            pstmt.setString(3, fichaje.rol);
-            pstmt.setString(4, fichaje.fecha != null ? fichaje.fecha.toString() : "");
-            pstmt.setString(5, fichaje.entrada != null ? fichaje.entrada.toString() : "");
-            pstmt.setString(6, fichaje.salida != null ? fichaje.salida.toString() : "");
-            pstmt.setInt(7, fichaje.descanso);
-            pstmt.setInt(8, fichaje.comida);
-            pstmt.setInt(9, fichaje.horasSemanales);
-            pstmt.setBoolean(10, fichaje.estado);
-            pstmt.setInt(11, fichaje.id);
+            pstmt.setString(1, fichaje.getNombre());
+            pstmt.setString(2, fichaje.getApellido());
+            pstmt.setString(3, fichaje.getRol());
+            pstmt.setString(4, fichaje.getFecha() != null ? fichaje.getFecha().toString() : "");
+            pstmt.setString(5, fichaje.getEntrada() != null ? fichaje.getEntrada().toString() : "");
+            pstmt.setString(6, fichaje.getSalida() != null ? fichaje.getSalida().toString() : "");
+            pstmt.setInt(7, fichaje.getDescanso());
+            pstmt.setInt(8, fichaje.getComida());
+            pstmt.setInt(9, fichaje.getHorasSemanales());
+            pstmt.setBoolean(10, fichaje.isEstado());
+            pstmt.setInt(11, fichaje.getId());
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {

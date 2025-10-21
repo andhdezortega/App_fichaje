@@ -42,7 +42,7 @@ public class LoginServlet extends HttpServlet {
             // Si el usuario tiene fichaje activo o está "En producción", ir a perfil.jsp
             if (activo != null || (u != null && "En producción".equalsIgnoreCase(u.getDescripcion()))) {
                 if (activo != null) {
-                    session.setAttribute("horaEntrada", java.time.LocalDateTime.of(activo.fecha, activo.entrada));
+                    session.setAttribute("horaEntrada", java.time.LocalDateTime.of(activo.getFecha(), activo.getEntrada()));
                     session.setAttribute("horaSalida", null);
                     session.setAttribute("fichajeEntrada", true);
                     session.setAttribute("fichajeSalida", false);

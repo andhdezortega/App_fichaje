@@ -69,32 +69,32 @@
         <h2><%= (fichajeSeleccionado != null) ? "Editar Fichaje" : "Nuevo Fichaje" %></h2>
         <form method="post" action="<%= (fichajeSeleccionado != null) ? "ActualizarFichaje" : "InsertarFichaje" %>">
             <% if (fichajeSeleccionado != null) { %>
-                <input type="hidden" name="id" value="<%= fichajeSeleccionado.id %>">
-                <p><strong>ID:</strong> <%= fichajeSeleccionado.id %></p> <!-- Puedes mostrarlo para info -->
+                <input type="hidden" name="id" value="<%= fichajeSeleccionado.getId() %>">
+                <p><strong>ID:</strong> <%= fichajeSeleccionado.getId() %></p> <!-- Puedes mostrarlo para info -->
             <% } %>
 
             <label>Nombre:</label>
-            <input type="text" name="nombre" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.nombre : "" %>">
+            <input type="text" name="nombre" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getNombre() : "" %>">
 
             <label>Apellido:</label>
-            <input type="text" name="apellido" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.apellido : "" %>">
+            <input type="text" name="apellido" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getApellido() : "" %>">
 
             <label>Rol:</label>
-            <input type="text" name="rol" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.rol : "" %>">
+            <input type="text" name="rol" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getRol() : "" %>">
 
             <label>Fecha:</label>
-            <input type="date" name="fecha" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.fecha.toString() : "" %>">
+            <input type="date" name="fecha" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getFecha().toString() : "" %>">
 
             <%
                 String entradaVal = "";
                 String salidaVal = "";
                 if (fichajeSeleccionado != null) {
-                    if (fichajeSeleccionado.entrada != null) {
-                        String s = fichajeSeleccionado.entrada.toString();
+                    if (fichajeSeleccionado.getEntrada() != null) {
+                        String s = fichajeSeleccionado.getEntrada().toString();
                         entradaVal = s.length() >= 5 ? s.substring(0,5) : s;
                     }
-                    if (fichajeSeleccionado.salida != null) {
-                        String s2 = fichajeSeleccionado.salida.toString();
+                    if (fichajeSeleccionado.getSalida() != null) {
+                        String s2 = fichajeSeleccionado.getSalida().toString();
                         salidaVal = s2.length() >= 5 ? s2.substring(0,5) : s2;
                     }
                 }
@@ -107,16 +107,16 @@
             <input type="time" name="salida" required value="<%= salidaVal %>">
 
             <label>Descanso (min):</label>
-            <input type="number" name="descanso" value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.descanso : "" %>">
+            <input type="number" name="descanso" value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getDescanso() : "" %>">
 
             <label>Comida (min):</label>
-            <input type="number" name="comida" value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.comida : "" %>">
+            <input type="number" name="comida" value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getComida() : "" %>">
 
             <label>Horas semanales:</label>
-            <input type="number" name="horasSemanales" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.horasSemanales : "" %>">
+            <input type="number" name="horasSemanales" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getHorasSemanales() : "" %>">
 
             <label>En producción:</label>
-            <input type="checkbox" name="estado" <%= (fichajeSeleccionado != null && fichajeSeleccionado.estado) ? "checked" : "" %>>
+            <input type="checkbox" name="estado" <%= (fichajeSeleccionado != null && fichajeSeleccionado.isEstado()) ? "checked" : "" %>>
 
             <input type="submit" value="<%= (fichajeSeleccionado != null) ? "Actualizar" : "Guardar" %>">
         </form>
@@ -150,21 +150,21 @@
             <tbody>
             <% for (FichajeModel f : fichajes) { %>
                 <tr>
-                    <td><%= f.id %></td>
-                    <td><%= f.nombre %></td>
-                    <td><%= f.apellido %></td>
-                    <td><%= f.rol %></td>
-                    <td><%= f.fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) %></td>
-                    <td><%= f.entrada %></td>
-                    <td><%= f.salida %></td>
-                    <td><%= f.descanso %></td>
-                    <td><%= f.comida %></td>
+                    <td><%= f.getId() %></td>
+                    <td><%= f.getNombre() %></td>
+                    <td><%= f.getApellido() %></td>
+                    <td><%= f.getRol() %></td>
+                    <td><%= f.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) %></td>
+                    <td><%= f.getEntrada() %></td>
+                    <td><%= f.getSalida() %></td>
+                    <td><%= f.getDescanso() %></td>
+                    <td><%= f.getComida() %></td>
                     <td>
                         <%
                             String hhmm = "00:00";
-                            if (f.entrada != null && f.salida != null) {
-                                long minutos = java.time.Duration.between(f.entrada, f.salida).toMinutes();
-                                int descuentos = Math.max(0, f.descanso) + Math.max(0, f.comida);
+                            if (f.getEntrada() != null && f.getSalida() != null) {
+                                long minutos = java.time.Duration.between(f.getEntrada(), f.getSalida()).toMinutes();
+                                int descuentos = Math.max(0, f.getDescanso()) + Math.max(0, f.getComida());
                                 long minutosEfectivos = Math.max(0, minutos - descuentos);
                                 long horas = minutosEfectivos / 60;
                                 long mins = minutosEfectivos % 60;
@@ -173,19 +173,19 @@
                         %>
                         <%= hhmm %>
                     </td>
-                    <td><%= f.horasSemanales %></td>
-                    <td class="<%= (f.entrada != null && f.salida == null) ? "estado-si" : "estado-no" %>">
-                        <%= (f.entrada != null && f.salida == null) ? "Sí" : "No" %>
+                    <td><%= f.getHorasSemanales() %></td>
+                    <td class="<%= (f.getEntrada() != null && f.getSalida() == null) ? "estado-si" : "estado-no" %>">
+                        <%= (f.getEntrada() != null && f.getSalida() == null) ? "Sí" : "No" %>
                     </td>
                     <td>
                         <div class="actions-inline">
                             <form method="get" action="admin.jsp">
-                                <input type="hidden" name="id" value="<%= f.id %>">
+                                <input type="hidden" name="id" value="<%= f.getId() %>">
                                 <input type="submit" value="Editar" class="btn-accion small-action">
                             </form>
 
                             <form method="post" action="EliminarFichaje">
-                                <input type="hidden" name="id" value="<%= f.id %>">
+                                <input type="hidden" name="id" value="<%= f.getId() %>">
                                 <input type="submit" value="Eliminar" class="btn-accion small-action" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
                             </form>
                         </div>

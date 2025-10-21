@@ -61,16 +61,16 @@
                 <tbody>
                 <% for (com.mycompany.controlfichaje.FichajeModel f : fichajes) { %>
                     <tr>
-                        <td><%= f.id %></td>
-                        <td><%= f.nombre %></td>
-                        <td><%= f.apellido %></td>
-                        <td><%= f.rol %></td>
-                        <td><%= f.fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) %></td>
-                        <td><%= f.entrada %></td>
-                        <td><%= f.salida %></td>
-                        <td><%= f.descanso %></td>
-                        <td><%= f.comida %></td>
-                        <td><%= f.horasSemanales %></td>
+                        <td><%= f.getId() %></td>
+                        <td><%= f.getNombre() %></td>
+                        <td><%= f.getApellido() %></td>
+                        <td><%= f.getRol() %></td>
+                        <td><%= f.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) %></td>
+                        <td><%= f.getEntrada() %></td>
+                        <td><%= f.getSalida() %></td>
+                        <td><%= f.getDescanso() %></td>
+                        <td><%= f.getComida() %></td>
+                        <td><%= f.getHorasSemanales() %></td>
                     </tr>
                 <% } %>
                 </tbody>
