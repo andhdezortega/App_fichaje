@@ -151,4 +151,38 @@ public class FichajeModel {
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
+
+    // Método para calcular horas extra en minutos
+    public Integer calcularHorasExtraMinutos() {
+        if (entrada == null || salida == null) {
+            return 0;
+        }
+        
+        long minutosTrabajados = java.time.Duration.between(entrada, salida).toMinutes();
+        int descuentos = Math.max(0, descanso) + Math.max(0, comida);
+        long minutosEfectivos = Math.max(0, minutosTrabajados - descuentos);
+        
+        // Calcular horas semanales en minutos (asumiendo 5 días laborables)
+        long minutosSemanales = horasSemanales * 60;
+        long minutosDiarios = minutosSemanales / 5;
+        
+        long minutosExtra = minutosEfectivos - minutosDiarios;
+        return (int) Math.max(0, minutosExtra);
+    }
+
+    // Método para obtener horas extra en minutos (alias para compatibilidad)
+    public Integer getHorasExtraMinutos() {
+        return calcularHorasExtraMinutos();
+    }
+
+    // Campo para estado de horas extra (pendiente/aprobado)
+    private String estadoHorasExtra;
+
+    public String getEstadoHorasExtra() {
+        return estadoHorasExtra;
+    }
+
+    public void setEstadoHorasExtra(String estadoHorasExtra) {
+        this.estadoHorasExtra = estadoHorasExtra;
+    }
 }

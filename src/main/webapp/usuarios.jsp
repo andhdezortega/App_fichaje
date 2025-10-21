@@ -32,7 +32,17 @@
     <div class="container">
         <!-- BARRA LATERAL -->
         <div class="sidebar">
+            
             <h2><%= editMode ? "Editar Usuario" : "Crear Nuevo Usuario" %></h2>
+            <% if (mensaje != null) { %>
+                <p class="mensaje-exito"><%= mensaje %></p>
+            <% } %>
+            <% if (error != null) { %>
+                <p class="mensaje-error"><%= error %></p>
+            <% } %>
+            <% if (editMode) { %>
+                <p class="mensaje-info">Editando al usuario <strong><%= usuarioObj.getUsuario() %></strong></p>
+            <% } %>
             <form method="post" action="<%= editMode ? "ActualizarUsuarioServlet" : "CrearUsuarioServlet" %>">
                 <% if (editMode) { %>
                     <input type="hidden" name="id" value="<%= usuarioObj.getId() %>">
@@ -63,15 +73,7 @@
                 <% } %>
             </form>
             
-            <% if (mensaje != null) { %>
-                <p class="mensaje-exito"><%= mensaje %></p>
-            <% } %>
-            <% if (error != null) { %>
-                <p class="mensaje-error"><%= error %></p>
-            <% } %>
-            <% if (editMode) { %>
-                <p class="mensaje-info">Editando al usuario <strong><%= usuarioObj.getUsuario() %></strong></p>
-            <% } %>
+            
 
             <div style="margin-top: 20px;">
                 <a href="admin.jsp" class="boton-link">Volver al Panel de Fichajes</a>

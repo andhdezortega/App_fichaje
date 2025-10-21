@@ -1,12 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, java.time.format.DateTimeFormatter" %>
+<%@ page import="com.mycompany.controlfichaje.dao.FichajeDAO" %>
+<%@ page import="com.mycompany.controlfichaje.FichajeModel" %>
 <%
-    // Recuperar fichajes de sesión (misma estructura que admin.jsp)
-    List<com.mycompany.controlfichaje.FichajeModel> fichajes = (List<com.mycompany.controlfichaje.FichajeModel>) session.getAttribute("fichajes");
-    if (fichajes == null) {
-        fichajes = new ArrayList<>();
-    }
+    FichajeDAO fichajeDAO = new FichajeDAO();
+    List<FichajeModel> fichajes = fichajeDAO.obtenerTodos();
 %>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
