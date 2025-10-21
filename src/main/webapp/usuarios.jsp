@@ -35,7 +35,7 @@
             <h2><%= editMode ? "Editar Usuario" : "Crear Nuevo Usuario" %></h2>
             <form method="post" action="<%= editMode ? "ActualizarUsuarioServlet" : "CrearUsuarioServlet" %>">
                 <% if (editMode) { %>
-                    <input type="hidden" name="originalUsuario" value="<%= usuarioObj.getUsuario() %>">
+                    <input type="hidden" name="id" value="<%= usuarioObj.getId() %>">
                 <% } %>
                 <label>Usuario:</label>
                 <input type="text" name="usuario" value="<%= editMode ? usuarioObj.getUsuario() : "" %>" required>
@@ -107,12 +107,12 @@
                             <td>
                                 <div class="actions-inline">
                                     <form method="get" action="EditarUsuarioServlet" style="display:inline;">
-                                        <input type="hidden" name="usuario" value="<%= user.get("usuario") %>">
+                                        <input type="hidden" name="id" value="<%= user.get("id") %>">
                                         <input type="submit" value="Editar" class="btn-accion">
                                     </form>
                                     <% if (!"admin".equals(user.get("usuario"))) { %>
                                         <form method="post" action="EliminarUsuarioServlet" style="display:inline;">
-                                            <input type="hidden" name="usuario" value="<%= user.get("usuario") %>">
+                                            <input type="hidden" name="id" value="<%= user.get("id") %>">
                                             <input type="submit" value="Eliminar" class="btn-accion btn-rojo" 
                                                    onclick="return confirm('¿Seguro que quieres eliminar este usuario?');">
                                         </form>

@@ -20,16 +20,15 @@ public class EliminarUsuarioServlet extends HttpServlet {
             return;
         }
 
-        String usuario = request.getParameter("usuario");
-        
-        // No permitir eliminar al admin
-        if ("admin".equals(usuario)) {
-            response.sendRedirect("usuarios.jsp?error=No se puede eliminar al administrador");
+
+        String idParam = request.getParameter("id");
+        if (idParam == null || idParam.isEmpty()) {
+            response.sendRedirect("usuarios.jsp?error=ID no especificado");
             return;
         }
-
+        int id = Integer.parseInt(idParam);
         UsuarioDAO dao = new UsuarioDAO();
-        boolean eliminado = dao.eliminarUsuario(usuario);
+        boolean eliminado = dao.eliminarUsuarioPorId(id);
 
         if (eliminado) {
             response.sendRedirect("usuarios.jsp?mensaje=Usuario eliminado correctamente");

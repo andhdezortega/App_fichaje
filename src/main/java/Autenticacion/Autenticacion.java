@@ -9,74 +9,46 @@ import com.mycompany.controlfichaje.dao.UsuarioDAO;
 public class Autenticacion {
     private static final UsuarioDAO usuarioDAO = new UsuarioDAO();
     
-    //Método para verificar las credenciales
-    public static boolean verificarCredenciales(String usuario, String password) {
-        System.out.print("Verificando credenciales para: " + usuario);
-        
-        if (usuario == null || usuario.trim().isEmpty() ||
-            password == null || password.trim().isEmpty())
-        {    
-            System.out.println("Campos vacíos");
+    //Método para verificar las credenciales por correo
+    public static boolean verificarCredenciales(String correo, String password) {
+        if (correo == null || correo.trim().isEmpty() ||
+            password == null || password.trim().isEmpty()) {
             return false;
         }
-        
-        boolean credencialesCorrectas = usuarioDAO.verificarCredenciales(usuario.trim(), password);
-        
-        if (credencialesCorrectas) {
-            System.out.println("Credenciales correctas para: " + usuario);  
-        } else {
-            System.out.println("Credenciales incorrectas para: " + usuario);
-        }
-        
-        return credencialesCorrectas;   
+        return usuarioDAO.verificarCredencialesPorCorreo(correo.trim(), password);
     }
     
-    //Método de Login
-    public static boolean hacerLogin(HttpServletRequest request, String usuario, String password) {
-        System.out.println("Iniciando proceso de login para: " + usuario);
-        
-        if (!verificarCredenciales(usuario, password)) {
+    //Método de Login por correo
+    public static boolean hacerLogin(HttpServletRequest request, String correo, String password) {
+        if (!verificarCredenciales(correo, password)) {
             return false;
         }
-        
-        Map<String, String> userInfo = usuarioDAO.obtenerInfoUsuario(usuario);
+        Map<String, String> userInfo = usuarioDAO.obtenerInfoUsuarioPorCorreo(correo);
         if (userInfo.isEmpty()) {
             return false;
         }
-        
         HttpSession session = request.getSession(true);
-        System.out.println("ID de Sesión creada: " + session.getId());
-        
+        // Obtener el nombre de usuario real para la sesión
+        com.mycompany.controlfichaje.dao.Usuario u = com.mycompany.controlfichaje.dao.UsuarioDAO.obtenerUsuarioPorCorreo(correo);
+        String usuario = (u != null && u.getUsuario() != null) ? u.getUsuario() : correo;
         session.setAttribute("usuario", usuario);
+        session.setAttribute("correo", correo);
         session.setAttribute("rol", userInfo.get("rol"));
         session.setAttribute("descripcion", userInfo.get("descripcion"));
         session.setAttribute("timestampLogin", System.currentTimeMillis());
         session.setAttribute("ipAddress", request.getRemoteAddr());
         session.setMaxInactiveInterval(30 * 60);
-        
-        System.out.println("Login exitoso - Usuario: " + usuario + ", Rol: " + userInfo.get("rol") + ", Sesión: " + session.getId());
         return true;
     }
     
     //Método para verificar si hay sesión activa
     public static boolean estaAutenticado(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        
         if (session == null) {
-            System.out.println("No hay sesión activa");
             return false;
         }
-        
         String usuario = (String) session.getAttribute("usuario");
-        boolean autenticado = (usuario != null);
-        
-        if (autenticado) {
-            System.out.println("Sesión activa encontrada - Usuario: " + usuario);      
-        } else {
-            System.out.println("Sesión existe pero sin usuario");
-        }
-        
-        return autenticado;
+        return usuario != null;
     }
     
     //Método para obtener el Usuario Actual de la sesión

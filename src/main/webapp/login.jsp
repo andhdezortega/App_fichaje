@@ -12,9 +12,11 @@
     <div class ="login-container">
     <div class="login-box">
         <h2>Iniciar sesión</h2>
-        <form action="LoginServlet" method="post">
-            <label for="usuario">Usuario</label>
-            <input type="text" name="usuario" required>
+        <form action="<%= request.getContextPath() %>/LoginServlet" method="post">
+
+
+            <label for="correo">Correo electrónico</label>
+            <input type="text" name="correo" required autocomplete="username" style="width:100%;padding:10px;margin-bottom:20px;border:1px solid #cccccc;border-radius:5px;font-size:14px;">
 
             <label for="contrasena">Contraseña</label>
             <input type="password" name="contrasena" required>

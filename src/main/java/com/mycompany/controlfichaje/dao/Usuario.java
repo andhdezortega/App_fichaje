@@ -1,6 +1,7 @@
 package com.mycompany.controlfichaje.dao;
 
 public class Usuario {
+    private int id;
     private String usuario;
     private String apellido;
     private String correo;
@@ -8,7 +9,8 @@ public class Usuario {
     private String rol;
     private String descripcion;
 
-    public Usuario(String usuario, String apellido, String correo, String password, String rol, String descripcion) {
+    public Usuario(int id, String usuario, String apellido, String correo, String password, String rol, String descripcion) {
+        this.id = id;
         this.usuario = usuario;
         this.apellido = apellido;
         this.correo = correo;
@@ -18,6 +20,7 @@ public class Usuario {
     }
 
     // Getters
+    public int getId() { return id; }
     public String getUsuario() { return usuario; }
     public String getApellido() { return apellido; }
     public String getCorreo() { return correo; }
@@ -26,6 +29,7 @@ public class Usuario {
     public String getDescripcion() { return descripcion; }
 
     // Setters
+    public void setId(int id) { this.id = id; }
     public void setUsuario(String usuario) { this.usuario = usuario; }
     public void setApellido(String apellido) { this.apellido = apellido; }
     public void setCorreo(String correo) { this.correo = correo; }

@@ -20,7 +20,7 @@ public class ActualizarUsuarioServlet extends HttpServlet {
             return;
         }
 
-        String originalUsuario = request.getParameter("originalUsuario");
+        String idParam = request.getParameter("id");
         String usuario = request.getParameter("usuario");
         String apellido = request.getParameter("apellido");
         String correo = request.getParameter("correo");
@@ -32,9 +32,13 @@ public class ActualizarUsuarioServlet extends HttpServlet {
             rol = "user";
         }
 
+        if (idParam == null || idParam.isEmpty()) {
+            response.sendRedirect("usuarios.jsp?error=ID de usuario no especificado");
+            return;
+        }
+        int id = Integer.parseInt(idParam);
         UsuarioDAO dao = new UsuarioDAO();
-        boolean ok = dao.actualizarUsuario(originalUsuario != null && !originalUsuario.isEmpty() ? originalUsuario : usuario,
-                                           usuario, apellido, correo, password, rol, descripcion);
+        boolean ok = dao.actualizarUsuarioPorId(id, usuario, apellido, correo, password, rol, descripcion);
         if (ok) {
             response.sendRedirect("usuarios.jsp?mensaje=Usuario actualizado correctamente");
         } else {

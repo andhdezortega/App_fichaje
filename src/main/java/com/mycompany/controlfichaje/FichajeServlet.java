@@ -26,7 +26,8 @@ public class FichajeServlet extends HttpServlet {
             return;
         }
         
-        String nombreUsuario = Autenticacion.obtenerUsuarioActual(request);
+    HttpSession session = request.getSession();
+    String correoUsuario = (String) session.getAttribute("correo");
         String accion = request.getParameter("accion");
 
         if (accion == null) {
@@ -34,14 +35,11 @@ public class FichajeServlet extends HttpServlet {
             return;
         }
 
-        HttpSession session = request.getSession();
         LocalDateTime ahora = LocalDateTime.now();
-        
-        // Obtener usuario actual y sus datos
-        Usuario usuario = UsuarioDAO.obtenerUsuario(nombreUsuario);
-        
+        // Obtener usuario actual y sus datos por correo
+        Usuario usuario = UsuarioDAO.obtenerUsuarioPorCorreo(correoUsuario);
         // Forzar coherencia: usar siempre datos del usuario autenticado
-        String nombre = (usuario != null && usuario.getUsuario() != null) ? usuario.getUsuario() : nombreUsuario;
+        String nombre = (usuario != null && usuario.getUsuario() != null) ? usuario.getUsuario() : correoUsuario;
         String apellido = (usuario != null && usuario.getApellido() != null) ? usuario.getApellido() : "";
         if (usuario == null) {
             response.sendRedirect("login.jsp");

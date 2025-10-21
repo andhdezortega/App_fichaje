@@ -14,11 +14,11 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String usuario = request.getParameter("usuario");
+        String correo = request.getParameter("correo");
         String contrasena = request.getParameter("contrasena");
 
-        // Usar la clase Autenticacion para validar y crear sesión
-        boolean loginExitoso = Autenticacion.hacerLogin(request, usuario, contrasena);
+        // Usar la clase Autenticacion para validar y crear sesión por correo
+        boolean loginExitoso = Autenticacion.hacerLogin(request, correo, contrasena);
         if (loginExitoso) {
             // Si el usuario tiene un fichaje activo, ir directamente a perfil.jsp
             HttpSession session = request.getSession();
@@ -27,7 +27,7 @@ public class LoginServlet extends HttpServlet {
             // Preferir datos reales del usuario desde BD; si no, fallback por espacios
             String nombre;
             String apellido;
-            com.mycompany.controlfichaje.dao.Usuario u = com.mycompany.controlfichaje.dao.UsuarioDAO.obtenerUsuario(usuarioSesion);
+            com.mycompany.controlfichaje.dao.Usuario u = com.mycompany.controlfichaje.dao.UsuarioDAO.obtenerUsuarioPorCorreo(correo);
             if (u != null) {
                 nombre = (u.getUsuario() != null) ? u.getUsuario() : usuarioSesion;
                 apellido = (u.getApellido() != null) ? u.getApellido() : "";
@@ -57,10 +57,10 @@ public class LoginServlet extends HttpServlet {
             } else {
                 response.sendRedirect("bienvenido.jsp");
             }
-        } else if ("externo".equals(usuario) && "externo123".equals(contrasena)) {
+        } else if ("externo".equals(correo) && "externo123".equals(contrasena)) {
             // Login para externo
             HttpSession session = request.getSession();
-            session.setAttribute("usuario", usuario);
+            session.setAttribute("usuario", correo);
             session.setAttribute("rol", "externo");
             response.sendRedirect("externo.jsp");
         } else {

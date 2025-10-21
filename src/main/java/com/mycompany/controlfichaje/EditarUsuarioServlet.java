@@ -21,18 +21,17 @@ public class EditarUsuarioServlet extends HttpServlet {
             return;
         }
 
-        String usuario = request.getParameter("usuario");
-        if (usuario == null || usuario.isEmpty()) {
+        String idParam = request.getParameter("id");
+        if (idParam == null || idParam.isEmpty()) {
             response.sendRedirect("usuarios.jsp?error=Usuario no especificado");
             return;
         }
-
-        Usuario existente = UsuarioDAO.obtenerUsuario(usuario);
+        int id = Integer.parseInt(idParam);
+        Usuario existente = UsuarioDAO.obtenerUsuarioPorId(id);
         if (existente == null) {
             response.sendRedirect("usuarios.jsp?error=Usuario no encontrado");
             return;
         }
-
         request.setAttribute("usuarioObj", existente);
         request.getRequestDispatcher("usuarios.jsp").forward(request, response);
     }
