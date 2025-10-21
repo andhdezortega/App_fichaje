@@ -4,6 +4,9 @@
 <%@ page import="com.mycompany.controlfichaje.*" %>
 <%@ page import="com.mycompany.controlfichaje.dao.FichajeDAO" %>
 
+<%@ page import="com.mycompany.controlfichaje.FichajeModel" %>
+
+
 <%
     String usuario = (String) session.getAttribute("usuario");
     String rol = (String) session.getAttribute("rol");
@@ -12,8 +15,7 @@
         response.sendRedirect("login.jsp");
         return;
     }
-   
-    // Obtener fichajes desde la base de datos
+       // Obtener fichajes y, si hay selección, total de horas extra pendientes del usuario
     FichajeDAO fichajeDAO = new FichajeDAO();
     List<FichajeModel> fichajes = fichajeDAO.obtenerTodos();
 
@@ -29,16 +31,28 @@
     }
 %>
 
-<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Panel Administrador</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+    <meta charset="UTF-8">
+    <title>Panel Administrador</title>
+    <!-- Enlace al CSS de DataTables -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+    
+    <!-- Enlace a jQuery (requerido por DataTables) -->
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Enlace a JS de DataTables -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+
+    <!--Mover ancho columnas-->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+
     <style>
         .estado-si {
             background-color: #d4edda; 
@@ -53,6 +67,8 @@
             text-align: center;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sorttable/2.1.2/sorttable.min.js"></script>
+
 </head>
 <body>
 
@@ -67,7 +83,8 @@
     <!---------------------- BARRA LATERAL----------------------- -->
     <div class="sidebar">
         <h2><%= (fichajeSeleccionado != null) ? "Editar Fichaje" : "Nuevo Fichaje" %></h2>
-        <form method="post" action="<%= (fichajeSeleccionado != null) ? "ActualizarFichaje" : "InsertarFichaje" %>">
+        
+        <form id="formFichaje" method="post" action="<%= (fichajeSeleccionado != null) ? "ActualizarFichaje" : "InsertarFichaje" %>">
             <% if (fichajeSeleccionado != null) { %>
                 <input type="hidden" name="id" value="<%= fichajeSeleccionado.getId() %>">
                 <p><strong>ID:</strong> <%= fichajeSeleccionado.getId() %></p> <!-- Puedes mostrarlo para info -->
@@ -115,9 +132,28 @@
             <label>Horas semanales:</label>
             <input type="number" name="horasSemanales" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getHorasSemanales() : "" %>">
 
-            <label>En producción:</label>
-            <input type="checkbox" name="estado" <%= (fichajeSeleccionado != null && fichajeSeleccionado.isEstado()) ? "checked" : "" %>>
-
+            <% if (fichajeSeleccionado != null) { %>
+                <div class="panel-overtime" style="margin-bottom:16px; padding:12px; background:#1f2a44; border-radius:6px;">
+                    <p style="margin:0 0 8px 0;">Horas extra (min): <strong><%= fichajeSeleccionado.calcularHorasExtraMinutos() %></strong></p>
+                    <%
+                        int totalPendiente = 0;
+                        for (FichajeModel fx : fichajes) {
+                            if (fx.getNombre() != null && fichajeSeleccionado.getNombre() != null && fx.getNombre().equals(fichajeSeleccionado.getNombre())) {
+                                Integer hem = fx.getHorasExtraMinutos();
+                                totalPendiente += (hem != null) ? hem : 0;
+                            }
+                        }
+                    %>
+                    <p style="margin:0 0 8px 0;">Pendiente total del usuario: <strong><%= totalPendiente %></strong></p>
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                        <label for="aprobarHorasExtra" style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="checkbox" id="aprobarHorasExtra" name="aprobarHorasExtra" form="formFichaje" <%= ("aprobado".equalsIgnoreCase(String.valueOf(fichajeSeleccionado.getEstadoHorasExtra()))) ? "checked" : "" %>>
+                            Aprobar horas extra
+                        </label>
+                    </div>
+                    <p style="margin:0;">Estado: <strong><%= fichajeSeleccionado.getEstadoHorasExtra() != null ? fichajeSeleccionado.getEstadoHorasExtra() : "-" %></strong></p>
+                </div>
+            <% } %>
             <input type="submit" value="<%= (fichajeSeleccionado != null) ? "Actualizar" : "Guardar" %>">
         </form>
     </div>
@@ -129,7 +165,7 @@
         <div style="margin-bottom: 20px;">
             <a href="usuarios.jsp" class="boton-link">Gestionar Usuarios</a>
         </div>
-       <table id="tablaFichajes" class="admin-table">
+        <table id="tablaFichajes" class="admin-table">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -142,57 +178,72 @@
                     <th>Descanso</th>
                     <th>Comida</th>
                     <th>Horas trabajadas</th>
+                    <th>Extra (min)</th>
                     <th>Horas/semana</th>
                     <th>En producción</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-            <% for (FichajeModel f : fichajes) { %>
-                <tr>
-                    <td><%= f.getId() %></td>
-                    <td><%= f.getNombre() %></td>
-                    <td><%= f.getApellido() %></td>
-                    <td><%= f.getRol() %></td>
-                    <td><%= f.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) %></td>
-                    <td><%= f.getEntrada() %></td>
-                    <td><%= f.getSalida() %></td>
-                    <td><%= f.getDescanso() %></td>
-                    <td><%= f.getComida() %></td>
-                    <td>
-                        <%
-                            String hhmm = "00:00";
-                            if (f.getEntrada() != null && f.getSalida() != null) {
-                                long minutos = java.time.Duration.between(f.getEntrada(), f.getSalida()).toMinutes();
-                                int descuentos = Math.max(0, f.getDescanso()) + Math.max(0, f.getComida());
-                                long minutosEfectivos = Math.max(0, minutos - descuentos);
-                                long horas = minutosEfectivos / 60;
-                                long mins = minutosEfectivos % 60;
-                                hhmm = String.format("%02d:%02d", horas, mins);
-                            }
-                        %>
-                        <%= hhmm %>
-                    </td>
-                    <td><%= f.getHorasSemanales() %></td>
-                    <td class="<%= (f.getEntrada() != null && f.getSalida() == null) ? "estado-si" : "estado-no" %>">
-                        <%= (f.getEntrada() != null && f.getSalida() == null) ? "Sí" : "No" %>
-                    </td>
-                    <td>
-                        <div class="actions-inline">
-                            <form method="get" action="admin.jsp">
-                                <input type="hidden" name="id" value="<%= f.getId() %>">
-                                <input type="submit" value="Editar" class="btn-accion small-action">
-                            </form>
+<%
+    // Pre-calcular horas trabajadas y horas extra
+    List<String> horasTrabajadasList = new ArrayList<>();
+    List<Integer> horasExtraList = new ArrayList<>();
+    for (FichajeModel f : fichajes) {
+        // Horas trabajadas
+        String hhmm = "00:00";
+        if (f.getEntrada() != null && f.getSalida() != null) {
+            long minutos = java.time.Duration.between(f.getEntrada(), f.getSalida()).toMinutes();
+            int descuentos = Math.max(0, f.getDescanso()) + Math.max(0, f.getComida());
+            long minutosEfectivos = Math.max(0, minutos - descuentos);
+            long horas = minutosEfectivos / 60;
+            long mins = minutosEfectivos % 60;
+            hhmm = String.format("%02d:%02d", horas, mins);
+        }
+        horasTrabajadasList.add(hhmm);
 
-                            <form method="post" action="EliminarFichaje">
-                                <input type="hidden" name="id" value="<%= f.getId() %>">
-                                <input type="submit" value="Eliminar" class="btn-accion small-action" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            <% } %>
-            </tbody>
+        // Horas extra
+        Integer extra = f.getHorasExtraMinutos();
+        horasExtraList.add((extra != null) ? extra : 0);
+    }
+%>
+
+<% for (int i = 0; i < fichajes.size(); i++) {
+       FichajeModel f = fichajes.get(i);
+%>
+<tr>
+    <td><%= f.getId() %></td>
+    <td><%= f.getNombre() %></td>
+    <td><%= f.getApellido() %></td>
+    <td><%= f.getRol() %></td>
+    <td><%= (f.getFecha() != null) ? f.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "" %></td>
+    <td><%= (f.getEntrada() != null) ? f.getEntrada().format(DateTimeFormatter.ofPattern("HH:mm")) : "" %></td>
+    <td><%= (f.getSalida() != null) ? f.getSalida().format(DateTimeFormatter.ofPattern("HH:mm")) : "" %></td>
+    <td><%= f.getDescanso() %></td>
+    <td><%= f.getComida() %></td>
+    <td><%= horasTrabajadasList.get(i) %></td>
+    <td><%= horasExtraList.get(i) %></td>
+    <td><%= f.getHorasSemanales() %></td>
+    <td class="<%= (f.getEntrada() != null && f.getSalida() == null) ? "estado-si" : "estado-no" %>">
+        <%= (f.getEntrada() != null && f.getSalida() == null) ? "Sí" : "No" %>
+    </td>
+    <td>
+        <div class="actions-inline">
+            <form method="get" action="admin.jsp">
+                <input type="hidden" name="id" value="<%= f.getId() %>">
+                <input type="submit" value="Editar" class="btn-accion small-action">
+            </form>
+
+            <form method="post" action="EliminarFichaje">
+                <input type="hidden" name="id" value="<%= f.getId() %>">
+                <input type="submit" value="Eliminar" class="btn-accion small-action" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
+            </form>
+        </div>
+    </td>
+</tr>
+<% } %>
+</tbody>
+
         </table>
     </div>
 </div>
@@ -238,6 +289,7 @@ function alignLogoutButton() {
 window.addEventListener('load', alignLogoutButton);
 window.addEventListener('resize', alignLogoutButton);
 </script>
+
 
 </body>
 </html>

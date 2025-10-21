@@ -13,6 +13,9 @@ import com.mycompany.controlfichaje.dao.FichajeDAO;
 import com.mycompany.controlfichaje.dao.UsuarioDAO;
 import com.mycompany.controlfichaje.dao.Usuario;
 
+
+
+
 @WebServlet(name = "FichajeServlet", urlPatterns = {"/FichajeServlet"})
 public class FichajeServlet extends HttpServlet {
 
@@ -81,13 +84,14 @@ public class FichajeServlet extends HttpServlet {
                     session.setAttribute("fichajeEntrada", true);
                     session.setAttribute("fichajeSalida", false);
                     
-                    // Si se pasa un parámetro opcional returnTo, redirige a esa página
-                    String returnTo = request.getParameter("returnTo");
-                    if (returnTo != null && !returnTo.trim().isEmpty()) {
-                        response.sendRedirect(request.getContextPath() + "/" + returnTo);
-                        return;
-                    }
-                    response.sendRedirect("perfil.jsp");
+                    // Guardar variables de estado de producción
+                    session.setAttribute("inicioProduccion", ahora);
+                    session.setAttribute("estadoUsuario", "produccion");
+
+                    // Redirigir SIEMPRE a perfil.jsp después de fichar entrada
+                    response.sendRedirect(request.getContextPath() + "/perfil.jsp");
+                    return;
+
                 } else {
                     request.setAttribute("error", "Error al registrar la entrada");
                     request.getRequestDispatcher("perfil.jsp").forward(request, response);
@@ -114,21 +118,19 @@ public class FichajeServlet extends HttpServlet {
                         
                         // Si se pasa un parámetro opcional returnTo, redirige a esa página
                         String returnToSalida = request.getParameter("returnTo");
-                        if (returnToSalida != null && !returnToSalida.trim().isEmpty()) {
-                            response.sendRedirect(request.getContextPath() + "/" + returnToSalida);
-                            return;
-                        }
-                        response.sendRedirect("bienvenido.jsp");
-                    } else {
-                        request.setAttribute("error", "Error al registrar la salida");
-                        request.getRequestDispatcher("perfil.jsp").forward(request, response);
+                        // Limpiar sesión de producción
+                        session.removeAttribute("inicioProduccion");
+                        session.removeAttribute("estadoUsuario");
+
+                        // Redirigir SIEMPRE a bienvenido.jsp tras fichar salida
+                        response.sendRedirect(request.getContextPath() + "/bienvenido.jsp");
+                        return;
                     }
-                } else {
                     request.setAttribute("error", "No se encontró un fichaje activo");
                     request.getRequestDispatcher("perfil.jsp").forward(request, response);
                 }
                 return;
-
+            
             default:
                 // si no reconoce la acción
                 response.sendRedirect("perfil.jsp");

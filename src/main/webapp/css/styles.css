@@ -274,14 +274,17 @@ button.cerrar-btn:hover {
 
 /*------------------ Tabla del panel administrador----------------- */
 .admin-table {
-    width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    position: relative;
+    width: auto;
+    margin-top: 10px;
+    padding: auto;
     font-size: 14px;
     background-color: var(--blanco);
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    table-layout: fixed;
 }
 
 .admin-table thead {
@@ -290,9 +293,13 @@ button.cerrar-btn:hover {
 }
 
 .admin-table th, .admin-table td {
-    padding: 12px 15px;
+    padding: 8px 6px;
+    width: 50px;
     text-align: center;
-    border-bottom: 1px solid var(--gris-desactivado);
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .admin-table tbody tr:hover {
@@ -301,22 +308,7 @@ button.cerrar-btn:hover {
     cursor: pointer;
 }
 
-/* Delimitación clara entre usuarios en la tabla de usuarios.jsp */
-.admin-table tbody tr {
-    border-bottom: 3px solid #b0b0b0 !important;
-}
 
-.admin-table th, .admin-table td {
-    border-bottom: none !important;
-}
-
-/* Sombreado alterno para filas */
-.admin-table tbody tr:nth-child(even) {
-    background-color: #f5f7fa;
-}
-.admin-table tbody tr:nth-child(odd) {
-    background-color: #fff;
-}
 
 .admin-table td.vacio {
     text-align: center;
@@ -328,6 +320,23 @@ button.cerrar-btn:hover {
     height: 100vh;
     position: relative; /* para que los controles absolutos se posicionen respecto al contenedor */
 }
+
+.grip {
+    background-color: #ccc;         /* Visibilidad del grip */
+    width: 5px;
+    cursor: col-resize;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    z-index: 10;
+    box-shadow: 1px 0 0 #888;
+}
+
+.dragging {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
 
 /* Contenedor para controles en la esquina superior derecha (logout, etc.) */
 .top-right-controls {
@@ -442,62 +451,19 @@ p.small-note,
 .btn-accion {
     background-color: var(--blanco);
     color: var(--azulado);
-    padding: 6px 10px;
+    padding: 10px 16px;
     border: none;
     border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    width: auto;
-    margin-right: 6px;
-    font-size: 14px;
-    min-width: 0;
-    max-width: 80px;
+    width: 100%; /* Si lo quieres igual que en el style inline */
 }
 
-/* --- Ajuste tabla usuarios: sin ancho forzado en acciones, línea divisoria visible y botones compactos --- */
-.admin-table th:last-child,
-.admin-table td:last-child {
-    width: auto !important;
-    max-width: none !important;
-    min-width: 0 !important;
-    white-space: nowrap;
-    text-align: center;
-    padding-left: 4px;
-    padding-right: 4px;
-}
-
-.admin-table th, .admin-table td {
-    border-bottom: 2px solid #cccccc !important;
-    padding: 8px 8px !important;
-}
-
-.actions-inline {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    justify-content: center;
-}
-
-.btn-accion, .btn-accion {
-    padding: 4px 8px !important;
-    font-size: 13px !important;
-    margin-right: 2px !important;
-    min-width: 0 !important;
-    max-width: 60px !important;
-    box-shadow: none !important;
-}
-
-/* Limitar el ancho de la columna de acciones para evitar exceso de espacio */
-.admin-table th:last-child,
-.admin-table td:last-child {
-    width: 120px;
-    max-width: 140px;
-    min-width: 80px;
-    white-space: nowrap;
-    text-align: center;
-    padding-left: 0;
-    padding-right: 0;
+.btn-accion:hover {
+    background-color: var(--aguamarina);
+    color: var(--blanco);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
 /* Hover para el botón Fichar Salida en perfil.jsp (solo si no está disabled) */
@@ -528,9 +494,10 @@ p.small-note,
 /* Parte central: tabla */
 .main {
     flex: 1;
-    padding: 30px;
+    padding: 20px;
     background-color: var(--blanco);
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 /* Hacer .main contenedor relativo para que controles absolutos se posicionen respecto a él */
 .main {
@@ -619,21 +586,12 @@ th {
     background-color: var(--azulado);
     color: var(--blanco);
 }
-.admin-table th,
-.admin-table td {
-    width: 10%; 
-    text-align: center;
-}
+
 
 .admin-table th:last-child,
 .admin-table td:last-child {
-    width: auto !important;
-    max-width: none !important;
-    min-width: 0 !important;
+    width: 40px;
     white-space: nowrap;
-    text-align: center;
-    padding-left: 4px;
-    padding-right: 4px;
 }
 .estado-si {
     background-color: var(--aguamarina);
@@ -668,8 +626,8 @@ th {
 .boton-link {
     display: inline-block;
     padding: 10px 15px;
-    background-color: var(--rojo);
-    color: var(--perlado);
+    background-color: var(--azulado);
+    color: var(--blanco);
     text-decoration: none;
     border-radius: 5px;
     margin-top: 10px;
@@ -677,43 +635,13 @@ th {
 }
 
 .boton-link:hover {
-    background-color: var(--aguamarina);
+    background-color: var(--aguamarina)!important;
     text-decoration: none;
-    color: var(--perlado);
+    color: var(--blanco) !important; 
+    text-decoration: none;
 }
 
 .divisor {
     border-top: 2px solid var(--mostaza);
     margin: 15px 0;
 }
-
-/* Ajuste específico para la columna de acciones en usuarios.jsp */
-.admin-table th:last-child,
-.admin-table td:last-child {
-    padding-left: 2px !important;
-    padding-right: 2px !important;
-    width: 1%;
-    min-width: 60px;
-    max-width: 80px;
-    text-align: center;
-}
-
-.actions-inline {
-    gap: 2px !important;
-}
-
-.btn-accion, .btn-accion {
-    padding: 2px 6px !important;
-    font-size: 12px !important;
-    margin-right: 0 !important;
-    min-width: 0 !important;
-    max-width: 60px !important;
-    box-shadow: none !important;
-}
-
-
-
-
-
-
-

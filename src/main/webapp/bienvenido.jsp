@@ -10,7 +10,6 @@
     Boolean fichajeEntrada = (Boolean) session.getAttribute("fichajeEntrada");
     if (fichajeEntrada == null) fichajeEntrada = false;
 
-    // Si hay fichaje activo en sesión, redirigir a perfil.jsp directamente
     if (fichajeEntrada) {
         response.sendRedirect("perfil.jsp");
         return;
