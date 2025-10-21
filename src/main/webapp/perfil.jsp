@@ -7,13 +7,14 @@
 
 <%
     String usuario = (String) session.getAttribute("usuario");
+    String correo = (String) session.getAttribute("correo");
     if (usuario == null) {
         response.sendRedirect("login.jsp");
         return;
     }
 
     // Obtener datos completos del usuario desde la base de datos
-    Usuario usuarioObj = UsuarioDAO.obtenerUsuario(usuario);
+    Usuario usuarioObj = UsuarioDAO.obtenerUsuarioPorCorreo(correo);
     String apellido = "";
     if (usuarioObj != null && usuarioObj.getApellido() != null) {
         apellido = usuarioObj.getApellido();
@@ -193,10 +194,15 @@ actualizarContadorYBarra();
                 </form>
 
                 <!-- Formulario para fichar salida -->
-                <form action="FichajeServlet" method="post">
+                <form action="FichajeServlet" method="post" class="mb-2">
                     <input type="hidden" name="accion" value="salida">
                         <input type="hidden" name="returnTo" value="bienvenido.jsp">
                         <button type="submit" class="btn btn-danger" <%= (!fichajeSalida) ? "disabled" : "" %>>Fichar Salida</button>
+                </form>
+
+                <!-- Botón de cerrar sesión -->
+                <form action="LogoutServlet" method="post">
+                    <button type="submit" class="btn btn-secondary">Cerrar sesión</button>
                 </form>
             </div>
         </div>

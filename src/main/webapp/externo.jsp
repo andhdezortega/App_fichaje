@@ -81,16 +81,24 @@
     <script>
         $(document).ready(function() {
             $('#tablaExterna').DataTable({ paging: true, searching: true, ordering: true, pageLength: 100 });
-                    
+
+            function escapeCsvField(field) {
+                if (field == null) return '';
+                // Si contiene comillas, punto y coma o salto de línea, envolver en comillas y duplicar comillas internas
+                if (/[";\n]/.test(field)) {
+                    return '"' + field.replace(/"/g, '""') + '"';
+                }
+                return field;
+            }
 
             $('#downloadCsv').on('click', function() {
                 var rows = [];
-                $('#tablaExterna thead th').each(function() { rows.push('"' + $(this).text().replace(/"/g, '""') + '"'); });
-                var csv = rows.join(',') + '\n';
+                $('#tablaExterna thead th').each(function() { rows.push(escapeCsvField($(this).text())); });
+                var csv = rows.join(';') + '\n';
                 $('#tablaExterna tbody tr').each(function() {
                     var cols = [];
-                    $(this).find('td').each(function() { cols.push('"' + $(this).text().replace(/"/g, '""') + '"'); });
-                    csv += cols.join(',') + '\n';
+                    $(this).find('td').each(function() { cols.push(escapeCsvField($(this).text())); });
+                    csv += cols.join(';') + '\n';
                 });
 
                 var BOM = '\uFEFF'; // BOM para forzar lectura UTF-8

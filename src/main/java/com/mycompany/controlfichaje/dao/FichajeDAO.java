@@ -17,6 +17,17 @@ public class FichajeDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
+            // Obtener horas_semanales desde la tabla usuarios
+            int horasSemanales = 40; // Valor por defecto
+            String sqlUsuario = "SELECT horas_semanales FROM usuarios WHERE usuario = ? LIMIT 1";
+            try (PreparedStatement pstmtUsuario = conn.prepareStatement(sqlUsuario)) {
+                pstmtUsuario.setString(1, fichaje.getNombre());
+                ResultSet rsUsuario = pstmtUsuario.executeQuery();
+                if (rsUsuario.next()) {
+                    horasSemanales = rsUsuario.getInt("horas_semanales");
+                }
+            }
+            
             pstmt.setString(1, fichaje.getNombre());
             pstmt.setString(2, fichaje.getApellido());
             pstmt.setString(3, fichaje.getRol());
@@ -25,7 +36,7 @@ public class FichajeDAO {
             pstmt.setString(6, fichaje.getSalida() != null ? fichaje.getSalida().toString() : "");
             pstmt.setInt(7, fichaje.getDescanso());
             pstmt.setInt(8, fichaje.getComida());
-            pstmt.setInt(9, fichaje.getHorasSemanales());
+            pstmt.setInt(9, horasSemanales);
             pstmt.setBoolean(10, fichaje.isEstado());
             
             return pstmt.executeUpdate() > 0;
