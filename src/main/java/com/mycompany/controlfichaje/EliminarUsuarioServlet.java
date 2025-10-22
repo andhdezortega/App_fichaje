@@ -6,6 +6,10 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import com.mycompany.controlfichaje.dao.UsuarioDAO;
 
+/**
+ * Servlet para eliminar un usuario por id.
+ * Requiere rol admin. Protege al usuario 'admin' de ser borrado en el DAO.
+ */
 @WebServlet("/EliminarUsuarioServlet")
 public class EliminarUsuarioServlet extends HttpServlet {
     @Override

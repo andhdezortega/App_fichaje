@@ -7,9 +7,19 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO para la entidad de fichajes (entradas/salidas de jornada laboral).
+ *
+ * Gestiona inserción, consulta, actualización y borrado de registros en la tabla
+ * "fichajes". Convierte los tipos String almacenados en BD a tipos Java
+ * (LocalDate/LocalTime) cuando corresponde.
+ */
 public class FichajeDAO {
 
-    // Crear nuevo fichaje
+    /**
+     * Inserta un nuevo fichaje. Las horas_semanales se obtienen de la tabla usuarios
+     * en base al nombre del usuario y, si no existe, se usa 40 como valor por defecto.
+     */
     public boolean crear(FichajeModel fichaje) {
         String sql = "INSERT INTO fichajes (nombre, apellido, rol, fecha, entrada, salida, descanso, comida, horas_semanales, estado) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -46,7 +56,9 @@ public class FichajeDAO {
         }
     }
 
-    // Obtener todos los fichajes
+    /**
+     * Recupera todos los fichajes existentes.
+     */
     public List<FichajeModel> obtenerTodos() {
         List<FichajeModel> fichajes = new ArrayList<>();
         String sql = "SELECT * FROM fichajes";
@@ -84,7 +96,9 @@ public class FichajeDAO {
         return fichajes;
     }
 
-    // Obtener un fichaje por ID
+    /**
+     * Recupera un fichaje por su id.
+     */
     public FichajeModel obtenerPorId(int id) {
         String sql = "SELECT * FROM fichajes WHERE id = ?";
         
@@ -122,7 +136,9 @@ public class FichajeDAO {
         return null;
     }
 
-    // Obtener fichaje activo (no cerrado) por nombre y apellido
+    /**
+     * Recupera el último fichaje activo (estado = 0) para un usuario (nombre/apellido).
+     */
     public FichajeModel obtenerFichajeActivo(String nombre, String apellido) {
         String sql = "SELECT * FROM fichajes WHERE nombre = ? AND apellido = ? AND estado = 0 ORDER BY id DESC LIMIT 1";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -159,7 +175,9 @@ public class FichajeDAO {
         return null;
     }
 
-    // Actualizar fichaje
+    /**
+     * Actualiza un fichaje existente por id.
+     */
     public boolean actualizar(FichajeModel fichaje) {
         String sql = "UPDATE fichajes SET nombre = ?, apellido = ?, rol = ?, fecha = ?, entrada = ?, " +
                     "salida = ?, descanso = ?, comida = ?, horas_semanales = ?, estado = ? WHERE id = ?";
@@ -186,7 +204,9 @@ public class FichajeDAO {
         }
     }
 
-    // Eliminar fichaje
+    /**
+     * Elimina un fichaje por id.
+     */
     public boolean eliminar(int id) {
         String sql = "DELETE FROM fichajes WHERE id = ?";
         

@@ -10,6 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Servlet para cargar datos de un usuario (por id) en el formulario de edición.
+ * Requiere rol admin. Devuelve el objeto Usuario en el request hacia usuarios.jsp.
+ */
 @WebServlet("/EditarUsuarioServlet")
 public class EditarUsuarioServlet extends HttpServlet {
     @Override
@@ -32,6 +36,7 @@ public class EditarUsuarioServlet extends HttpServlet {
             response.sendRedirect("usuarios.jsp?error=Usuario no encontrado");
             return;
         }
+        // Adjuntar el usuario al request para llenar el formulario en la JSP
         request.setAttribute("usuarioObj", existente);
         request.getRequestDispatcher("usuarios.jsp").forward(request, response);
     }

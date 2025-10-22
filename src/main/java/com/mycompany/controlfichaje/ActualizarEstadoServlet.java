@@ -9,6 +9,10 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import Autenticacion.Autenticacion;
 
+/**
+ * Servlet para actualizar el estado del usuario en sesión (produccion/break/comida).
+ * Guarda/elimina el atributo "inicioProduccion" dependiendo del estado.
+ */
 @WebServlet("/ActualizarEstadoServlet")
 public class ActualizarEstadoServlet extends HttpServlet {
 

@@ -1,6 +1,5 @@
 package com.mycompany.controlfichaje;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,8 +8,11 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import com.mycompany.controlfichaje.dao.FichajeDAO;
-import java.util.List;
 
+/**
+ * Servlet para actualizar un fichaje existente desde admin.jsp.
+ * Recibe todos los campos del fichaje por POST, incluido el id.
+ */
 @WebServlet("/ActualizarFichaje")
 public class ActualizarFichajeServlet extends HttpServlet {
 
@@ -31,7 +33,6 @@ public class ActualizarFichajeServlet extends HttpServlet {
             FichajeModel f = new FichajeModel(id, nombre, apellido, rol, fecha, entrada, salida, descanso, comida, horasSemanales, estado);
 
             FichajeDAO dao = new FichajeDAO();
-            List<FichajeModel> fichajes = dao.obtenerTodos();
             dao.actualizar(f);
 
             response.sendRedirect("admin.jsp");

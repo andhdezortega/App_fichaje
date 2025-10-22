@@ -13,9 +13,17 @@ import com.mycompany.controlfichaje.dao.FichajeDAO;
 import com.mycompany.controlfichaje.dao.UsuarioDAO;
 import com.mycompany.controlfichaje.dao.Usuario;
 
-
-
-
+/**
+ * Servlet principal para registrar fichajes (entrada/salida).
+ *
+ * Acciones soportadas:
+ * - "entrada": crea un nuevo fichaje con hora de entrada y estado=false (abierto).
+ * - "salida": cierra el fichaje activo marcando hora de salida y estado=true.
+ *
+ * Flujo:
+ * - Entrada: crea fichaje, guarda en sesión horaEntrada y redirige a perfil.jsp.
+ * - Salida: actualiza el fichaje activo con hora de salida y redirige a bienvenido.jsp.
+ */
 @WebServlet(name = "FichajeServlet", urlPatterns = {"/FichajeServlet"})
 public class FichajeServlet extends HttpServlet {
 
@@ -77,6 +85,7 @@ public class FichajeServlet extends HttpServlet {
                 boolean entradaRegistrada = fichajeDAO.crear(fichaje);
                 
                 if (entradaRegistrada) {
+                    System.out.println("DEBUG: Fichaje creado exitosamente para " + nombre + " " + apellido);
                     session.setAttribute("horaEntrada", ahora);
                     session.setAttribute("horaSalida", null);
                     session.setAttribute("fichajeEntrada", true);
@@ -86,11 +95,14 @@ public class FichajeServlet extends HttpServlet {
                     session.setAttribute("inicioProduccion", ahora);
                     session.setAttribute("estadoUsuario", "produccion");
 
-                    // Redirigir SIEMPRE a perfil.jsp después de fichar entrada
-                    response.sendRedirect(request.getContextPath() + "/perfil.jsp");
+                    System.out.println("DEBUG: Atributos de sesión establecidos. fichajeEntrada=" + session.getAttribute("fichajeEntrada"));
+                    
+                    // Redirigir a perfil.jsp después de fichar entrada
+                    response.sendRedirect("perfil.jsp");
                     return;
 
                 } else {
+                    System.out.println("ERROR: No se pudo crear el fichaje para " + nombre + " " + apellido);
                     request.setAttribute("error", "Error al registrar la entrada");
                     request.getRequestDispatcher("perfil.jsp").forward(request, response);
                 }
@@ -114,14 +126,12 @@ public class FichajeServlet extends HttpServlet {
                         session.setAttribute("fichajeSalida", true);
                         session.setAttribute("fichajeEntrada", false);
                         
-                        // Si se pasa un parámetro opcional returnTo, redirige a esa página
-                        String returnToSalida = request.getParameter("returnTo");
                         // Limpiar sesión de producción
                         session.removeAttribute("inicioProduccion");
                         session.removeAttribute("estadoUsuario");
 
-                        // Redirigir SIEMPRE a bienvenido.jsp tras fichar salida
-                        response.sendRedirect(request.getContextPath() + "/bienvenido.jsp");
+                        // Redirigir a bienvenido.jsp tras fichar salida
+                        response.sendRedirect("bienvenido.jsp");
                         return;
                     }
                     request.setAttribute("error", "No se encontró un fichaje activo");
@@ -135,6 +145,9 @@ public class FichajeServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Redirige GET a doPost para compatibilidad.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

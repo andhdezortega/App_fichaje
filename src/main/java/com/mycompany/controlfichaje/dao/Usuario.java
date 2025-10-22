@@ -1,5 +1,18 @@
 package com.mycompany.controlfichaje.dao;
 
+/**
+ * Modelo de dominio para un usuario del sistema.
+ *
+ * Atributos:
+ * - id: clave primaria numérica (autoincrement) en base de datos.
+ * - usuario: nombre visible del usuario (alias mostrable en la UI).
+ * - apellido: apellidos del usuario.
+ * - correo: identificador único para login; se usa para autenticación.
+ * - password: contraseña (en BD está almacenada en texto plano en este proyecto,
+ *   lo ideal sería usar hash+salt).
+ * - rol: perfil de acceso (por ejemplo, "admin" o "usuario").
+ * - descripcion: información adicional que se muestra en el perfil.
+ */
 public class Usuario {
     private int id;
     private String usuario;

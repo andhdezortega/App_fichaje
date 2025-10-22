@@ -6,6 +6,10 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import com.mycompany.controlfichaje.dao.UsuarioDAO;
 
+/**
+ * Servlet para crear nuevos usuarios (solo admin).
+ * Recibe datos de usuario/apellido/correo/password/descripcion vía POST y crea la cuenta con rol 'user'.
+ */
 @WebServlet("/CrearUsuarioServlet")
 public class CrearUsuarioServlet extends HttpServlet {
     @Override

@@ -3,11 +3,24 @@ package com.mycompany.controlfichaje.dao;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * Acceso a datos (DAO) para la entidad Usuario.
+ *
+ * Expone operaciones CRUD y consultas auxiliares:
+ * - Crear, actualizar y eliminar usuarios (por id).
+ * - Listar usuarios para mostrarlos en JSP.
+ * - Verificar credenciales (por correo) para la autenticación.
+ * - Obtener datos de un usuario por id o por correo.
+ */
 public class UsuarioDAO {
 
     // Métodos de UsuarioDAO
 
-    // Actualizar usuario por id
+    /**
+     * Actualiza los datos de un usuario identificado por su id.
+     * Si {@code password} está vacío, no se actualiza la contraseña.
+     * @return true si se actualizó al menos una fila
+     */
     public boolean actualizarUsuarioPorId(int id, String usuario, String apellido, String correo, String password, String rol, String descripcion) {
         boolean actualizarPassword = password != null && !password.isEmpty();
         String sql = actualizarPassword
@@ -33,7 +46,10 @@ public class UsuarioDAO {
         }
     }
 
-    // Obtener todos los usuarios
+    /**
+     * Devuelve una lista de mapas con los campos principales de todos los usuarios.
+     * Se usa para renderizar tablas en JSP. Incluye el id como String.
+     */
     public List<Map<String, String>> obtenerTodos() {
         List<Map<String, String>> usuarios = new ArrayList<>();
         String sql = "SELECT id, usuario, apellido, correo, rol, descripcion FROM usuarios";
@@ -56,7 +72,9 @@ public class UsuarioDAO {
         return usuarios;
     }
 
-    // Eliminar usuario por id
+    /**
+     * Elimina un usuario por id. Protege al usuario 'admin' para no borrarlo.
+     */
     public boolean eliminarUsuarioPorId(int id) {
         String sql = "DELETE FROM usuarios WHERE id = ? AND usuario != 'admin'";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -69,7 +87,9 @@ public class UsuarioDAO {
         }
     }
 
-    // Verificar si un usuario ya existe
+    /**
+     * Comprueba si ya existe un usuario con el nombre visible indicado.
+     */
     public boolean existeUsuario(String usuario) {
         String sql = "SELECT COUNT(*) FROM usuarios WHERE usuario = ?";
         
@@ -88,7 +108,10 @@ public class UsuarioDAO {
         return false;
     }
 
-    // Verificar credenciales por correo
+    /**
+     * Verifica si la contraseña proporcionada coincide con la guardada para el correo dado.
+     * (En este proyecto no hay hashing, se compara texto plano).
+     */
     public boolean verificarCredencialesPorCorreo(String correo, String password) {
         String sql = "SELECT password FROM usuarios WHERE correo = ?";
         if (correo == null || password == null) {
@@ -113,7 +136,9 @@ public class UsuarioDAO {
         return false;
     }
 
-    // Obtener información del usuario por id
+    /**
+     * Recupera un Usuario completo por id.
+     */
     public static Usuario obtenerUsuarioPorId(int id) {
         String sql = "SELECT id, usuario, apellido, correo, password, rol, descripcion FROM usuarios WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -137,6 +162,10 @@ public class UsuarioDAO {
         return null;
     }
 
+    /**
+     * Crea un nuevo usuario con los campos proporcionados.
+     * Campos opcionales: apellido, correo y descripcion (se guardan como cadena vacía si son null).
+     */
     public boolean crearUsuario(String usuario, String apellido, String correo, String password, String rol, String descripcion) {
         String sql = "INSERT INTO usuarios (usuario, apellido, correo, password, rol, descripcion) VALUES (?, ?, ?, ?, ?, ?)";
         
@@ -161,7 +190,10 @@ public class UsuarioDAO {
         }
     }
 
-    // Obtener rol y descripcion por correo (compatibilidad con Autenticacion)
+    /**
+     * Obtiene rol y descripción de un usuario a partir de su correo.
+     * Devuelve un Map con claves "rol" y "descripcion"; vacío si no existe.
+     */
     public Map<String, String> obtenerInfoUsuarioPorCorreo(String correo) {
         Map<String, String> info = new HashMap<>();
         String sql = "SELECT rol, descripcion FROM usuarios WHERE correo = ?";
@@ -180,7 +212,9 @@ public class UsuarioDAO {
         return info;
     }
 
-    // Obtener usuario por correo (para autenticación)
+    /**
+     * Recupera un Usuario completo por correo. Usado durante la autenticación.
+     */
     public static Usuario obtenerUsuarioPorCorreo(String correo) {
         String sql = "SELECT id, usuario, apellido, correo, password, rol, descripcion FROM usuarios WHERE correo = ?";
         try (Connection conn = DatabaseConnection.getConnection();

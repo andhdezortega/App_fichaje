@@ -9,6 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Servlet para actualizar los datos de un usuario existente (por id).
+ * Requiere rol admin. Si password está vacío, no se modifica.
+ */
 @WebServlet("/ActualizarUsuarioServlet")
 public class ActualizarUsuarioServlet extends HttpServlet {
     @Override

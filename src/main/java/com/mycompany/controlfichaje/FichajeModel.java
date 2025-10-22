@@ -3,6 +3,17 @@ package com.mycompany.controlfichaje;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Modelo de datos para un fichaje (registro de jornada).
+ *
+ * Campos principales:
+ * - nombre/apellido/rol: identificación básica del empleado y su rol.
+ * - fecha: día del registro.
+ * - entrada/salida: horas de inicio y fin de la jornada.
+ * - descanso/comida: minutos descontados por pausas.
+ * - horasSemanales: horas contratadas por semana (se usan para calcular objetivo diario).
+ * - estado: indica si el fichaje está cerrado (true) o aún abierto (false).
+ */
 public class FichajeModel {
     private int id;
     private String nombre;
@@ -16,7 +27,9 @@ public class FichajeModel {
     private int horasSemanales;
     private boolean estado;
 
-    // Constructor para crear desde la base de datos
+    /**
+     * Constructor completo usado al leer desde la base de datos.
+     */
     public FichajeModel(int id, String nombre, String apellido, String rol, 
                        LocalDate fecha, LocalTime entrada, LocalTime salida, 
                        int descanso, int comida, int horasSemanales, boolean estado) {
@@ -33,7 +46,9 @@ public class FichajeModel {
         this.estado = estado;
     }
 
-    // Constructor para crear desde formulario
+    /**
+     * Constructor desde parámetros de formulario (Strings). Convierte a tipos fuertes.
+     */
     public FichajeModel(int id, String n, String a, String r, String f, String e, String s, String d, String c, int hs, boolean est) {
         this.id = id;
         this.nombre = n;
@@ -48,7 +63,9 @@ public class FichajeModel {
         this.estado = est;
     }
 
-    // Constructor por defecto para usar en código (por ejemplo desde servlet)
+    /**
+     * Constructor por defecto: útil para inicializar y rellenar progresivamente.
+     */
     public FichajeModel() {
         this.id = 0;
         this.nombre = "";
@@ -152,7 +169,13 @@ public class FichajeModel {
         this.estado = estado;
     }
 
-    // Método para calcular horas extra en minutos
+    /**
+     * Calcula los minutos de horas extra del día.
+     * Fórmula:
+     *  minutosExtra = max(0, (minutos(salida-entrada) - descanso - comida) - minutosObjetivoDiario)
+     * donde minutosObjetivoDiario = horasSemanales*60 / 5 (asumiendo 5 días laborables).
+     * @return minutos extra no negativos; 0 si faltan datos de entrada/salida.
+     */
     public Integer calcularHorasExtraMinutos() {
         if (entrada == null || salida == null) {
             return 0;
@@ -170,7 +193,9 @@ public class FichajeModel {
         return (int) Math.max(0, minutosExtra);
     }
 
-    // Método para obtener horas extra en minutos (alias para compatibilidad)
+    /**
+     * Alias del cálculo de horas extra para compatibilidad con vistas.
+     */
     public Integer getHorasExtraMinutos() {
         return calcularHorasExtraMinutos();
     }

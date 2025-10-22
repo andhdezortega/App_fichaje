@@ -1,6 +1,22 @@
 
 package Autenticacion;
 
+/**
+ * Utilidades de autenticación y autorización para la aplicación.
+ *
+ * Responsabilidades principales:
+ * - Validar credenciales de usuario (por correo y contraseña).
+ * - Gestionar la sesión HTTP: inicio de sesión, obtención de datos de sesión y cierre.
+ * - Comprobar el rol del usuario autenticado para controlar accesos.
+ *
+ * Notas de diseño:
+ * - Esta clase expone métodos estáticos porque se usa desde distintos servlets/JSP
+ *   sin necesidad de instanciarla.
+ * - La información de sesión almacenada incluye: usuario visible ("usuario"),
+ *   correo ("correo"), rol ("rol"), descripción ("descripcion"), marca de tiempo
+ *   del login ("timestampLogin") y la IP de origen ("ipAddress").
+ */
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.Map;
@@ -9,7 +25,12 @@ import com.mycompany.controlfichaje.dao.UsuarioDAO;
 public class Autenticacion {
     private static final UsuarioDAO usuarioDAO = new UsuarioDAO();
     
-    //Método para verificar las credenciales por correo
+    /**
+     * Verifica que el correo y la contraseña sean válidos en base de datos.
+     * @param correo Correo electrónico del usuario (identificador de login)
+     * @param password Contraseña en texto plano introducida por el usuario
+     * @return true si las credenciales son correctas; false en caso contrario
+     */
     public static boolean verificarCredenciales(String correo, String password) {
         if (correo == null || correo.trim().isEmpty() ||
             password == null || password.trim().isEmpty()) {
@@ -18,7 +39,14 @@ public class Autenticacion {
         return usuarioDAO.verificarCredencialesPorCorreo(correo.trim(), password);
     }
     
-    //Método de Login por correo
+    /**
+     * Realiza el proceso de login a partir de correo y contraseña.
+     * Si es correcto, inicializa la sesión HTTP y almacena los atributos necesarios.
+     * @param request Petición actual (para crear/recuperar la sesión)
+     * @param correo Correo electrónico del usuario
+     * @param password Contraseña introducida
+     * @return true si el login es satisfactorio; false si las credenciales no son válidas
+     */
     public static boolean hacerLogin(HttpServletRequest request, String correo, String password) {
         if (!verificarCredenciales(correo, password)) {
             return false;
@@ -28,20 +56,25 @@ public class Autenticacion {
             return false;
         }
         HttpSession session = request.getSession(true);
-        // Obtener el nombre de usuario real para la sesión
+        // Obtener el nombre de usuario "amigable" para mostrar en la UI.
         com.mycompany.controlfichaje.dao.Usuario u = com.mycompany.controlfichaje.dao.UsuarioDAO.obtenerUsuarioPorCorreo(correo);
         String usuario = (u != null && u.getUsuario() != null) ? u.getUsuario() : correo;
         session.setAttribute("usuario", usuario);
         session.setAttribute("correo", correo);
         session.setAttribute("rol", userInfo.get("rol"));
         session.setAttribute("descripcion", userInfo.get("descripcion"));
+        // Marcas técnicas: tiempo de login, IP remota y tiempo de inactividad (30 min)
         session.setAttribute("timestampLogin", System.currentTimeMillis());
         session.setAttribute("ipAddress", request.getRemoteAddr());
         session.setMaxInactiveInterval(30 * 60);
         return true;
     }
     
-    //Método para verificar si hay sesión activa
+    /**
+     * Comprueba si existe una sesión válida con un usuario autenticado.
+     * @param request Petición actual
+     * @return true si hay sesión y el atributo "usuario" está presente; false en caso contrario
+     */
     public static boolean estaAutenticado(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
@@ -51,7 +84,11 @@ public class Autenticacion {
         return usuario != null;
     }
     
-    //Método para obtener el Usuario Actual de la sesión
+    /**
+     * Recupera el nombre de usuario visible almacenado en sesión.
+     * @param request Petición actual
+     * @return el nombre de usuario o null si no hay sesión
+     */
     public static String obtenerUsuarioActual(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -62,7 +99,11 @@ public class Autenticacion {
         return null;
     }
     
-    //Método para obtener el rol del usuario
+    /**
+     * Obtiene el rol actual del usuario autenticado desde la sesión.
+     * @param request Petición actual
+     * @return rol (por ejemplo, "admin" o "usuario"), o null si no hay sesión
+     */
     public static String obtenerRol(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session !=null) {
@@ -73,7 +114,12 @@ public class Autenticacion {
         return null;
     }
     
-    //Método para verificación del rol requerido
+    /**
+     * Verifica si el usuario autenticado tiene el rol indicado.
+     * @param request Petición actual
+     * @param rolRequerido Rol necesario para acceder a un recurso
+     * @return true si coincide; false en caso contrario
+     */
     public static boolean tieneRol(HttpServletRequest request, String rolRequerido) {
         String rolActual = obtenerRol(request);
         boolean tieneAcceso = rolRequerido != null && rolRequerido.equals(rolActual);
@@ -82,7 +128,10 @@ public class Autenticacion {
         return tieneAcceso;
     }
     
-    //Método para hacer logout
+    /**
+     * Cierra la sesión del usuario actual invalidando la sesión HTTP.
+     * @param request Petición actual
+     */
     public static void hacerlogout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -97,6 +146,11 @@ public class Autenticacion {
         }
     }
     
+    /**
+     * Devuelve el tiempo (en segundos) transcurrido desde el inicio de sesión.
+     * @param request Petición actual
+     * @return segundos de sesión activa o 0 si no hay sesión o falta la marca de tiempo
+     */
     public static long obtenerTiempoSesion(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {

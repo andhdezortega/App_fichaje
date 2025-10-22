@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Servlet para eliminar un fichaje por id desde admin.jsp.
+ */
 @WebServlet("/EliminarFichaje")
 public class EliminarFichaje extends HttpServlet {
     @Override
