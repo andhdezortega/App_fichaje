@@ -7,19 +7,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO para la entidad de fichajes (entradas/salidas de jornada laboral).
- *
- * Gestiona inserción, consulta, actualización y borrado de registros en la tabla
- * "fichajes". Convierte los tipos String almacenados en BD a tipos Java
- * (LocalDate/LocalTime) cuando corresponde.
- */
+
 public class FichajeDAO {
 
-    /**
-     * Inserta un nuevo fichaje. Las horas_semanales se obtienen de la tabla usuarios
-     * en base al nombre del usuario y, si no existe, se usa 40 como valor por defecto.
-     */
+    
     public boolean crear(FichajeModel fichaje) {
         String sql = "INSERT INTO fichajes (nombre, apellido, rol, fecha, entrada, salida, descanso, comida, horas_semanales, estado) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -57,11 +48,11 @@ public class FichajeDAO {
     }
 
     /**
-     * Recupera todos los fichajes existentes.
+     * Recupera todos los fichajes existentes ordenados por fecha y hora de entrada descendente (más recientes primero).
      */
     public List<FichajeModel> obtenerTodos() {
         List<FichajeModel> fichajes = new ArrayList<>();
-        String sql = "SELECT * FROM fichajes";
+        String sql = "SELECT * FROM fichajes ORDER BY fecha DESC, entrada DESC, id DESC";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -96,39 +87,39 @@ public class FichajeDAO {
         return fichajes;
     }
 
+    
+
     /**
-     * Recupera un fichaje por su id.
+     * Recupera un fichaje específico por su ID.
      */
     public FichajeModel obtenerPorId(int id) {
         String sql = "SELECT * FROM fichajes WHERE id = ?";
-        
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
             pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            
-            if (rs.next()) {
-                String fechaStr = rs.getString("fecha");
-                String entradaStr = rs.getString("entrada");
-                String salidaStr = rs.getString("salida");
-                LocalDate fecha = (fechaStr != null && !fechaStr.isEmpty()) ? LocalDate.parse(fechaStr) : null;
-                LocalTime entrada = (entradaStr != null && !entradaStr.isEmpty()) ? LocalTime.parse(entradaStr) : null;
-                LocalTime salida = (salidaStr != null && !salidaStr.isEmpty()) ? LocalTime.parse(salidaStr) : null;
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String fechaStr = rs.getString("fecha");
+                    String entradaStr = rs.getString("entrada");
+                    String salidaStr = rs.getString("salida");
+                    java.time.LocalDate fecha = (fechaStr != null && !fechaStr.isEmpty()) ? java.time.LocalDate.parse(fechaStr) : null;
+                    java.time.LocalTime entrada = (entradaStr != null && !entradaStr.isEmpty()) ? java.time.LocalTime.parse(entradaStr) : null;
+                    java.time.LocalTime salida = (salidaStr != null && !salidaStr.isEmpty()) ? java.time.LocalTime.parse(salidaStr) : null;
 
-                return new FichajeModel(
-                    rs.getInt("id"),
-                    rs.getString("nombre"),
-                    rs.getString("apellido"),
-                    rs.getString("rol"),
-                    fecha,
-                    entrada,
-                    salida,
-                    rs.getInt("descanso"),
-                    rs.getInt("comida"),
-                    rs.getInt("horas_semanales"),
-                    rs.getBoolean("estado")
-                );
+                    return new FichajeModel(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("rol"),
+                        fecha,
+                        entrada,
+                        salida,
+                        rs.getInt("descanso"),
+                        rs.getInt("comida"),
+                        rs.getInt("horas_semanales"),
+                        rs.getBoolean("estado")
+                    );
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -32,9 +32,9 @@ public class CrearUsuarioServlet extends HttpServlet {
 
         UsuarioDAO dao = new UsuarioDAO();
 
-        // Verificar si el usuario ya existe
-        if (dao.existeUsuario(usuario)) {
-            response.sendRedirect("usuarios.jsp?error=El usuario ya existe");
+        // Verificar si el correo ya existe
+        if (dao.existeUsuario(correo)) {
+            response.sendRedirect("usuarios.jsp?error=El correo ya está registrado");
             return;
         }
 

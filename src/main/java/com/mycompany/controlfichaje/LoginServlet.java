@@ -26,11 +26,22 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String correo = request.getParameter("correo");
-        String contrasena = request.getParameter("contrasena");
+    String correo = request.getParameter("correo");
+    String contrasena = request.getParameter("contrasena");
 
+        System.out.println("[LOGINSERVLET] Recibido POST - correo=[" + correo + "], contrasena length=" + (contrasena != null ? contrasena.length() : "null"));
+
+        // Validación mínima: debe ser un correo (no nombre de usuario)
+        if (correo == null || !correo.contains("@")) {
+            System.out.println("[LOGINSERVLET] Error: correo no válido (no contiene @)");
+            response.sendRedirect("login.jsp?error=email");
+            return;
+        }
+
+        System.out.println("[LOGINSERVLET] Llamando a Autenticacion.hacerLogin");
         // Validar y crear sesión por correo
-        boolean loginExitoso = Autenticacion.hacerLogin(request, correo, contrasena);
+    boolean loginExitoso = Autenticacion.hacerLogin(request, correo, contrasena);
+        System.out.println("[LOGINSERVLET] Login exitoso: " + loginExitoso);
         if (loginExitoso) {
             // Si el usuario tiene un fichaje activo, ir directamente a perfil.jsp
             HttpSession session = request.getSession();
@@ -65,9 +76,12 @@ public class LoginServlet extends HttpServlet {
             }
 
             // Si no hay fichaje activo ni "En producción", ir al panel correspondiente
-            if ("admin".equals(Autenticacion.obtenerRol(request))) {
+            String rolUsuario = Autenticacion.obtenerRol(request);
+            // Solo el usuario con nombre "admin" va directo a admin.jsp
+            if ("admin".equals(rolUsuario) && "admin".equals(nombre)) {
                 response.sendRedirect("admin.jsp");
             } else {
+                // Todos los demás (incluidos otros admins) van a bienvenido.jsp
                 response.sendRedirect("bienvenido.jsp");
             }
         } else if ("externo".equals(correo) && "externo123".equals(contrasena)) {

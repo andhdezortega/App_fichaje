@@ -262,6 +262,31 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* Botón panel de administración */
+.btn-admin {
+    background-color: var(--azulado);
+    border: none;
+    color: var(--blanco);
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+.btn-admin:hover {
+    background-color: var(--aguamarina-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.btn-admin:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
 
 button.cerrar-btn {
     background-color: var(--blanco);

@@ -2,24 +2,15 @@ package com.mycompany.controlfichaje.dao;
 
 import java.sql.*;
 import java.util.*;
+import Autenticacion.PasswordHasher;
 
-/**
- * Acceso a datos (DAO) para la entidad Usuario.
- *
- * Expone operaciones CRUD y consultas auxiliares:
- * - Crear, actualizar y eliminar usuarios (por id).
- * - Listar usuarios para mostrarlos en JSP.
- * - Verificar credenciales (por correo) para la autenticación.
- * - Obtener datos de un usuario por id o por correo.
- */
+
 public class UsuarioDAO {
 
-    // Métodos de UsuarioDAO
-
     /**
-     * Actualiza los datos de un usuario identificado por su id.
-     * Si {@code password} está vacío, no se actualiza la contraseña.
-     * @return true si se actualizó al menos una fila
+     * Actualiza un usuario por su ID.
+     * Si se proporciona una nueva contraseña, se hashea con BCrypt antes de guardarla.
+     * Si password es null o vacío, no se modifica la contraseña existente.
      */
     public boolean actualizarUsuarioPorId(int id, String usuario, String apellido, String correo, String password, String rol, String descripcion) {
         boolean actualizarPassword = password != null && !password.isEmpty();
@@ -34,7 +25,9 @@ public class UsuarioDAO {
             pstmt.setString(index++, apellido != null ? apellido : "");
             pstmt.setString(index++, correo != null ? correo : "");
             if (actualizarPassword) {
-                pstmt.setString(index++, password);
+                // Hashear la nueva contraseña antes de guardarla
+                String hashedPassword = PasswordHasher.hashPassword(password);
+                pstmt.setString(index++, hashedPassword);
             }
             pstmt.setString(index++, rol);
             pstmt.setString(index++, descripcion != null ? descripcion : "");
@@ -109,32 +102,63 @@ public class UsuarioDAO {
     }
 
     /**
-     * Verifica si la contraseña proporcionada coincide con la guardada para el correo dado.
-     * (En este proyecto no hay hashing, se compara texto plano).
+     * Comprueba si ya existe un usuario con el correo indicado.
      */
-    public boolean verificarCredencialesPorCorreo(String correo, String password) {
-        String sql = "SELECT password FROM usuarios WHERE correo = ?";
-        if (correo == null || password == null) {
-            return false;
-        }
-        String c = correo.trim();
-        String p = password.trim();
-        if (c.isEmpty() || p.isEmpty()) {
-            return false;
-        }
+    public boolean existeCorreo(String correo) {
+        String sql = "SELECT COUNT(*) FROM usuarios WHERE correo = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, c);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                String pwdDb = rs.getString("password");
-                return pwdDb != null && pwdDb.equals(p);
+            pstmt.setString(1, correo);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
+
+    /**
+     * Verifica si la contraseña proporcionada coincide con el hash guardado para el correo dado.
+     * Usa BCrypt para comparar de forma segura la contraseña en texto plano con el hash.
+     * También soporta contraseñas antiguas en texto plano para compatibilidad durante migración.
+     */
+    public boolean verificarCredencialesPorCorreo(String correo, String password) {
+    String sql = "SELECT password FROM usuarios WHERE correo = ?";
+        if (correo == null || password == null) {
+            return false;
+        }
+    String c = correo.trim();   // OK: el correo sí se puede normalizar
+    String p = password;        // NO recortar contraseñas: podrían llevar espacios válidos
+
+        if (c.isEmpty() || p.isEmpty()) {
+            return false;
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, c);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String pwdDb = rs.getString("password");
+                    if (pwdDb == null) return false;
+
+                    // Si es BCrypt, verifica con BCrypt. Si no, fallback a texto plano (solo mientras migras).
+                    if (PasswordHasher.isHashed(pwdDb)) {
+                        return PasswordHasher.checkPassword(p, pwdDb);
+                    } else {
+                        return pwdDb.equals(p);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     /**
      * Recupera un Usuario completo por id.
@@ -164,6 +188,7 @@ public class UsuarioDAO {
 
     /**
      * Crea un nuevo usuario con los campos proporcionados.
+     * La contraseña se hashea automáticamente con BCrypt antes de guardarla.
      * Campos opcionales: apellido, correo y descripcion (se guardan como cadena vacía si son null).
      */
     public boolean crearUsuario(String usuario, String apellido, String correo, String password, String rol, String descripcion) {
@@ -176,10 +201,13 @@ public class UsuarioDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
+            // Hashear la contraseña antes de guardarla
+            String hashedPassword = PasswordHasher.hashPassword(password);
+            
             pstmt.setString(1, usuario);
             pstmt.setString(2, apellido != null ? apellido : "");
             pstmt.setString(3, correo != null ? correo : "");
-            pstmt.setString(4, password);
+            pstmt.setString(4, hashedPassword);
             pstmt.setString(5, rol);
             pstmt.setString(6, descripcion != null ? descripcion : "");
             
@@ -195,7 +223,7 @@ public class UsuarioDAO {
      * Devuelve un Map con claves "rol" y "descripcion"; vacío si no existe.
      */
     public Map<String, String> obtenerInfoUsuarioPorCorreo(String correo) {
-        Map<String, String> info = new HashMap<>();
+        Map<String, String> info = new HashMap<String, String>();
         String sql = "SELECT rol, descripcion FROM usuarios WHERE correo = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -211,6 +239,7 @@ public class UsuarioDAO {
         }
         return info;
     }
+
 
     /**
      * Recupera un Usuario completo por correo. Usado durante la autenticación.
@@ -238,4 +267,6 @@ public class UsuarioDAO {
         }
         return null;
     }
+
+    
 }

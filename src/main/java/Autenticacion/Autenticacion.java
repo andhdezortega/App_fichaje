@@ -23,20 +23,26 @@ import java.util.Map;
 import com.mycompany.controlfichaje.dao.UsuarioDAO;
 
 public class Autenticacion {
-    private static final UsuarioDAO usuarioDAO = new UsuarioDAO();
     
     /**
      * Verifica que el correo y la contraseña sean válidos en base de datos.
+     * Solo se permite el login mediante correo.
      * @param correo Correo electrónico del usuario (identificador de login)
      * @param password Contraseña en texto plano introducida por el usuario
      * @return true si las credenciales son correctas; false en caso contrario
      */
     public static boolean verificarCredenciales(String correo, String password) {
+        System.out.println("[AUTENTICACION] verificarCredenciales llamado con correo=[" + correo + "], password length=" + (password != null ? password.length() : "null"));
         if (correo == null || correo.trim().isEmpty() ||
-            password == null || password.trim().isEmpty()) {
+            password == null || password.isEmpty()) {
+            System.out.println("[AUTENTICACION] Validación inicial FALLÓ - correo o password inválidos");
             return false;
         }
-        return usuarioDAO.verificarCredencialesPorCorreo(correo.trim(), password);
+        System.out.println("[AUTENTICACION] Llamando a usuarioDAO.verificarCredencialesPorCorreo");
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        boolean resultado = usuarioDAO.verificarCredencialesPorCorreo(correo.trim(), password);
+        System.out.println("[AUTENTICACION] Resultado DAO: " + resultado);
+        return resultado;
     }
     
     /**
@@ -48,25 +54,32 @@ public class Autenticacion {
      * @return true si el login es satisfactorio; false si las credenciales no son válidas
      */
     public static boolean hacerLogin(HttpServletRequest request, String correo, String password) {
+        System.out.println("[AUTENTICACION] hacerLogin llamado con correo=[" + correo + "]");
         if (!verificarCredenciales(correo, password)) {
+            System.out.println("[AUTENTICACION] verificarCredenciales retornó FALSE");
             return false;
         }
+        System.out.println("[AUTENTICACION] Credenciales verificadas OK, obteniendo info de usuario");
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
         Map<String, String> userInfo = usuarioDAO.obtenerInfoUsuarioPorCorreo(correo);
         if (userInfo.isEmpty()) {
+            System.out.println("[AUTENTICACION] userInfo está vacío para correo: " + correo);
             return false;
         }
+        System.out.println("[AUTENTICACION] userInfo obtenido, creando sesión");
         HttpSession session = request.getSession(true);
         // Obtener el nombre de usuario "amigable" para mostrar en la UI.
         com.mycompany.controlfichaje.dao.Usuario u = com.mycompany.controlfichaje.dao.UsuarioDAO.obtenerUsuarioPorCorreo(correo);
         String usuario = (u != null && u.getUsuario() != null) ? u.getUsuario() : correo;
         session.setAttribute("usuario", usuario);
-        session.setAttribute("correo", correo);
+        session.setAttribute("correo", (u != null ? u.getCorreo() : correo));
         session.setAttribute("rol", userInfo.get("rol"));
         session.setAttribute("descripcion", userInfo.get("descripcion"));
         // Marcas técnicas: tiempo de login, IP remota y tiempo de inactividad (30 min)
         session.setAttribute("timestampLogin", System.currentTimeMillis());
         session.setAttribute("ipAddress", request.getRemoteAddr());
         session.setMaxInactiveInterval(30 * 60);
+        System.out.println("[AUTENTICACION] Login exitoso para usuario: " + usuario);
         return true;
     }
     

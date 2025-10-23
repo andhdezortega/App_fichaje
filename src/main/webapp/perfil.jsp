@@ -8,6 +8,7 @@
 <%
     String usuario = (String) session.getAttribute("usuario");
     String correo = (String) session.getAttribute("correo");
+    String rol = (String) session.getAttribute("rol");
     if (usuario == null) {
         response.sendRedirect("login.jsp");
         return;
@@ -199,6 +200,12 @@ actualizarContadorYBarra();
                         <input type="hidden" name="returnTo" value="bienvenido.jsp">
                         <button type="submit" class="btn btn-danger" <%= (!fichajeSalida) ? "disabled" : "" %>>Fichar Salida</button>
                 </form>
+
+                <% if ("admin".equals(rol)) { %>
+                <form action="admin.jsp" method="get" style="margin-top: 10px;">
+                    <button type="submit" class="btn-admin">Panel de Administración</button>
+                </form>
+                <% } %>
 
                 <!-- Botón de cerrar sesión -->
                 <form action="LogoutServlet" method="post">

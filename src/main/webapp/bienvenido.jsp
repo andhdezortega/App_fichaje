@@ -2,6 +2,7 @@
 <%@ page session="true" %>
 <%
     String usuario = (String) session.getAttribute("usuario");
+    String rol = (String) session.getAttribute("rol");
     if (usuario == null) {
         response.sendRedirect("login.jsp");
         return;
@@ -33,6 +34,12 @@
                 <input type="hidden" name="returnTo" value="perfil.jsp">
                 <button type="submit" name="accion" value="entrada" <%= fichajeEntrada ? "disabled" : "" %>>Fichar Entrada</button>
             </form>
+
+            <% if ("admin".equals(rol)) { %>
+            <form action="admin.jsp" method="get" style="margin-top: 10px;">
+                <button type="submit" class="btn-admin">Panel de Administración</button>
+            </form>
+            <% } %>
 
             <form action="LogoutServlet" method="post" style="margin-top: 10px;">
                 <button class="cerrar-btn" type="submit">Cerrar sesión</button>

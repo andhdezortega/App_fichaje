@@ -48,10 +48,10 @@
                     <input type="hidden" name="id" value="<%= usuarioObj.getId() %>">
                 <% } %>
                 <label>Usuario:</label>
-                <input type="text" name="usuario" value="<%= editMode ? usuarioObj.getUsuario() : "" %>" required>
+                <input type="text" name="usuario" value="<%= editMode ? usuarioObj.getUsuario() : "" %>"required >
 
                 <label>Apellido:</label>
-                <input type="text" name="apellido" value="<%= editMode && usuarioObj.getApellido() != null ? usuarioObj.getApellido() : "" %>" required>
+                <input type="text" name="apellido" value="<%= editMode && usuarioObj.getApellido() != null ? usuarioObj.getApellido() : "" %>"required >
 
                 <label>Correo electrónico:</label>
                 <input type="email" name="correo" value="<%= editMode && usuarioObj.getCorreo() != null ? usuarioObj.getCorreo() : "" %>" required>
@@ -59,6 +59,12 @@
                 <label>Contraseña<%= editMode ? " (dejar en blanco para no cambiarla)" : "" %>:</label>
                 <input type="password" name="password" <%= editMode ? "" : "required" %>>
 
+                <label>Rol:</label>
+                <select name="rol" required>
+                    <option value="user" <%= editMode && "user".equals(usuarioObj.getRol()) ? "selected" : "" %>>Usuario</option>
+                    <option value="admin" <%= editMode && "admin".equals(usuarioObj.getRol()) ? "selected" : "" %>>Administrador</option>
+                </select>
+                
                 <label>Descripción:</label>
                 <input type="text" name="descripcion" value="<%= editMode && usuarioObj.getDescripcion() != null ? usuarioObj.getDescripcion() : "" %>" required>
 
