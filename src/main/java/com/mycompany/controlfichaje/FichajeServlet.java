@@ -13,9 +13,6 @@ import com.mycompany.controlfichaje.dao.FichajeDAO;
 import com.mycompany.controlfichaje.dao.UsuarioDAO;
 import com.mycompany.controlfichaje.dao.Usuario;
 
-
-
-
 @WebServlet(name = "FichajeServlet", urlPatterns = {"/FichajeServlet"})
 public class FichajeServlet extends HttpServlet {
 
@@ -116,8 +113,6 @@ public class FichajeServlet extends HttpServlet {
                         session.setAttribute("fichajeSalida", true);
                         session.setAttribute("fichajeEntrada", false);
                         
-                        // Si se pasa un parámetro opcional returnTo, redirige a esa página
-                        String returnToSalida = request.getParameter("returnTo");
                         // Limpiar sesión de producción
                         session.removeAttribute("inicioProduccion");
                         session.removeAttribute("estadoUsuario");
@@ -132,7 +127,6 @@ public class FichajeServlet extends HttpServlet {
                 return;
             
             default:
-                // si no reconoce la acción
                 response.sendRedirect("perfil.jsp");
         }
     }

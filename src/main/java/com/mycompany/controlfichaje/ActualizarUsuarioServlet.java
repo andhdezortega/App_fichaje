@@ -28,21 +28,8 @@ public class ActualizarUsuarioServlet extends HttpServlet {
         String rol = request.getParameter("rol");
         String descripcion = request.getParameter("descripcion");
 
-        System.out.println("🔍 ActualizarUsuarioServlet - ID: " + idParam);
-        System.out.println("🔍 ActualizarUsuarioServlet - Usuario: " + usuario);
-        System.out.println("🔍 ActualizarUsuarioServlet - Rol: " + rol);
-
-        // Normalizar rol a valores esperados en la app
-        if (rol == null || rol.trim().isEmpty()) {
-            rol = "usuario";
-        } else {
-            rol = rol.trim().toLowerCase();
-            if ("user".equals(rol)) {
-                rol = "usuario";
-            } else if (!"admin".equals(rol) && !"usuario".equals(rol)) {
-                // Cualquier otro valor inesperado pasa a "usuario"
-                rol = "usuario";
-            }
+        if (rol == null || rol.isEmpty()) {
+            rol = "user";
         }
 
         if (idParam == null || idParam.isEmpty()) {

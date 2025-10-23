@@ -1,6 +1,7 @@
 package com.mycompany.controlfichaje;
 
 import com.mycompany.controlfichaje.dao.Usuario;
+import com.mycompany.controlfichaje.dao.UsuarioDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Servlet para cargar datos de un usuario (por id) en el formulario de edición.
+ * Requiere rol admin. Devuelve el objeto Usuario en el request hacia usuarios.jsp.
+ */
 @WebServlet("/EditarUsuarioServlet")
 public class EditarUsuarioServlet extends HttpServlet {
     @Override
@@ -21,29 +26,19 @@ public class EditarUsuarioServlet extends HttpServlet {
         }
 
         String idParam = request.getParameter("id");
-        System.out.println("🔍 EditarUsuarioServlet - ID recibido: " + idParam);
-        System.out.println("🔍 EditarUsuarioServlet - Todos los parámetros: " + request.getParameterMap());
-        
         if (idParam == null || idParam.isEmpty()) {
-            System.out.println("❌ Error: ID no especificado");
-            response.sendRedirect("usuarios.jsp?error=Usuario no especificado - ID: " + idParam);
+            response.sendRedirect("usuarios.jsp?error=Usuario no especificado");
             return;
         }
-        
         int id = Integer.parseInt(idParam);
-        System.out.println("🔍 Buscando usuario con ID: " + id);
-        
-        Usuario existente = com.mycompany.controlfichaje.dao.UsuarioDAO.obtenerUsuarioPorId(id);
+        Usuario existente = UsuarioDAO.obtenerUsuarioPorId(id);
         if (existente == null) {
-            System.out.println("❌ Error: Usuario no encontrado con ID: " + id);
             response.sendRedirect("usuarios.jsp?error=Usuario no encontrado");
             return;
         }
-        
-        System.out.println("✅ Usuario encontrado: " + existente.getUsuario() + " (ID: " + existente.getId() + ")");
+        // Adjuntar el usuario al request para llenar el formulario en la JSP
         request.setAttribute("usuarioObj", existente);
         request.getRequestDispatcher("usuarios.jsp").forward(request, response);
     }
 }
-
 

@@ -39,5 +39,7 @@ public class ActualizarFichajeServlet extends HttpServlet {
             e.printStackTrace();
             response.sendRedirect("admin.jsp?error=1");
         }
+
+        
     }
 }

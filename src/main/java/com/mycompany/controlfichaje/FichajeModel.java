@@ -176,13 +176,31 @@ public class FichajeModel {
     }
 
     // Campo para estado de horas extra (pendiente/aprobado)
-    private String estadoHorasExtra;
+   private String estadoHorasExtra;
 
-    public String getEstadoHorasExtra() {
-        return estadoHorasExtra;
-    }
+// Constructor (añade este parámetro)
+public FichajeModel(int id, String nombre, String apellido, String rol, LocalDate fecha,
+                    LocalTime entrada, LocalTime salida, int descanso, int comida, int horasSemanales,
+                    String estadoHorasExtra) {
+                    this.id = id;
+                    this.nombre = nombre;
+                    this.apellido = apellido;
+                    this.rol = rol;
+                    this.fecha = fecha;
+                    this.entrada = entrada;
+                    this.salida = salida;
+                    this.descanso = descanso;
+                    this.comida = comida;
+                    this.horasSemanales = horasSemanales;
+                    this.estadoHorasExtra = estadoHorasExtra;
+                }
 
-    public void setEstadoHorasExtra(String estadoHorasExtra) {
-        this.estadoHorasExtra = estadoHorasExtra;
-    }
-}
+                public String getEstadoHorasExtra() {
+                    return estadoHorasExtra;
+                }
+
+                public void setEstadoHorasExtra(String estadoHorasExtra) {
+                    this.estadoHorasExtra = estadoHorasExtra;
+                }
+
+                }

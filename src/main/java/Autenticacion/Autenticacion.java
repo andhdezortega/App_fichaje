@@ -33,6 +33,9 @@ public class Autenticacion {
         } else {
             session.setAttribute("estadoUsuario", "produccion");
         }
+        System.out.println("Verificación de credenciales para " + correo + ": " + verificarCredenciales(correo, password));
+        System.out.println("userInfo: " + userInfo);
+
 
         // Obtener el nombre de usuario real para la sesión
         com.mycompany.controlfichaje.dao.Usuario u = com.mycompany.controlfichaje.dao.UsuarioDAO.obtenerUsuarioPorCorreo(correo);

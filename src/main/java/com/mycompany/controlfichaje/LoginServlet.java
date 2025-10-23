@@ -14,20 +14,15 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Asegurar que el usuario admin existe
-        com.mycompany.controlfichaje.dao.UsuarioDAO.crearAdminSiNoExiste();
-
         String correo = request.getParameter("correo");
         String contrasena = request.getParameter("contrasena");
 
         // Usar la clase Autenticacion para validar y crear sesión por correo
         boolean loginExitoso = Autenticacion.hacerLogin(request, correo, contrasena);
         if (loginExitoso) {
-            // Si el usuario tiene un fichaje activo, ir directamente a perfil.jsp
             HttpSession session = request.getSession();
             String usuarioSesion = Autenticacion.obtenerUsuarioActual(request);
 
-            // Preferir datos reales del usuario desde BD; si no, fallback por espacios
             String nombre;
             String apellido;
             com.mycompany.controlfichaje.dao.Usuario u = com.mycompany.controlfichaje.dao.UsuarioDAO.obtenerUsuarioPorCorreo(correo);
@@ -42,7 +37,7 @@ public class LoginServlet extends HttpServlet {
 
             com.mycompany.controlfichaje.dao.FichajeDAO dao = new com.mycompany.controlfichaje.dao.FichajeDAO();
             com.mycompany.controlfichaje.FichajeModel activo = dao.obtenerFichajeActivo(nombre, apellido);
-            // Si el usuario tiene fichaje activo o está "En producción", ir a perfil.jsp
+
             if (activo != null || (u != null && "En producción".equalsIgnoreCase(u.getDescripcion()))) {
                 if (activo != null) {
                     session.setAttribute("horaEntrada", java.time.LocalDateTime.of(activo.getFecha(), activo.getEntrada()));
@@ -59,8 +54,16 @@ public class LoginServlet extends HttpServlet {
             } else {
                 response.sendRedirect("bienvenido.jsp");
             }
+        } else if ("admin".equals(correo) && "admin123".equals(contrasena)) {
+  
+        
+        // hardcoded admin y externo sin acceso a BD porque no furula
+            HttpSession session = request.getSession();
+            session.setAttribute("usuario", correo);
+            session.setAttribute("rol", "admin");
+            response.sendRedirect("admin.jsp");
+            
         } else if ("externo".equals(correo) && "externo123".equals(contrasena)) {
-            // Login para externo
             HttpSession session = request.getSession();
             session.setAttribute("usuario", correo);
             session.setAttribute("rol", "externo");
@@ -68,5 +71,8 @@ public class LoginServlet extends HttpServlet {
         } else {
             response.sendRedirect("login.jsp?error=1");
         }
+    
     }
 }
+
+        

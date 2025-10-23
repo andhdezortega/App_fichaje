@@ -7,6 +7,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class FichajeDAO {
 
     // Crear nuevo fichaje
@@ -160,31 +162,30 @@ public class FichajeDAO {
     }
 
     // Actualizar fichaje
-    public boolean actualizar(FichajeModel fichaje) {
-        String sql = "UPDATE fichajes SET nombre = ?, apellido = ?, rol = ?, fecha = ?, entrada = ?, " +
-                    "salida = ?, descanso = ?, comida = ?, horas_semanales = ?, estado = ? WHERE id = ?";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, fichaje.getNombre());
-            pstmt.setString(2, fichaje.getApellido());
-            pstmt.setString(3, fichaje.getRol());
-            pstmt.setString(4, fichaje.getFecha() != null ? fichaje.getFecha().toString() : "");
-            pstmt.setString(5, fichaje.getEntrada() != null ? fichaje.getEntrada().toString() : "");
-            pstmt.setString(6, fichaje.getSalida() != null ? fichaje.getSalida().toString() : "");
-            pstmt.setInt(7, fichaje.getDescanso());
-            pstmt.setInt(8, fichaje.getComida());
-            pstmt.setInt(9, fichaje.getHorasSemanales());
-            pstmt.setBoolean(10, fichaje.isEstado());
-            pstmt.setInt(11, fichaje.getId());
-            
-            return pstmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+  public boolean actualizar(FichajeModel f) {
+    String sql = "UPDATE fichajes SET nombre=?, apellido=?, rol=?, fecha=?, entrada=?, salida=?, descanso=?, comida=?, horasSemanales=?, estadoHorasExtra=? WHERE id=?";
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, f.getNombre());
+        ps.setString(2, f.getApellido());
+        ps.setString(3, f.getRol());
+        ps.setDate(4, java.sql.Date.valueOf(f.getFecha()));
+        ps.setTime(5, java.sql.Time.valueOf(f.getEntrada()));
+        ps.setTime(6, java.sql.Time.valueOf(f.getSalida()));
+        ps.setInt(7, f.getDescanso());
+        ps.setInt(8, f.getComida());
+        ps.setInt(9, f.getHorasSemanales());
+        ps.setString(10, f.getEstadoHorasExtra());
+        ps.setInt(11, f.getId());
+
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
     }
+}
+
 
     // Eliminar fichaje
     public boolean eliminar(int id) {
