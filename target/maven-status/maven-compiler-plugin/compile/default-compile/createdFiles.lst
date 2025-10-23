@@ -1,0 +1,16 @@
+com\mycompany\controlfichaje\FichajeModel.class
+com\mycompany\controlfichaje\dao\UsuarioDAO.class
+com\mycompany\controlfichaje\CrearUsuarioServlet.class
+com\mycompany\controlfichaje\EliminarUsuarioServlet.class
+com\mycompany\controlfichaje\FichajeServlet.class
+com\mycompany\controlfichaje\ActualizarUsuarioServlet.class
+com\mycompany\controlfichaje\LoginServlet.class
+com\mycompany\controlfichaje\ActualizarEstadoServlet.class
+Autenticacion\Autenticacion.class
+com\mycompany\controlfichaje\ActualizarFichajeServlet.class
+com\mycompany\controlfichaje\dao\Usuario.class
+com\mycompany\controlfichaje\EliminarFichaje.class
+com\mycompany\controlfichaje\EditarUsuarioServlet.class
+com\mycompany\controlfichaje\dao\FichajeDAO.class
+com\mycompany\controlfichaje\LogoutServlet.class
+com\mycompany\controlfichaje\dao\DatabaseConnection.class
