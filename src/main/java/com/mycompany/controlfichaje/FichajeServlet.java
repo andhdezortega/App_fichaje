@@ -85,7 +85,6 @@ public class FichajeServlet extends HttpServlet {
                 boolean entradaRegistrada = fichajeDAO.crear(fichaje);
                 
                 if (entradaRegistrada) {
-                    System.out.println("DEBUG: Fichaje creado exitosamente para " + nombre + " " + apellido);
                     session.setAttribute("horaEntrada", ahora);
                     session.setAttribute("horaSalida", null);
                     session.setAttribute("fichajeEntrada", true);
@@ -94,15 +93,12 @@ public class FichajeServlet extends HttpServlet {
                     // Guardar variables de estado de producción
                     session.setAttribute("inicioProduccion", ahora);
                     session.setAttribute("estadoUsuario", "produccion");
-
-                    System.out.println("DEBUG: Atributos de sesión establecidos. fichajeEntrada=" + session.getAttribute("fichajeEntrada"));
                     
                     // Redirigir a perfil.jsp después de fichar entrada
                     response.sendRedirect("perfil.jsp");
                     return;
 
                 } else {
-                    System.out.println("ERROR: No se pudo crear el fichaje para " + nombre + " " + apellido);
                     request.setAttribute("error", "Error al registrar la entrada");
                     request.getRequestDispatcher("perfil.jsp").forward(request, response);
                 }

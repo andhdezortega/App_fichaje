@@ -26,22 +26,17 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-    String correo = request.getParameter("correo");
-    String contrasena = request.getParameter("contrasena");
-
-        System.out.println("[LOGINSERVLET] Recibido POST - correo=[" + correo + "], contrasena length=" + (contrasena != null ? contrasena.length() : "null"));
+        String correo = request.getParameter("correo");
+        String contrasena = request.getParameter("contrasena");
 
         // Validación mínima: debe ser un correo (no nombre de usuario)
         if (correo == null || !correo.contains("@")) {
-            System.out.println("[LOGINSERVLET] Error: correo no válido (no contiene @)");
             response.sendRedirect("login.jsp?error=email");
             return;
         }
 
-        System.out.println("[LOGINSERVLET] Llamando a Autenticacion.hacerLogin");
         // Validar y crear sesión por correo
-    boolean loginExitoso = Autenticacion.hacerLogin(request, correo, contrasena);
-        System.out.println("[LOGINSERVLET] Login exitoso: " + loginExitoso);
+        boolean loginExitoso = Autenticacion.hacerLogin(request, correo, contrasena);
         if (loginExitoso) {
             // Si el usuario tiene un fichaje activo, ir directamente a perfil.jsp
             HttpSession session = request.getSession();

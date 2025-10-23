@@ -32,17 +32,12 @@ public class Autenticacion {
      * @return true si las credenciales son correctas; false en caso contrario
      */
     public static boolean verificarCredenciales(String correo, String password) {
-        System.out.println("[AUTENTICACION] verificarCredenciales llamado con correo=[" + correo + "], password length=" + (password != null ? password.length() : "null"));
         if (correo == null || correo.trim().isEmpty() ||
             password == null || password.isEmpty()) {
-            System.out.println("[AUTENTICACION] Validación inicial FALLÓ - correo o password inválidos");
             return false;
         }
-        System.out.println("[AUTENTICACION] Llamando a usuarioDAO.verificarCredencialesPorCorreo");
         UsuarioDAO usuarioDAO = new UsuarioDAO();
-        boolean resultado = usuarioDAO.verificarCredencialesPorCorreo(correo.trim(), password);
-        System.out.println("[AUTENTICACION] Resultado DAO: " + resultado);
-        return resultado;
+        return usuarioDAO.verificarCredencialesPorCorreo(correo.trim(), password);
     }
     
     /**
@@ -54,32 +49,24 @@ public class Autenticacion {
      * @return true si el login es satisfactorio; false si las credenciales no son válidas
      */
     public static boolean hacerLogin(HttpServletRequest request, String correo, String password) {
-        System.out.println("[AUTENTICACION] hacerLogin llamado con correo=[" + correo + "]");
         if (!verificarCredenciales(correo, password)) {
-            System.out.println("[AUTENTICACION] verificarCredenciales retornó FALSE");
             return false;
         }
-        System.out.println("[AUTENTICACION] Credenciales verificadas OK, obteniendo info de usuario");
         UsuarioDAO usuarioDAO = new UsuarioDAO();
         Map<String, String> userInfo = usuarioDAO.obtenerInfoUsuarioPorCorreo(correo);
         if (userInfo.isEmpty()) {
-            System.out.println("[AUTENTICACION] userInfo está vacío para correo: " + correo);
             return false;
         }
-        System.out.println("[AUTENTICACION] userInfo obtenido, creando sesión");
         HttpSession session = request.getSession(true);
-        // Obtener el nombre de usuario "amigable" para mostrar en la UI.
         com.mycompany.controlfichaje.dao.Usuario u = com.mycompany.controlfichaje.dao.UsuarioDAO.obtenerUsuarioPorCorreo(correo);
         String usuario = (u != null && u.getUsuario() != null) ? u.getUsuario() : correo;
         session.setAttribute("usuario", usuario);
         session.setAttribute("correo", (u != null ? u.getCorreo() : correo));
         session.setAttribute("rol", userInfo.get("rol"));
         session.setAttribute("descripcion", userInfo.get("descripcion"));
-        // Marcas técnicas: tiempo de login, IP remota y tiempo de inactividad (30 min)
         session.setAttribute("timestampLogin", System.currentTimeMillis());
         session.setAttribute("ipAddress", request.getRemoteAddr());
         session.setMaxInactiveInterval(30 * 60);
-        System.out.println("[AUTENTICACION] Login exitoso para usuario: " + usuario);
         return true;
     }
     
@@ -105,9 +92,7 @@ public class Autenticacion {
     public static String obtenerUsuarioActual(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            String usuario = (String) session.getAttribute ("usuario");
-            System.out.println("Usuario actual: " + usuario);
-            return usuario;            
+            return (String) session.getAttribute("usuario");
         }
         return null;
     }
@@ -119,10 +104,8 @@ public class Autenticacion {
      */
     public static String obtenerRol(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session !=null) {
-            String rol = (String) session.getAttribute("rol");
-            System.out.println("Rol actual: " + rol);
-            return rol;
+        if (session != null) {
+            return (String) session.getAttribute("rol");
         }
         return null;
     }
@@ -135,10 +118,7 @@ public class Autenticacion {
      */
     public static boolean tieneRol(HttpServletRequest request, String rolRequerido) {
         String rolActual = obtenerRol(request);
-        boolean tieneAcceso = rolRequerido != null && rolRequerido.equals(rolActual);
-        
-        System.out.println("Verificación de rol - Requerido: " + rolRequerido + ", Actual: " + rolActual + ", Acceso: " + tieneAcceso);
-        return tieneAcceso;
+        return rolRequerido != null && rolRequerido.equals(rolActual);
     }
     
     /**
@@ -148,14 +128,7 @@ public class Autenticacion {
     public static void hacerlogout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            String usuario = (String) session.getAttribute ("usuario");
-            System.out.println("Cerrando sesión para usuario: " + usuario);
-            
             session.invalidate();
-            
-            System.out.println("sesión cerrada correctamente");
-        } else {
-            System.out.println("no hay sesión activa para cerrar");
         }
     }
     
@@ -169,9 +142,7 @@ public class Autenticacion {
         if (session != null) {
             Long timestamp = (Long) session.getAttribute("timestampLogin");
             if (timestamp != null) {
-                long tiempoActivo = (System.currentTimeMillis() - timestamp) / 1000;
-                System.out.println("Sesión activa por: " + tiempoActivo + " segundos");
-                return tiempoActivo;
+                return (System.currentTimeMillis() - timestamp) / 1000;
             }
         }
         return 0;
