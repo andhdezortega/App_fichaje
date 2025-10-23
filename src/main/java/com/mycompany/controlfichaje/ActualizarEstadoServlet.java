@@ -17,6 +17,14 @@ import com.mycompany.controlfichaje.dao.UsuarioDAO;
 @WebServlet("/ActualizarEstadoServlet")
 public class ActualizarEstadoServlet extends HttpServlet {
 
+    // Método auxiliar para capitalizar nombres de estados
+    private String capitalize(String s) {
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * - Carga explícitamente el driver org.sqlite.JDBC en el bloque estático.
  */
 public class DatabaseConnection {
-    private static final String URL = "jdbc:sqlite:C:/Users/Usuario/Documents/NetBeansProjects/RamaJose/App_fichaje-jose/fichajes.sqlite3";
+    private static final String URL = "jdbc:sqlite:C:/Users/Usuario/Documents/NetBeansProjects/App_fichaje/fichajes.sqlite3";
 
     static {
         try {

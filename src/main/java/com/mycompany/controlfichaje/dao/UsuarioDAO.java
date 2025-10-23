@@ -112,6 +112,31 @@ public class UsuarioDAO {
         return false;
     }
 
+    // Verificar credenciales por usuario (para admin)
+    public boolean verificarCredencialesPorUsuario(String usuario, String password) {
+        String sql = "SELECT password FROM usuarios WHERE usuario = ?";
+        if (usuario == null || password == null) {
+            return false;
+        }
+        String u = usuario.trim();
+        String p = password.trim();
+        if (u.isEmpty() || p.isEmpty()) {
+            return false;
+        }
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, u);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String pwdDb = rs.getString("password");
+                return pwdDb != null && pwdDb.equals(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     // Obtener información del usuario por id
     public static Usuario obtenerUsuarioPorId(int id) {
         String sql = "SELECT id, usuario, apellido, correo, password, rol, descripcion FROM usuarios WHERE id = ?";
@@ -200,6 +225,31 @@ public class UsuarioDAO {
         return null;
     }
 
+    // Obtener usuario por nombre de usuario
+    public static Usuario obtenerUsuarioPorNombre(String usuario) {
+        String sql = "SELECT id, usuario, apellido, correo, password, rol, descripcion FROM usuarios WHERE usuario = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, usuario);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                        rs.getInt("id"),
+                        rs.getString("usuario"),
+                        rs.getString("apellido"),
+                        rs.getString("correo"),
+                        rs.getString("password"),
+                        rs.getString("rol"),
+                        rs.getString("descripcion")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     //  para actualizar solo el estado (descripcion) del usuario
     public static void actualizarEstadoUsuario(String correo, String estado) {
         String sql = "UPDATE usuarios SET descripcion = ? WHERE correo = ?";
@@ -226,5 +276,31 @@ public class UsuarioDAO {
         e.printStackTrace();
     }
 }
+
+    // Crear usuario admin si no existe
+    public static void crearAdminSiNoExiste() {
+        String sql = "SELECT COUNT(*) FROM usuarios WHERE usuario = 'admin'";
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery()) {
+            
+            if (rs.next() && rs.getInt(1) == 0) {
+                // Admin no existe, crearlo
+                String insertSql = "INSERT INTO usuarios (usuario, apellido, correo, password, rol, descripcion) VALUES (?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                    insertStmt.setString(1, "admin");
+                    insertStmt.setString(2, "Administrador");
+                    insertStmt.setString(3, "admin@admin.com");
+                    insertStmt.setString(4, "admin");
+                    insertStmt.setString(5, "admin");
+                    insertStmt.setString(6, "En producción");
+                    insertStmt.executeUpdate();
+                    System.out.println("✅ Usuario admin creado automáticamente");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

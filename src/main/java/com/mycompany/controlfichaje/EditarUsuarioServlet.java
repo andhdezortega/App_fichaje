@@ -1,7 +1,6 @@
 package com.mycompany.controlfichaje;
 
 import com.mycompany.controlfichaje.dao.Usuario;
-import com.mycompany.controlfichaje.dao.UsuarioDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,16 +21,26 @@ public class EditarUsuarioServlet extends HttpServlet {
         }
 
         String idParam = request.getParameter("id");
+        System.out.println("🔍 EditarUsuarioServlet - ID recibido: " + idParam);
+        System.out.println("🔍 EditarUsuarioServlet - Todos los parámetros: " + request.getParameterMap());
+        
         if (idParam == null || idParam.isEmpty()) {
-            response.sendRedirect("usuarios.jsp?error=Usuario no especificado");
+            System.out.println("❌ Error: ID no especificado");
+            response.sendRedirect("usuarios.jsp?error=Usuario no especificado - ID: " + idParam);
             return;
         }
+        
         int id = Integer.parseInt(idParam);
-        Usuario existente = UsuarioDAO.obtenerUsuarioPorId(id);
+        System.out.println("🔍 Buscando usuario con ID: " + id);
+        
+        Usuario existente = com.mycompany.controlfichaje.dao.UsuarioDAO.obtenerUsuarioPorId(id);
         if (existente == null) {
+            System.out.println("❌ Error: Usuario no encontrado con ID: " + id);
             response.sendRedirect("usuarios.jsp?error=Usuario no encontrado");
             return;
         }
+        
+        System.out.println("✅ Usuario encontrado: " + existente.getUsuario() + " (ID: " + existente.getId() + ")");
         request.setAttribute("usuarioObj", existente);
         request.getRequestDispatcher("usuarios.jsp").forward(request, response);
     }

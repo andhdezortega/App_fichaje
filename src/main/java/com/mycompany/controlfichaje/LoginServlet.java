@@ -14,6 +14,9 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Asegurar que el usuario admin existe
+        com.mycompany.controlfichaje.dao.UsuarioDAO.crearAdminSiNoExiste();
+
         String correo = request.getParameter("correo");
         String contrasena = request.getParameter("contrasena");
 
@@ -51,7 +54,6 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
-            // Si no hay fichaje activo ni "En producción", ir al panel correspondiente
             if ("admin".equals(Autenticacion.obtenerRol(request))) {
                 response.sendRedirect("admin.jsp");
             } else {

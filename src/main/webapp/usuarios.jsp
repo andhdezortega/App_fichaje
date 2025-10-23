@@ -18,6 +18,13 @@
     // Si venimos de EditarUsuarioServlet, habrá un usuarioObj con datos a editar
     Usuario usuarioObj = (Usuario) request.getAttribute("usuarioObj");
     boolean editMode = usuarioObj != null;
+    
+    // Debug logs
+    System.out.println("🔍 usuarios.jsp - editMode: " + editMode);
+    System.out.println("🔍 usuarios.jsp - usuarioObj: " + (usuarioObj != null ? usuarioObj.getUsuario() : "null"));
+    if (usuarioObj != null) {
+        System.out.println("🔍 usuarios.jsp - ID: " + usuarioObj.getId() + ", Usuario: " + usuarioObj.getUsuario() + ", Rol: " + usuarioObj.getRol());
+    }
 %>
 
 <!DOCTYPE html>
@@ -29,35 +36,74 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
+    <div class="top-right-controls">
+        <form method="post" action="LogoutServlet">
+            <button type="submit" class="cerrar-btn">Cerrar sesión</button>
+        </form>
+    </div>
+    
     <div class="container">
         <!-- BARRA LATERAL -->
         <div class="sidebar">
             <h2><%= editMode ? "Editar Usuario" : "Crear Nuevo Usuario" %></h2>
             <form method="post" action="<%= editMode ? "ActualizarUsuarioServlet" : "CrearUsuarioServlet" %>">
-                <% if (editMode) { %>
-                    <input type="hidden" name="originalUsuario" value="<%= usuarioObj.getUsuario() %>">
+                <% if (editMode && usuarioObj != null) { %>
+                    <input type="hidden" name="id" value="<%= usuarioObj.getId() %>">
+                    <p><strong>ID:</strong> <%= usuarioObj.getId() %></p>
                 <% } %>
+                
                 <label>Usuario:</label>
-                <input type="text" name="usuario" value="<%= editMode ? usuarioObj.getUsuario() : "" %>" required>
+                <% 
+                    String usuarioValue = "";
+                    if (editMode && usuarioObj != null) {
+                        usuarioValue = usuarioObj.getUsuario() != null ? usuarioObj.getUsuario() : "";
+                    }
+                %>
+                <input type="text" name="usuario" value="<%= usuarioValue %>" required>
 
                 <label>Apellido:</label>
-                <input type="text" name="apellido" value="<%= editMode && usuarioObj.getApellido() != null ? usuarioObj.getApellido() : "" %>" required>
+                <% 
+                    String apellidoValue = "";
+                    if (editMode && usuarioObj != null) {
+                        apellidoValue = usuarioObj.getApellido() != null ? usuarioObj.getApellido() : "";
+                    }
+                %>
+                <input type="text" name="apellido" value="<%= apellidoValue %>" required>
 
                 <label>Correo electrónico:</label>
-                <input type="email" name="correo" value="<%= editMode && usuarioObj.getCorreo() != null ? usuarioObj.getCorreo() : "" %>" required>
+                <% 
+                    String correoValue = "";
+                    if (editMode && usuarioObj != null) {
+                        correoValue = usuarioObj.getCorreo() != null ? usuarioObj.getCorreo() : "";
+                    }
+                %>
+                <input type="email" name="correo" value="<%= correoValue %>" required>
 
                 <label>Contraseña<%= editMode ? " (dejar en blanco para no cambiarla)" : "" %>:</label>
                 <input type="password" name="password" <%= editMode ? "" : "required" %>>
 
+                <label>Rol:</label>
+                <% 
+                    String rolValue = "";
+                    if (editMode && usuarioObj != null) {
+                        rolValue = usuarioObj.getRol() != null ? usuarioObj.getRol() : "usuario";
+                    }
+                %>
+                <select name="rol" required>
+                    <option value="usuario" <%= "usuario".equals(rolValue) ? "selected" : "" %>>Usuario</option>
+                    <option value="admin" <%= "admin".equals(rolValue) ? "selected" : "" %>>Administrador</option>
+                </select>
+
                 <label>Descripción:</label>
-                <input type="text" name="descripcion" value="<%= editMode && usuarioObj.getDescripcion() != null ? usuarioObj.getDescripcion() : "" %>" required>
+                <% 
+                    String descripcionValue = "";
+                    if (editMode && usuarioObj != null) {
+                        descripcionValue = usuarioObj.getDescripcion() != null ? usuarioObj.getDescripcion() : "";
+                    }
+                %>
+                <input type="text" name="descripcion" value="<%= descripcionValue %>" required>
 
-                <% if (editMode) { %>
-                    <!-- Mantener el rol actual del usuario para no perderlo -->
-                    <input type="hidden" name="rol" value="<%= usuarioObj.getRol() %>">
-                <% } %>
-
-                <input type="submit" value="<%= editMode ? "Guardar cambios" : "Crear Usuario" %>">
+                <input type="submit" value="<%= editMode ? "Actualizar" : "Crear Usuario" %>">
                 <% if (editMode) { %>
                     <a href="usuarios.jsp" class="boton-link" style="margin-left:8px;">Cancelar</a>
                 <% } %>
@@ -69,7 +115,7 @@
             <% if (error != null) { %>
                 <p class="mensaje-error"><%= error %></p>
             <% } %>
-            <% if (editMode) { %>
+            <% if (editMode && usuarioObj != null) { %>
                 <p class="mensaje-info">Editando al usuario <strong><%= usuarioObj.getUsuario() %></strong></p>
             <% } %>
 
@@ -96,7 +142,9 @@
                     <% 
                     UsuarioDAO usuarioDAO = new UsuarioDAO();
                     List<Map<String, String>> usuarios = usuarioDAO.obtenerTodos();
+                    System.out.println("🔍 usuarios.jsp - Total usuarios: " + usuarios.size());
                     for (Map<String, String> user : usuarios) { 
+                        System.out.println("🔍 usuarios.jsp - Usuario: " + user.get("usuario") + ", ID: " + user.get("id"));
                     %>
                         <tr>
                             <td><%= user.get("usuario") %></td>
@@ -106,7 +154,7 @@
                             <td><%= user.get("descripcion") %></td>
                             <td>
                                 <form method="get" action="EditarUsuarioServlet" style="display:inline;">
-                                    <input type="hidden" name="usuario" value="<%= user.get("usuario") %>">
+                                    <input type="hidden" name="id" value="<%= user.get("id") %>">
                                     <input type="submit" value="Editar" class="btn-accion">
                                 </form>
                                 <% if (!"admin".equals(user.get("usuario"))) { %>
@@ -123,5 +171,23 @@
             </table>
         </div>
     </div>
+
+<script>
+function alignLogoutButton() {
+    var h1 = document.querySelector('.main h1');
+    var wrapper = document.querySelector('.top-right-controls');
+    if (!h1 || !wrapper) return;
+    var h1Rect = h1.getBoundingClientRect();
+    var btn = wrapper.querySelector('.cerrar-btn');
+    var btnHeight = btn ? btn.offsetHeight : wrapper.offsetHeight;
+    // calcular top para centrar el botón con el H1
+    var top = h1Rect.top + (h1Rect.height - btnHeight) / 2;
+    if (top < 6) top = 6;
+    wrapper.style.top = top + 'px';
+}
+window.addEventListener('load', alignLogoutButton);
+window.addEventListener('resize', alignLogoutButton);
+</script>
+
 </body>
 </html>
