@@ -5,21 +5,25 @@
 <%@ page import="java.time.Duration"%>
 <%@ page import="com.mycompany.controlfichaje.dao.*" %>
 
+<%!
+    // Método auxiliar para capitalizar nombres de estados
+    private String capitalize(String s) {
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
+    }
+%>
+
 <%
+    // Validar sesión de usuario
     String usuario = (String) session.getAttribute("usuario");
     String correo = (String) session.getAttribute("correo");
-    String rol = (String) session.getAttribute("rol");
     if (usuario == null) {
         response.sendRedirect("login.jsp");
         return;
     }
 
-    // Obtener datos completos del usuario desde la base de datos
+    // Obtener datos del usuario
     Usuario usuarioObj = UsuarioDAO.obtenerUsuarioPorCorreo(correo);
-    String apellido = "";
-    if (usuarioObj != null && usuarioObj.getApellido() != null) {
-        apellido = usuarioObj.getApellido();
-    }
+    String apellido = usuarioObj != null && usuarioObj.getApellido() != null ? usuarioObj.getApellido() : "";
 
     Boolean fichajeEntrada = (Boolean) session.getAttribute("fichajeEntrada");
     if (fichajeEntrada == null || !fichajeEntrada) {
@@ -29,48 +33,71 @@
 
     LocalDateTime horaEntrada = (LocalDateTime) session.getAttribute("horaEntrada");
     LocalDateTime horaSalida = (LocalDateTime) session.getAttribute("horaSalida");
-    LocalDateTime inicioProduccion = (LocalDateTime) session.getAttribute("inicioProduccion");
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-    String entradaFormateada = (horaEntrada != null) ? horaEntrada.format(formatter) : "Sin registrar";
+    String entradaFormateada = horaEntrada != null ? horaEntrada.format(formatter) : "Sin registrar";
 
-    boolean fichajeSalida = (horaEntrada != null && horaSalida == null);
+    boolean fichajeSalida = horaEntrada != null && horaSalida == null;
 
+    // Estado actual del usuario
     String estadoUsuario = (String) session.getAttribute("estadoUsuario");
     if (estadoUsuario == null || estadoUsuario.isEmpty()) {
         estadoUsuario = "produccion";
         session.setAttribute("estadoUsuario", estadoUsuario);
     }
 
-    String claseEstado = "estado-msg";
-    if ("produccion".equals(estadoUsuario)) {
-        claseEstado += " estado-produccion";
-    } else {
-        claseEstado += " estado-no-produccion";
-    }
+    String claseEstado = "estado-msg " + ("produccion".equals(estadoUsuario) ? "estado-produccion" : "estado-no-produccion");
 
-    String estadoBarra;
+    String estado;
     switch (estadoUsuario) {
-        case "break":
-            estadoBarra = "Break";
-            break;
-        case "comida":
-            estadoBarra = "Comida";
-            break;
-        case "asuntos_propios":
-            estadoBarra = "Asuntos propios";
-            break;
-        case "produccion":
-            estadoBarra = "En producción";
-            break;
-        default:
-            estadoBarra = "";
+        case "break": estado = "Break"; break;
+        case "comida": estado = "Comida"; break;
+        case "asuntos_propios": estado = "Asuntos propios"; break;
+        case "produccion": estado = "En producción"; break;
+        default: estado = ""; break;
     }
 
-    String inicioProduccionStr = "";
-    if (inicioProduccion != null) {
+    // Inicializar estados y minutos acumulados
+    String[] estados = {"produccion", "break", "comida", "asuntos_propios"};
+    for (String est : estados) {
+        String estCap = capitalize(est);
+        if (session.getAttribute("inicio" + estCap) == null && est.equals(estadoUsuario)) {
+            session.setAttribute("inicio" + estCap, LocalDateTime.now());
+        }
+        if (session.getAttribute("minutos" + estCap) == null) {
+            session.setAttribute("minutos" + estCap, 0L);
+        }
+    }
+
+    // Calcular minutos acumulados
+    long minutosProduccion = 0;
+    long minutosNoProduccion = 0;
+
+    for (String est : estados) {
+        String estCap = capitalize(est);
+        Long minutos = (Long) session.getAttribute("minutos" + estCap);
+        minutos = minutos != null ? minutos : 0L;
+
+        LocalDateTime inicio = (LocalDateTime) session.getAttribute("inicio" + estCap);
+        if (inicio != null && est.equals(estadoUsuario)) {
+            minutos += Duration.between(inicio, LocalDateTime.now()).toMinutes();
+        }
+
+        session.setAttribute("minutos" + estCap, minutos);
+
+        if ("produccion".equals(est)) {
+            minutosProduccion = minutos;
+        } else {
+            minutosNoProduccion += minutos;
+        }
+    }
+
+    // Formato ISO para JS
+    LocalDateTime inicioEstado = (LocalDateTime) session.getAttribute("inicio" + capitalize(estadoUsuario));
+    String inicioEstadoStr = "";
+    if (inicioEstado != null) {
         DateTimeFormatter isoFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        inicioProduccionStr = inicioProduccion.format(isoFormatter);
+        inicioEstadoStr = inicioEstado.format(isoFormatter);
     }
 %>
 
@@ -78,134 +105,107 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title><%= estadoBarra %></title>
-
-    <!-- Bootstrap -->
+    <title><%= estado %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" href="<%=request.getContextPath()%>/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-
 <body class="bg-light">
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <div class="card shadow-sm w-100" style="max-width: 700px;">
-            <div class="card-body">
-                
-                <h1 class="mb-4">Perfil de <%= usuario + " " + apellido %></h1>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-sm w-100" style="max-width: 700px;">
+        <div class="card-body">
+            <h1 class="mb-4">Perfil de <%= usuario %> <%= apellido %></h1>
+            <p><strong>Última entrada:</strong> <%= entradaFormateada %></p>
 
-                <p><strong>Última entrada:</strong> <%= entradaFormateada %></p>
+<p class="estado-msg <%= "produccion".equals(estadoUsuario) ? "estado-produccion" : "estado-no-produccion" %>">
+    <strong>Tu estado:&nbsp; </strong> <%= estado %>
+</p>
 
-                <% if (estadoUsuario != null && !estadoUsuario.isEmpty()) { %>
-                    <p class="<%= claseEstado %>">
-                        <strong>Tu estado es:&nbsp;</strong><%= estadoBarra %>
-                    </p>
-                <% } %>
 
-                <% if ("produccion".equals(estadoUsuario) && inicioProduccion != null) { %>
+            <!-- Contadores -->
+            <div class="mt-4">
+                <p><strong>Tiempo en producción:</strong>
+                    <span id="contador-produccion">
+                        <%= String.format("%02dh %02dm %02ds", minutosProduccion / 60, minutosProduccion % 60, 0) %>
 
-<!---------------------------BARRA--------------------------->
-<div class="mt-4">
-    <p><strong>Tiempo en producción:</strong> <span id="contador-produccion">00:00:00</span></p>
+                    </span>
+                </p>
+                <p><strong>Tiempo en no producción:</strong>
+                    <span id="contador-no-produccion">
 
-    <div class="progress">
-        <div id="barra-produccion"
-            class="progress-bar progress-bar-striped"
-            role="progressbar"
-            style="width: 0%;"
-            aria-valuenow="0"
-            aria-valuemin="0"
-            aria-valuemax="100">
-            0%
-        </div>
-    </div>
-</div>
+                        <%= String.format("%02dh %02dm %02ds", minutosNoProduccion / 60, minutosNoProduccion % 60, 0) %>
+                    </span>
+                </p>
+            </div>
 
+<!-- Script para actualizar contadores -->
 <script>
-const inicioProduccion = new Date("<%= inicioProduccionStr %>");
-const estadoUsuario = "<%= estadoUsuario %>";
-const jornadaMs = 8 * 60 * 60 * 1000; // 8 horas
+document.addEventListener("DOMContentLoaded", function() {
+    // Variables de sesión
+    const minutosProduccionJS = <%= minutosProduccion %>;
+    const minutosNoProduccionJS = <%= minutosNoProduccion %>;
+    const inicioEstadoStrJS = "<%= inicioEstadoStr %>";
+    const estadoActualJS = "<%= estadoUsuario %>";
 
-function actualizarContadorYBarra() {
 
-    const ahora = new Date();
-    const diffMs = ahora - inicioProduccion;
+    function actualizarContadores() {
+        if (!inicioEstadoStr) return;
 
-    const horas = Math.floor(diffMs / 3600000);
-    const minutos = Math.floor((diffMs % 3600000) / 60000);
+        const inicio = new Date(inicioEstadoStr);
+        const ahora = new Date();
+        const diffMinutos = Math.floor((ahora - inicio) / 60000);
+        const diffSegundos = Math.floor(((ahora - inicio) % 60000) / 1000);
 
-    document.getElementById('contador-produccion').textContent =
-        `${horas.toString().padStart(2,'0')}h ${minutos.toString().padStart(2,'0')}m ${segundos.toString().padStart(2,'0')}s`;
+        let h, m, s;
 
-    let porcentaje = (diffMs / jornadaMs) * 100;
-    porcentaje = Math.min(porcentaje, 100);
-
-    const barra = document.getElementById('barra-produccion');
-    barra.style.width = porcentaje + '%';
-    barra.textContent = Math.floor(porcentaje) + '%';
-    barra.setAttribute('aria-valuenow', Math.floor(porcentaje));
-
-    //  Cambiar color según el estado actual del usuario
-    barra.classList.remove('bg-success', 'bg-warning', 'bg-danger');
-
-    switch (estadoUsuario) {
-        case 'produccion':
-            barra.classList.add('bg-success');
-            break;
-        case 'break':
-        case 'comida':
-        case 'asuntos_propios':
-            barra.classList.add('bg-warning');
-            break;
-        default:
-            barra.classList.add('bg-danger');
-            break;
+        if (estadoActual === "produccion") {
+            let total = minutosProduccion + diffMinutos;
+            h = String(Math.floor(total / 60)).padStart(2, '0');
+            m = String(total % 60).padStart(2, '0');
+            s = String(diffSegundos).padStart(2, '0');
+            document.querySelectorAll(".contador-produccion").forEach(el => el.textContent = `${h}h ${m}m ${s}s`);
+        } else {
+            let total = minutosNoProduccion + diffMinutos;
+            h = String(Math.floor(total / 60)).padStart(2, '0');
+            m = String(total % 60).padStart(2, '0');
+            s = String(diffSegundos).padStart(2, '0');
+            document.querySelectorAll(".contador-no-produccion").forEach(el => el.textContent = `${h}h ${m}m ${s}s`);
+        }
     }
-}
 
-// Actualizar cada segundo
-setInterval(actualizarContadorYBarra, 1000);
-actualizarContadorYBarra();
+    actualizarContadores();
+    setInterval(actualizarContadores, 1000);
+});
 </script>
 
 
 
-<% } %>
+            <hr class="my-4">
 
-
-
-                <hr class="my-4"/>
-
-                <!-- Formulario para cambiar estado -->
-                <form action="ActualizarEstadoServlet" method="post" class="mb-3">
-                    <div class="row g-2 align-items-center">
-                        <div class="col-md-4">
-                            <select name="estado" id="estado" class="form-select" required>
-                                <option value="produccion" <%= "produccion".equals(estadoUsuario) ? "selected" : "" %>>En producción</option>
-                                <option value="break" <%= "break".equals(estadoUsuario) ? "selected" : "" %>>Break</option>
-                                <option value="comida" <%= "comida".equals(estadoUsuario) ? "selected" : "" %>>Comida</option>
-                                <option value="asuntos_propios" <%= "asuntos_propios".equals(estadoUsuario) ? "selected" : "" %>>Asuntos propios</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary">Actualizar estado</button>
-                        </div>
+            <!-- Formulario cambiar estado -->
+            <form action="ActualizarEstadoServlet" method="post" class="mb-3">
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-4">
+                        <select name="estado" class="form-select" required>
+                            <option value="produccion" <%= "produccion".equals(estadoUsuario) ? "selected" : "" %>>En producción</option>
+                            <option value="break" <%= "break".equals(estadoUsuario) ? "selected" : "" %>>Break</option>
+                            <option value="comida" <%= "comida".equals(estadoUsuario) ? "selected" : "" %>>Comida</option>
+                            <option value="asuntos_propios" <%= "asuntos_propios".equals(estadoUsuario) ? "selected" : "" %>>Asuntos propios</option>
+                        </select>
                     </div>
-                </form>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary">Actualizar estado</button>
+                    </div>
+                </div>
+            </form>
 
-                <!-- Formulario para fichar salida -->
-                <form action="FichajeServlet" method="post" class="mb-2">
-                    <input type="hidden" name="accion" value="salida">
-                        <input type="hidden" name="returnTo" value="bienvenido.jsp">
-                        <button type="submit" class="btn btn-danger" <%= (!fichajeSalida) ? "disabled" : "" %>>Fichar Salida</button>
+            <!-- Formulario fichar salida -->
+            <form action="FichajeServlet" method="post" class="mb-2">
+                <input type="hidden" name="accion" value="salida">
+                <input type="hidden" name="returnTo" value="bienvenido.jsp">
+                <button type="submit" class="btn btn-danger" <%= !fichajeSalida ? "disabled" : "" %>>Fichar Salida</button>
                 </form>
-
-                <% if ("admin".equals(rol)) { %>
-                <form action="admin.jsp" method="get" style="margin-top: 10px;">
-                    <button type="submit" class="btn-admin">Panel de Administración</button>
-                </form>
-                <% } %>
 
                 <!-- Botón de cerrar sesión -->
                 <form action="LogoutServlet" method="post">

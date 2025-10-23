@@ -81,14 +81,15 @@
 <div class="container">
 
     <!---------------------- BARRA LATERAL----------------------- -->
-    <div class="sidebar">
-        <h2><%= (fichajeSeleccionado != null) ? "Editar Fichaje" : "Nuevo Fichaje" %></h2>
-        
-        <form id="formFichaje" method="post" action="<%= (fichajeSeleccionado != null) ? "ActualizarFichaje" : "InsertarFichaje" %>">
-            <% if (fichajeSeleccionado != null) { %>
-                <input type="hidden" name="id" value="<%= fichajeSeleccionado.getId() %>">
-                <p><strong>ID:</strong> <%= fichajeSeleccionado.getId() %></p> <!-- Puedes mostrarlo para info -->
-            <% } %>
+<div class="sidebar">
+    <h2><%= (fichajeSeleccionado != null) ? "Editar Fichaje" : "Nuevo Fichaje" %></h2>
+
+    <form id="formFichaje" method="post" action="<%= (fichajeSeleccionado != null) ? "ActualizarFichaje" : "InsertarFichaje" %>">
+
+        <% if (fichajeSeleccionado != null) { %>
+            <input type="hidden" name="id" value="<%= fichajeSeleccionado.getId() %>">
+            <p><strong>ID:</strong> <%= fichajeSeleccionado.getId() %></p>
+        <% } %>
 
             <label>Nombre:</label>
             <input type="text" name="nombre" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getNombre() : "" %>">
@@ -132,31 +133,67 @@
             <label>Horas semanales:</label>
             <input type="number" name="horasSemanales" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getHorasSemanales() : "" %>">
 
+
             <% if (fichajeSeleccionado != null) { %>
-                <div class="panel-overtime" style="margin-bottom:16px; padding:12px; background:#1f2a44; border-radius:6px;">
-                    <p style="margin:0 0 8px 0;">Horas extra (min): <strong><%= fichajeSeleccionado.calcularHorasExtraMinutos() %></strong></p>
-                    <%
-                        int totalPendiente = 0;
-                        for (FichajeModel fx : fichajes) {
-                            if (fx.getNombre() != null && fichajeSeleccionado.getNombre() != null && fx.getNombre().equals(fichajeSeleccionado.getNombre())) {
-                                Integer hem = fx.getHorasExtraMinutos();
-                                totalPendiente += (hem != null) ? hem : 0;
-                            }
-                        }
-                    %>
-                    <p style="margin:0 0 8px 0;">Pendiente total del usuario: <strong><%= totalPendiente %></strong></p>
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                        <label for="aprobarHorasExtra" style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                            <input type="checkbox" id="aprobarHorasExtra" name="aprobarHorasExtra" form="formFichaje" <%= ("aprobado".equalsIgnoreCase(String.valueOf(fichajeSeleccionado.getEstadoHorasExtra()))) ? "checked" : "" %>>
-                            Aprobar horas extra
-                        </label>
-                    </div>
-                    <p style="margin:0;">Estado: <strong><%= fichajeSeleccionado.getEstadoHorasExtra() != null ? fichajeSeleccionado.getEstadoHorasExtra() : "-" %></strong></p>
-                </div>
-            <% } %>
-            <input type="submit" value="<%= (fichajeSeleccionado != null) ? "Actualizar" : "Guardar" %>">
-        </form>
-    </div>
+            <div class="panel-overtime">
+        <% 
+            // Calcular minutos extra para el fichaje seleccionado
+            int horasExtraSeleccionado = 0;
+            if (fichajeSeleccionado.getEntrada() != null && fichajeSeleccionado.getSalida() != null) {
+                long minutosTotales = java.time.Duration.between(fichajeSeleccionado.getEntrada(), fichajeSeleccionado.getSalida()).toMinutes();
+                int descansos = Math.max(0, fichajeSeleccionado.getDescanso()) + Math.max(0, fichajeSeleccionado.getComida());
+                long minutosEfectivos = Math.max(0, minutosTotales - descansos);
+                horasExtraSeleccionado = (int) Math.max(0, minutosEfectivos - 480);
+            }
+
+            // Calcular total pendiente de horas extra para el usuario del fichaje seleccionado
+            int totalPendiente = 0;
+            for (FichajeModel fx : fichajes) {
+                if (fx.getNombre() != null && fx.getNombre().equals(fichajeSeleccionado.getNombre())) {
+                    if (fx.getEntrada() != null && fx.getSalida() != null) {
+                        long minTot = java.time.Duration.between(fx.getEntrada(), fx.getSalida()).toMinutes();
+                        int descansosFx = Math.max(0, fx.getDescanso()) + Math.max(0, fx.getComida());
+                        long minEf = Math.max(0, minTot - descansosFx);
+                        int extraFx = (int) Math.max(0, minEf - 480);
+                        totalPendiente += extraFx;
+                    }
+                }
+            }
+        %>
+
+        <p>Horas extra de hoy (min): <strong><%= horasExtraSeleccionado %></strong></p>
+            <p>Pendiente total del usuario: <strong><%= totalPendiente %></strong></p>
+        </div>
+        <p>
+            <label>
+                <input type="radio" name="estadoHorasExtra" value="Aprobado" <%= "Aprobado".equals(fichajeSeleccionado != null ? fichajeSeleccionado.getEstadoHorasExtra() : "") ? "checked" : "" %> >
+                Aprobar horas extra
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="radio" name="estadoHorasExtra" value="Rechazado" <%= "Rechazado".equals(fichajeSeleccionado != null ? fichajeSeleccionado.getEstadoHorasExtra() : "") ? "checked" : "" %> >
+                Rechazar horas extra
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="radio" name="estadoHorasExtra" value="-" <%= (fichajeSeleccionado == null || fichajeSeleccionado.getEstadoHorasExtra() == null || "-".equals(fichajeSeleccionado.getEstadoHorasExtra())) ? "checked" : "" %> >
+                Ignorar
+            </label>
+        </p>
+
+        <input type="submit" value="<%= (fichajeSeleccionado != null) ? "Actualizar" : "Guardar" %>">
+
+    </form>
+
+
+    
+
+<% } %>
+
+</div>
+
 
     <!------------------- PANEL CENTRAL: tabla ------------->
     <div class="main">
@@ -186,27 +223,36 @@
             </thead>
             <tbody>
 <%
-    // Pre-calcular horas trabajadas y horas extra
+    // Listas para almacenar horas trabajadas y extra para la tabla
     List<String> horasTrabajadasList = new ArrayList<>();
     List<Integer> horasExtraList = new ArrayList<>();
-    for (FichajeModel f : fichajes) {
-        // Horas trabajadas
-        String hhmm = "00:00";
-        if (f.getEntrada() != null && f.getSalida() != null) {
-            long minutos = java.time.Duration.between(f.getEntrada(), f.getSalida()).toMinutes();
-            int descuentos = Math.max(0, f.getDescanso()) + Math.max(0, f.getComida());
-            long minutosEfectivos = Math.max(0, minutos - descuentos);
-            long horas = minutosEfectivos / 60;
-            long mins = minutosEfectivos % 60;
-            hhmm = String.format("%02d:%02d", horas, mins);
-        }
-        horasTrabajadasList.add(hhmm);
 
-        // Horas extra
-        Integer extra = f.getHorasExtraMinutos();
-        horasExtraList.add((extra != null) ? extra : 0);
+    for (FichajeModel f : fichajes) {
+        String horasTrabajadasStr = "00:00";
+        int minutosExtra = 0;
+
+        if (f.getEntrada() != null && f.getSalida() != null) {
+            // Calcular minutos totales entre entrada y salida
+            long minutosTotales = java.time.Duration.between(f.getEntrada(), f.getSalida()).toMinutes();
+
+            // Restar descansos y comidas
+            int descansos = Math.max(0, f.getDescanso()) + Math.max(0, f.getComida());
+            long minutosEfectivos = Math.max(0, minutosTotales - descansos);
+
+            // Formatear horas trabajadas (horas y minutos)
+            long horas = minutosEfectivos / 60;
+            long minutos = minutosEfectivos % 60;
+            horasTrabajadasStr = String.format("%02d:%02d", horas, minutos);
+
+            // Calcular minutos extra (+ de 8 horas = 480 min)
+            minutosExtra = (int) Math.max(0, minutosEfectivos - 480);
+        }
+
+        horasTrabajadasList.add(horasTrabajadasStr);
+        horasExtraList.add(minutosExtra);
     }
 %>
+
 
 <% for (int i = 0; i < fichajes.size(); i++) {
        FichajeModel f = fichajes.get(i);

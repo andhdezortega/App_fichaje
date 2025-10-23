@@ -1,15 +1,21 @@
 :root {
     --azulado: #30588C;
-    --aguamarina: #41A69C ;
-    --aguamarina-dark: #31887b;
+    --aguamarina: #41A69C;
+    --aguamarina-light: #d0e0df ;
+    --aguamarina-dark: #26695f;
     --mostaza: #F2AB27;
+    --beige: #f3eada;
     --anaranjado: #F28E13;
     --blanco: #ffffff;
     --texto-oscuro: #2c2c2c;
     --gris-desactivado: #cccccc;
     --rojo:#be5c59;
 
+    background-color: rgb(243, 253, 243);
+
+    background-color: rgb(255, 250, 230);
 }
+
 
 body {
     font-family: 'Segoe UI', sans-serif;
@@ -181,7 +187,7 @@ button:not(.cerrar-btn) {
 /* Clase base */
 .estado-msg {
     border-left: 8px solid;
-    background-color: var(--blanco);
+    background-color: rgb(239, 240, 239);
     padding: 20px;
     font-size: 16px;
     line-height: 1;
@@ -191,11 +197,19 @@ button:not(.cerrar-btn) {
 }
 .estado-produccion {
     border-color: var(--aguamarina);
-    background-color: var(--blanco);
+    background-color: var(--aguamarina-light);
 }
 .estado-no-produccion {
-    border-color: var(--mostaza);
+    border-color:  var(--mostaza);
+    background-color: var(--beige);
 }
+
+
+
+
+
+
+
 
 /*----------------------------------------------------*/
 /* Hover global para la mayoría de botones (excepto cerrar y botones rojos) */
@@ -262,31 +276,6 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* Botón panel de administración */
-.btn-admin {
-    background-color: var(--azulado);
-    border: none;
-    color: var(--blanco);
-    padding: 12px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    font-weight: 600;
-    margin-top: 15px;
-}
-
-.btn-admin:hover {
-    background-color: var(--aguamarina-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-}
-
-.btn-admin:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-}
 
 button.cerrar-btn {
     background-color: var(--blanco);
@@ -346,21 +335,6 @@ button.cerrar-btn:hover {
     position: relative; /* para que los controles absolutos se posicionen respecto al contenedor */
 }
 
-.grip {
-    background-color: #ccc;         /* Visibilidad del grip */
-    width: 5px;
-    cursor: col-resize;
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    z-index: 10;
-    box-shadow: 1px 0 0 #888;
-}
-
-.dragging {
-    background-color: rgba(0, 0, 0, 0.05);
-}
 
 
 /* Contenedor para controles en la esquina superior derecha (logout, etc.) */
@@ -397,6 +371,15 @@ button.cerrar-btn:hover {
 
 /* (sidebar submit styling está definido más abajo; la versión anterior se eliminó para evitar duplicados) */
 
+.panel-overtime {
+    margin-top: 20px;       
+    margin-bottom: 16px;   
+    padding: 12px;
+    background-color: var(--aguamarina-dark);
+    border-radius: 6px;
+    color: white;
+}
+
 
 .top-right-controls form {
     margin: 0;
@@ -405,13 +388,19 @@ button.cerrar-btn:hover {
 
 /* Lado izquierdo: barra lateral del formulario */
 .sidebar {
-    width: 300px;
+    width: 320px;
     background-color: var(--azulado);
     color: var(--blanco);
     padding: 20px;
     box-sizing: border-box;
     box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    min-height: 100vh;         
+    height: 100vh;               
+    overflow: auto;          
+    padding: 20px;              
+    width: 320px;               
 }
+
 
 /* Estilos básicos del formulario */
 .sidebar h2 {
@@ -670,3 +659,10 @@ th {
     border-top: 2px solid var(--mostaza);
     margin: 15px 0;
 }
+
+
+
+
+
+
+

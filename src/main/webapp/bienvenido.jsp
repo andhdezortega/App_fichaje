@@ -2,7 +2,6 @@
 <%@ page session="true" %>
 <%
     String usuario = (String) session.getAttribute("usuario");
-    String rol = (String) session.getAttribute("rol");
     if (usuario == null) {
         response.sendRedirect("login.jsp");
         return;
@@ -11,6 +10,7 @@
     Boolean fichajeEntrada = (Boolean) session.getAttribute("fichajeEntrada");
     if (fichajeEntrada == null) fichajeEntrada = false;
 
+    // Si hay fichaje activo en sesión, redirigir a perfil.jsp directamente
     if (fichajeEntrada) {
         response.sendRedirect("perfil.jsp");
         return;
@@ -23,6 +23,7 @@
     <title>Bienvenido</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" href="<%=request.getContextPath()%>/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="fichaje-container">
@@ -34,12 +35,6 @@
                 <input type="hidden" name="returnTo" value="perfil.jsp">
                 <button type="submit" name="accion" value="entrada" <%= fichajeEntrada ? "disabled" : "" %>>Fichar Entrada</button>
             </form>
-
-            <% if ("admin".equals(rol)) { %>
-            <form action="admin.jsp" method="get" style="margin-top: 10px;">
-                <button type="submit" class="btn-admin">Panel de Administración</button>
-            </form>
-            <% } %>
 
             <form action="LogoutServlet" method="post" style="margin-top: 10px;">
                 <button class="cerrar-btn" type="submit">Cerrar sesión</button>
