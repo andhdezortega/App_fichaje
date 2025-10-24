@@ -16,7 +16,7 @@
 
 
             <label for="correo">Correo electrónico</label>
-            <input type="text" name="correo" required autocomplete="username" style="width:100%;padding:10px;margin-bottom:20px;border:1px solid #cccccc;border-radius:5px;font-size:14px;">
+            <input type="email" name="correo" placeholder="tucorreo@empresa.com (obligatorio)" required autocomplete="username" style="width:100%;padding:10px;margin-bottom:20px;border:1px solid #cccccc;border-radius:5px;font-size:14px;">
 
             <label for="contrasena">Contraseña</label>
             <input type="password" name="contrasena" required>
@@ -24,8 +24,10 @@
             <button type="submit">Entrar</button>
         </form>
 
-        <% if (request.getParameter("error") != null) { %>
-            <p class="error">Usuario o contraseña incorrectos</p>
+        <% if ("1".equals(request.getParameter("error"))) { %>
+            <p class="error">Correo o contraseña incorrectos</p>
+        <% } else if ("email".equals(request.getParameter("error"))) { %>
+            <p class="error">Debes introducir un correo válido</p>
         <% } %>
     </div>
   </div>

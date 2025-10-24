@@ -79,6 +79,7 @@ public class FichajeDAO {
                     rs.getInt("horas_semanales"),
                     rs.getBoolean("estado")
                 );
+                try { fichaje.setHorasExtra(rs.getInt("horas_extra")); } catch (SQLException ignore) {}
                 fichajes.add(fichaje);
             }
         } catch (SQLException e) {
@@ -106,7 +107,7 @@ public class FichajeDAO {
                     java.time.LocalTime entrada = (entradaStr != null && !entradaStr.isEmpty()) ? java.time.LocalTime.parse(entradaStr) : null;
                     java.time.LocalTime salida = (salidaStr != null && !salidaStr.isEmpty()) ? java.time.LocalTime.parse(salidaStr) : null;
 
-                    return new FichajeModel(
+                    FichajeModel f = new FichajeModel(
                         rs.getInt("id"),
                         rs.getString("nombre"),
                         rs.getString("apellido"),
@@ -119,6 +120,8 @@ public class FichajeDAO {
                         rs.getInt("horas_semanales"),
                         rs.getBoolean("estado")
                     );
+                    try { f.setHorasExtra(rs.getInt("horas_extra")); } catch (SQLException ignore) {}
+                    return f;
                 }
             }
         } catch (SQLException e) {
@@ -145,7 +148,7 @@ public class FichajeDAO {
                     java.time.LocalTime entrada = (entradaStr != null && !entradaStr.isEmpty()) ? java.time.LocalTime.parse(entradaStr) : null;
                     java.time.LocalTime salida = (salidaStr != null && !salidaStr.isEmpty()) ? java.time.LocalTime.parse(salidaStr) : null;
 
-                    return new FichajeModel(
+                    FichajeModel f = new FichajeModel(
                         rs.getInt("id"),
                         rs.getString("nombre"),
                         rs.getString("apellido"),
@@ -158,6 +161,8 @@ public class FichajeDAO {
                         rs.getInt("horas_semanales"),
                         rs.getBoolean("estado")
                     );
+                    try { f.setHorasExtra(rs.getInt("horas_extra")); } catch (SQLException ignore) {}
+                    return f;
                 }
             }
         } catch (SQLException e) {
@@ -170,8 +175,18 @@ public class FichajeDAO {
      * Actualiza un fichaje existente por id.
      */
     public boolean actualizar(FichajeModel fichaje) {
+        // Calcular horas extra automáticamente si hay entrada y salida
+        int horasExtra = 0;
+        if (fichaje.getEntrada() != null && fichaje.getSalida() != null) {
+            long minutosTrabajados = java.time.Duration.between(fichaje.getEntrada(), fichaje.getSalida()).toMinutes();
+            int descuentos = Math.max(0, fichaje.getDescanso()) + Math.max(0, fichaje.getComida());
+            long minutosEfectivos = Math.max(0, minutosTrabajados - descuentos);
+            long minutosBase = 8 * 60; // 8 horas
+            horasExtra = (int) Math.max(0, minutosEfectivos - minutosBase);
+        }
+        
         String sql = "UPDATE fichajes SET nombre = ?, apellido = ?, rol = ?, fecha = ?, entrada = ?, " +
-                    "salida = ?, descanso = ?, comida = ?, horas_semanales = ?, estado = ? WHERE id = ?";
+                    "salida = ?, descanso = ?, comida = ?, horas_semanales = ?, estado = ?, horas_extra = ? WHERE id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -186,7 +201,8 @@ public class FichajeDAO {
             pstmt.setInt(8, fichaje.getComida());
             pstmt.setInt(9, fichaje.getHorasSemanales());
             pstmt.setBoolean(10, fichaje.isEstado());
-            pstmt.setInt(11, fichaje.getId());
+            pstmt.setInt(11, horasExtra);
+            pstmt.setInt(12, fichaje.getId());
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {

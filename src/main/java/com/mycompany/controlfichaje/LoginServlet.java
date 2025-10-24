@@ -79,7 +79,7 @@ public class LoginServlet extends HttpServlet {
                 // Todos los demás (incluidos otros admins) van a bienvenido.jsp
                 response.sendRedirect("bienvenido.jsp");
             }
-        } else if ("externo".equals(correo) && "externo123".equals(contrasena)) {
+        } else if ("externo@externo.com".equals(correo) && "externo123".equals(contrasena)) {
             // Login para externo
             HttpSession session = request.getSession();
             session.setAttribute("usuario", correo);

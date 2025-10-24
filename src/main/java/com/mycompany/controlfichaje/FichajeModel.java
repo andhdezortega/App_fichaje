@@ -26,6 +26,7 @@ public class FichajeModel {
     private int comida;
     private int horasSemanales;
     private boolean estado;
+    private int horasExtra; // minutos de horas extra, almacenados en BD
 
     /**
      * Constructor completo usado al leer desde la base de datos.
@@ -44,6 +45,7 @@ public class FichajeModel {
         this.comida = comida;
         this.horasSemanales = horasSemanales;
         this.estado = estado;
+        this.horasExtra = 0;
     }
 
     /**
@@ -78,6 +80,7 @@ public class FichajeModel {
         this.comida = 0;
         this.horasSemanales = 0;
         this.estado = false;
+        this.horasExtra = 0;
     }
 
     // Getters y Setters
@@ -167,6 +170,14 @@ public class FichajeModel {
 
     public void setEstado(boolean estado) {
         this.estado = estado;
+    }
+
+    public int getHorasExtra() {
+        return horasExtra;
+    }
+
+    public void setHorasExtra(int horasExtra) {
+        this.horasExtra = horasExtra;
     }
 
     /**

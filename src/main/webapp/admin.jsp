@@ -4,9 +4,6 @@
 <%@ page import="com.mycompany.controlfichaje.*" %>
 <%@ page import="com.mycompany.controlfichaje.dao.FichajeDAO" %>
 
-<%@ page import="com.mycompany.controlfichaje.FichajeModel" %>
-
-
 <%
     String usuario = (String) session.getAttribute("usuario");
     String rol = (String) session.getAttribute("rol");
@@ -15,11 +12,10 @@
         response.sendRedirect("login.jsp");
         return;
     }
-       // Obtener fichajes y, si hay selección, total de horas extra pendientes del usuario
+    
     FichajeDAO fichajeDAO = new FichajeDAO();
     List<FichajeModel> fichajes = fichajeDAO.obtenerTodos();
 
-    // Buscar fichaje para edición (por id)
     String paramId = request.getParameter("id");
     FichajeModel fichajeSeleccionado = null;
     if (paramId != null) {
@@ -31,6 +27,7 @@
     }
 %>
 
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -81,15 +78,14 @@
 <div class="container">
 
     <!---------------------- BARRA LATERAL----------------------- -->
-<div class="sidebar">
-    <h2><%= (fichajeSeleccionado != null) ? "Editar Fichaje" : "Nuevo Fichaje" %></h2>
-
-    <form id="formFichaje" method="post" action="<%= (fichajeSeleccionado != null) ? "ActualizarFichaje" : "InsertarFichaje" %>">
-
-        <% if (fichajeSeleccionado != null) { %>
-            <input type="hidden" name="id" value="<%= fichajeSeleccionado.getId() %>">
-            <p><strong>ID:</strong> <%= fichajeSeleccionado.getId() %></p>
-        <% } %>
+    <div class="sidebar">
+        <h2><%= (fichajeSeleccionado != null) ? "Editar Fichaje" : "Nuevo Fichaje" %></h2>
+        
+        <form id="formFichaje" method="post" action="<%= (fichajeSeleccionado != null) ? "ActualizarFichaje" : "InsertarFichaje" %>">
+            <% if (fichajeSeleccionado != null) { %>
+                <input type="hidden" name="id" value="<%= fichajeSeleccionado.getId() %>">
+                <p><strong>ID:</strong> <%= fichajeSeleccionado.getId() %></p>
+            <% } %>
 
             <label>Nombre:</label>
             <input type="text" name="nombre" required value="<%= (fichajeSeleccionado != null) ? fichajeSeleccionado.getNombre() : "" %>">
@@ -135,65 +131,18 @@
 
 
             <% if (fichajeSeleccionado != null) { %>
-            <div class="panel-overtime">
-        <% 
-            // Calcular minutos extra para el fichaje seleccionado
-            int horasExtraSeleccionado = 0;
-            if (fichajeSeleccionado.getEntrada() != null && fichajeSeleccionado.getSalida() != null) {
-                long minutosTotales = java.time.Duration.between(fichajeSeleccionado.getEntrada(), fichajeSeleccionado.getSalida()).toMinutes();
-                int descansos = Math.max(0, fichajeSeleccionado.getDescanso()) + Math.max(0, fichajeSeleccionado.getComida());
-                long minutosEfectivos = Math.max(0, minutosTotales - descansos);
-                horasExtraSeleccionado = (int) Math.max(0, minutosEfectivos - 480);
-            }
-
-            // Calcular total pendiente de horas extra para el usuario del fichaje seleccionado
-            int totalPendiente = 0;
-            for (FichajeModel fx : fichajes) {
-                if (fx.getNombre() != null && fx.getNombre().equals(fichajeSeleccionado.getNombre())) {
-                    if (fx.getEntrada() != null && fx.getSalida() != null) {
-                        long minTot = java.time.Duration.between(fx.getEntrada(), fx.getSalida()).toMinutes();
-                        int descansosFx = Math.max(0, fx.getDescanso()) + Math.max(0, fx.getComida());
-                        long minEf = Math.max(0, minTot - descansosFx);
-                        int extraFx = (int) Math.max(0, minEf - 480);
-                        totalPendiente += extraFx;
-                    }
-                }
-            }
-        %>
-
-        <p>Horas extra de hoy (min): <strong><%= horasExtraSeleccionado %></strong></p>
-            <p>Pendiente total del usuario: <strong><%= totalPendiente %></strong></p>
-        </div>
-        <p>
-            <label>
-                <input type="radio" name="estadoHorasExtra" value="Aprobado" <%= "Aprobado".equals(fichajeSeleccionado != null ? fichajeSeleccionado.getEstadoHorasExtra() : "") ? "checked" : "" %> >
-                Aprobar horas extra
-            </label>
-        </p>
-        <p>
-            <label>
-                <input type="radio" name="estadoHorasExtra" value="Rechazado" <%= "Rechazado".equals(fichajeSeleccionado != null ? fichajeSeleccionado.getEstadoHorasExtra() : "") ? "checked" : "" %> >
-                Rechazar horas extra
-            </label>
-        </p>
-        <p>
-            <label>
-                <input type="radio" name="estadoHorasExtra" value="-" <%= (fichajeSeleccionado == null || fichajeSeleccionado.getEstadoHorasExtra() == null || "-".equals(fichajeSeleccionado.getEstadoHorasExtra())) ? "checked" : "" %> >
-                Ignorar
-            </label>
-        </p>
-
-        <input type="submit" value="<%= (fichajeSeleccionado != null) ? "Actualizar" : "Guardar" %>">
-
-    </form>
-
-
-    
-
-<% } %>
-
-</div>
-
+                <div class="panel-overtime" style="margin-bottom:16px; padding:12px; background:#1f2a44; border-radius:6px;">
+                    <p style="margin:0 0 8px 0;">Horas extra actuales: <strong><%= fichajeSeleccionado.getHorasExtra() %> min</strong></p>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" onclick="denegarHorasExtra(<%= fichajeSeleccionado.getId() %>)" class="btn-accion" style="background:#dc3545;">
+                            Denegar horas extra (poner a 0)
+                        </button>
+                    </div>
+                </div>
+            <% } %>
+            <input type="submit" value="<%= (fichajeSeleccionado != null) ? "Actualizar" : "Guardar" %>">
+        </form>
+    </div>
 
     <!------------------- PANEL CENTRAL: tabla ------------->
     <div class="main">
@@ -222,74 +171,72 @@
                 </tr>
             </thead>
             <tbody>
-<%
-    // Listas para almacenar horas trabajadas y extra para la tabla
-    List<String> horasTrabajadasList = new ArrayList<>();
-    List<Integer> horasExtraList = new ArrayList<>();
+            <% for (FichajeModel f : fichajes) { %>
+                <tr>
+                    <td><%= f.getId() %></td>
+                    <td><%= f.getNombre() %></td>
+                    <td><%= f.getApellido() %></td>
+                    <td><%= f.getRol() %></td>
+                    <td><%= f.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) %></td>
+                    <td><%= f.getEntrada() %></td>
+                    <td><%= f.getSalida() %></td>
+                    <td><%= f.getDescanso() %></td>
+                    <td><%= f.getComida() %></td>
+                    <td>
+                        <%
+                            String hhmm = "00:00";
+                            if (f.getEntrada() != null && f.getSalida() != null) {
+                                long minutos = java.time.Duration.between(f.getEntrada(), f.getSalida()).toMinutes();
+                                int descuentos = Math.max(0, f.getDescanso()) + Math.max(0, f.getComida());
+                                long minutosEfectivos = Math.max(0, minutos - descuentos);
+                                long horas = minutosEfectivos / 60;
+                                long mins = minutosEfectivos % 60;
+                                hhmm = String.format("%02d:%02d", horas, mins);
+                            }
+                        %>
+                        <%= hhmm %>
+                    </td>
+                    <td>
+                        <%
+                            // Calcular minutos que superan las 8 horas
+                            int minutosExtra = 0;
+                            if (f.getEntrada() != null && f.getSalida() != null) {
+                                long minutosTrabajados = java.time.Duration.between(f.getEntrada(), f.getSalida()).toMinutes();
+                                int descuentos = Math.max(0, f.getDescanso()) + Math.max(0, f.getComida());
+                                long minutosEfectivos = Math.max(0, minutosTrabajados - descuentos);
+                                long minutosBase = 8 * 60; // 8 horas en minutos
+                                minutosExtra = (int) Math.max(0, minutosEfectivos - minutosBase);
+                            }
+                            // Si horas_extra en BD es 0, significa que fueron rechazadas
+                            int horasExtraBD = f.getHorasExtra();
+                            int mostrar = (horasExtraBD == 0) ? 0 : minutosExtra;
+                        %>
+                        <%= mostrar %>
+                    </td>
+                    <td><%= f.getHorasSemanales() %></td>
+                    <td class="<%= (f.getEntrada() != null && f.getSalida() == null) ? "estado-si" : "estado-no" %>">
+                        <%= (f.getEntrada() != null && f.getSalida() == null) ? "Sí" : "No" %>
+                    </td>
+                    <td>
+                        <div class="actions-inline">
+                            <form method="get" action="admin.jsp">
+                                <input type="hidden" name="id" value="<%= f.getId() %>">
+                                <input type="submit" value="Editar" class="btn-accion small-action">
+                            </form>
 
-    for (FichajeModel f : fichajes) {
-        String horasTrabajadasStr = "00:00";
-        int minutosExtra = 0;
-
-        if (f.getEntrada() != null && f.getSalida() != null) {
-            // Calcular minutos totales entre entrada y salida
-            long minutosTotales = java.time.Duration.between(f.getEntrada(), f.getSalida()).toMinutes();
-
-            // Restar descansos y comidas
-            int descansos = Math.max(0, f.getDescanso()) + Math.max(0, f.getComida());
-            long minutosEfectivos = Math.max(0, minutosTotales - descansos);
-
-            // Formatear horas trabajadas (horas y minutos)
-            long horas = minutosEfectivos / 60;
-            long minutos = minutosEfectivos % 60;
-            horasTrabajadasStr = String.format("%02d:%02d", horas, minutos);
-
-            // Calcular minutos extra (+ de 8 horas = 480 min)
-            minutosExtra = (int) Math.max(0, minutosEfectivos - 480);
-        }
-
-        horasTrabajadasList.add(horasTrabajadasStr);
-        horasExtraList.add(minutosExtra);
-    }
-%>
-
-
-<% for (int i = 0; i < fichajes.size(); i++) {
-       FichajeModel f = fichajes.get(i);
-%>
-<tr>
-    <td><%= f.getId() %></td>
-    <td><%= f.getNombre() %></td>
-    <td><%= f.getApellido() %></td>
-    <td><%= f.getRol() %></td>
-    <td><%= (f.getFecha() != null) ? f.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "" %></td>
-    <td><%= (f.getEntrada() != null) ? f.getEntrada().format(DateTimeFormatter.ofPattern("HH:mm")) : "" %></td>
-    <td><%= (f.getSalida() != null) ? f.getSalida().format(DateTimeFormatter.ofPattern("HH:mm")) : "" %></td>
-    <td><%= f.getDescanso() %></td>
-    <td><%= f.getComida() %></td>
-    <td><%= horasTrabajadasList.get(i) %></td>
-    <td><%= horasExtraList.get(i) %></td>
-    <td><%= f.getHorasSemanales() %></td>
-    <td class="<%= (f.getEntrada() != null && f.getSalida() == null) ? "estado-si" : "estado-no" %>">
-        <%= (f.getEntrada() != null && f.getSalida() == null) ? "Sí" : "No" %>
-    </td>
-    <td>
-        <div class="actions-inline">
-            <form method="get" action="admin.jsp">
-                <input type="hidden" name="id" value="<%= f.getId() %>">
-                <input type="submit" value="Editar" class="btn-accion small-action">
-            </form>
-
-            <form method="post" action="EliminarFichaje">
-                <input type="hidden" name="id" value="<%= f.getId() %>">
-                <input type="submit" value="Eliminar" class="btn-accion small-action" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
-            </form>
-        </div>
-    </td>
-</tr>
-<% } %>
-</tbody>
-
+                            <form method="post" action="EliminarFichaje">
+                                <input type="hidden" name="id" value="<%= f.getId() %>">
+                                <input type="submit" value="Eliminar" class="btn-accion small-action" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
+                            </form>
+                            <form method="post" action="RechazarHorasExtra">
+                                <input type="hidden" name="id" value="<%= f.getId() %>">
+                                <input type="submit" value="Rechazar extra" class="btn-accion small-action">
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            <% } %>
+            </tbody>
         </table>
     </div>
 </div>
@@ -332,6 +279,22 @@ function alignLogoutButton() {
     if (top < 6) top = 6;
     wrapper.style.top = top + 'px';
 }
+
+function denegarHorasExtra(id) {
+    if (confirm('¿Estás seguro de que quieres denegar las horas extra? Se pondrán a 0.')) {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'RechazarHorasExtra';
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'id';
+        input.value = id;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
 window.addEventListener('load', alignLogoutButton);
 window.addEventListener('resize', alignLogoutButton);
 </script>

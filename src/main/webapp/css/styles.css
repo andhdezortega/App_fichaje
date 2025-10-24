@@ -335,6 +335,21 @@ button.cerrar-btn:hover {
     position: relative; /* para que los controles absolutos se posicionen respecto al contenedor */
 }
 
+.grip {
+    background-color: #ccc;         /* Visibilidad del grip */
+    width: 5px;
+    cursor: col-resize;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    z-index: 10;
+    box-shadow: 1px 0 0 #888;
+}
+
+.dragging {
+    background-color: rgba(0, 0, 0, 0.05);
+}
 
 
 /* Contenedor para controles en la esquina superior derecha (logout, etc.) */
@@ -371,15 +386,6 @@ button.cerrar-btn:hover {
 
 /* (sidebar submit styling está definido más abajo; la versión anterior se eliminó para evitar duplicados) */
 
-.panel-overtime {
-    margin-top: 20px;       
-    margin-bottom: 16px;   
-    padding: 12px;
-    background-color: var(--aguamarina-dark);
-    border-radius: 6px;
-    color: white;
-}
-
 
 .top-right-controls form {
     margin: 0;
@@ -388,19 +394,13 @@ button.cerrar-btn:hover {
 
 /* Lado izquierdo: barra lateral del formulario */
 .sidebar {
-    width: 320px;
+    width: 300px;
     background-color: var(--azulado);
     color: var(--blanco);
     padding: 20px;
     box-sizing: border-box;
     box-shadow: 0 2px 4px rgba(0,0,0,0.8);
-    min-height: 100vh;         
-    height: 100vh;               
-    overflow: auto;          
-    padding: 20px;              
-    width: 320px;               
 }
-
 
 /* Estilos básicos del formulario */
 .sidebar h2 {
