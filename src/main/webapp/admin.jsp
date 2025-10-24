@@ -228,10 +228,7 @@
                                 <input type="hidden" name="id" value="<%= f.getId() %>">
                                 <input type="submit" value="Eliminar" class="btn-accion small-action" onclick="return confirm('¿Seguro que quieres eliminar este fichaje?');">
                             </form>
-                            <form method="post" action="RechazarHorasExtra">
-                                <input type="hidden" name="id" value="<%= f.getId() %>">
-                                <input type="submit" value="Rechazar extra" class="btn-accion small-action">
-                            </form>
+                            
                         </div>
                     </td>
                 </tr>
