@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  beans.xml - Configuración de CDI (Contexts and Dependency Injection).
+  
+  Contenido:
+  - bean-discovery-mode="all": habilita el escaneo de todos los beans CDI en el classpath.
+  
+  Nota: Este proyecto no usa CDI activamente; el archivo es requerido por Jakarta EE.
+-->
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_2_0.xsd"
+       bean-discovery-mode="all">
+</beans>

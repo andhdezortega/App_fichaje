@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  persistence.xml - Configuración JPA (Java Persistence API).
+  
+  Contenido:
+  - Define la unidad de persistencia "my_persistence_unit".
+  - Actualmente no contiene entidades JPA ni properties, ya que la aplicación
+    utiliza JDBC directo (DatabaseConnection) en lugar de JPA.
+  
+  Nota: Este archivo es requerido por Jakarta EE pero no se usa activamente.
+-->
+<persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+    <!-- Define Persistence Unit -->
+    <persistence-unit name="my_persistence_unit">
+        
+    </persistence-unit>
+</persistence>
